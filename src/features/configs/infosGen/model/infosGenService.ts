@@ -150,7 +150,7 @@ export async function onPostInfosGenSubmit(
   
   const submitData: FormData = postInfosGenDataForSubmitting(state)
   try {
-    const { data, error }: InfosGenResponse = onSubmit(submitData)
+    const { data, error }: InfosGenResponse = await onSubmit(submitData)
     
     if (error && error?.data) {
       const { violations } = error.data
@@ -187,7 +187,7 @@ export async function onPatchInfosGenSubmit(
   setErrors(initInfosGenErrorState())
   
   try {
-    const { data, error }: InfosGenResponse = onSubmit(state)
+    const { data, error }: InfosGenResponse = await onSubmit(state)
     
     if (error && error?.data) {
       const { violations } = error.data
