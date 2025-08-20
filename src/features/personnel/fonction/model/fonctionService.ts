@@ -3,7 +3,7 @@ import toast from "react-hot-toast";
 import type {JsonLdApiResponseInt} from "../../../../interfaces/JsonLdApiResponseInt.ts";
 
 // INTERFACES OR TYPES
-export interface CategorieExam {
+export interface Fonction {
   '@id'?: string
   id: number
   nom: string
@@ -13,33 +13,33 @@ export interface CategorieExam {
   selected: boolean
 }
 
-export interface SaveCategorieExam {
+export interface SaveFonction {
   id: number
   nom: string
 }
 
-export interface NewCategorieExam {
+export interface NewFonction {
   nom: string
   error: string | null
 }
 
-export interface CategorieExamError { nom: string | null }
+export interface FonctionError { nom: string | null }
 // END INTERFACES OR TYPES
 
 /* ------------------------------------------- */
 
 // INIT
-export const initNewCategorieExams = (): NewCategorieExam[] => [{ nom: '', error: null }]
+export const initNewFonctions = (): NewFonction[] => [{ nom: '', error: null }]
 
-export const initCategorieExamState = (): SaveCategorieExam => ({ nom: '', id: 0 })
+export const initFonctionState = (): SaveFonction => ({ nom: '', id: 0 })
 
-export const initCategorieExamErrorState = (): CategorieExamError => ({ nom: null })
+export const initFonctionErrorState = (): FonctionError => ({ nom: null })
 // END INIT
 
 /* ------------------------------------------- */
 
 // EVENTS & FUNCTIONS
-export const CategorieExamFakeData = (): CategorieExam[] => [
+export const getFonctionFakeData = (): Fonction[] => [
   {
     id: 1,
     nom: 'Malaria',
@@ -58,25 +58,25 @@ export const CategorieExamFakeData = (): CategorieExam[] => [
   },
 ]
 
-export async function onPostCategorieExamSubmit(
+export async function onPostFonctionSubmit(
   e: FormEvent<HTMLFormElement>,
-  state: NewCategorieExam[],
-  setState: Dispatch<SetStateAction<NewCategorieExam[]>>,
-  onSubmit: (data: NewCategorieExam) => Promise<any>,
+  state: NewFonction[],
+  setState: Dispatch<SetStateAction<NewFonction[]>>,
+  onSubmit: (data: NewFonction) => Promise<any>,
   onHide: () => void,
   onRefresh?: () => void
 ): Promise<void> {
   
   e.preventDefault()
-  const categories: NewCategorieExam[] = [...state]
-  const remainingCategories: NewCategorieExam[] = []
+  const categories: NewFonction[] = [...state]
+  const remainingCategories: NewFonction[] = []
   
   try {
     for (let i: number = 0; i < categories.length; i++) {
-      const category: NewCategorieExam = categories[i]
+      const category: NewFonction = categories[i]
       
       try {
-        const { data, error }: JsonLdApiResponseInt<CategorieExam> = await onSubmit(category)
+        const { data, error }: JsonLdApiResponseInt<Fonction> = await onSubmit(category)
         
         if (error && error?.data) {
           const { violations } = error.data
@@ -89,7 +89,7 @@ export async function onPostCategorieExamSubmit(
           toast.success('Opération bien effectué.')
         } else remainingCategories.push(category)
       } catch (e) {
-        toast.error('Erreur lors de la soumission de la catégorie')
+        toast.error('Erreur lors de la soumission de la fonction')
         remainingCategories.push({ ...category, error: 'Erreur lors de la soumission.' })
       }
     }
@@ -98,7 +98,7 @@ export async function onPostCategorieExamSubmit(
   setState(remainingCategories)
   
   if (remainingCategories.length === 0) {
-    setState(initNewCategorieExams())
+    setState(initNewFonctions())
     onHide()
   }
   
@@ -106,20 +106,20 @@ export async function onPostCategorieExamSubmit(
   
 }
 
-export async function onPatchCategorieExamSubmit(
+export async function onPatchFonctionSubmit(
   e: FormEvent<HTMLFormElement>,
-  state: SaveCategorieExam,
-  setErrors: Dispatch<SetStateAction<CategorieExamError>>,
-  onSubmit: (data: SaveCategorieExam) => Promise<any>,
+  state: SaveFonction,
+  setErrors: Dispatch<SetStateAction<FonctionError>>,
+  onSubmit: (data: SaveFonction) => Promise<any>,
   onHide: () => void,
   onRefresh?: () => void
 ): Promise<void> {
   
   e.preventDefault()
-  setErrors(initCategorieExamErrorState())
+  setErrors(initFonctionErrorState())
   
   try {
-    const { data, error }: JsonLdApiResponseInt<CategorieExam> = await onSubmit(state)
+    const { data, error }: JsonLdApiResponseInt<Fonction> = await onSubmit(state)
     if (error && error?.data) {
       const { violations } = error.data
       if (violations) violations.forEach(({ message, propertyPath }): void => {

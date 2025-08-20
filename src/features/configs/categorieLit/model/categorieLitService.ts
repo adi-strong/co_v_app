@@ -3,7 +3,7 @@ import toast from "react-hot-toast";
 import type {JsonLdApiResponseInt} from "../../../../interfaces/JsonLdApiResponseInt.ts";
 
 // INTERFACES OR TYPES
-export interface CategorieExam {
+export interface CategorieLit {
   '@id'?: string
   id: number
   nom: string
@@ -13,33 +13,33 @@ export interface CategorieExam {
   selected: boolean
 }
 
-export interface SaveCategorieExam {
+export interface SaveCategorieLit {
   id: number
   nom: string
 }
 
-export interface NewCategorieExam {
+export interface NewCategorieLit {
   nom: string
   error: string | null
 }
 
-export interface CategorieExamError { nom: string | null }
+export interface CategorieLitError { nom: string | null }
 // END INTERFACES OR TYPES
 
 /* ------------------------------------------- */
 
 // INIT
-export const initNewCategorieExams = (): NewCategorieExam[] => [{ nom: '', error: null }]
+export const initNewCategorieLits = (): NewCategorieLit[] => [{ nom: '', error: null }]
 
-export const initCategorieExamState = (): SaveCategorieExam => ({ nom: '', id: 0 })
+export const initCategorieLitState = (): SaveCategorieLit => ({ nom: '', id: 0 })
 
-export const initCategorieExamErrorState = (): CategorieExamError => ({ nom: null })
+export const initCategorieLitErrorState = (): CategorieLitError => ({ nom: null })
 // END INIT
 
 /* ------------------------------------------- */
 
 // EVENTS & FUNCTIONS
-export const CategorieExamFakeData = (): CategorieExam[] => [
+export const CategorieLitFakeData = (): CategorieLit[] => [
   {
     id: 1,
     nom: 'Malaria',
@@ -58,25 +58,25 @@ export const CategorieExamFakeData = (): CategorieExam[] => [
   },
 ]
 
-export async function onPostCategorieExamSubmit(
+export async function onPostCategorieLitSubmit(
   e: FormEvent<HTMLFormElement>,
-  state: NewCategorieExam[],
-  setState: Dispatch<SetStateAction<NewCategorieExam[]>>,
-  onSubmit: (data: NewCategorieExam) => Promise<any>,
+  state: NewCategorieLit[],
+  setState: Dispatch<SetStateAction<NewCategorieLit[]>>,
+  onSubmit: (data: NewCategorieLit) => Promise<any>,
   onHide: () => void,
   onRefresh?: () => void
 ): Promise<void> {
   
   e.preventDefault()
-  const categories: NewCategorieExam[] = [...state]
-  const remainingCategories: NewCategorieExam[] = []
+  const categories: NewCategorieLit[] = [...state]
+  const remainingCategories: NewCategorieLit[] = []
   
   try {
     for (let i: number = 0; i < categories.length; i++) {
-      const category: NewCategorieExam = categories[i]
+      const category: NewCategorieLit = categories[i]
       
       try {
-        const { data, error }: JsonLdApiResponseInt<CategorieExam> = await onSubmit(category)
+        const { data, error }: JsonLdApiResponseInt<CategorieLit> = await onSubmit(category)
         
         if (error && error?.data) {
           const { violations } = error.data
@@ -98,7 +98,7 @@ export async function onPostCategorieExamSubmit(
   setState(remainingCategories)
   
   if (remainingCategories.length === 0) {
-    setState(initNewCategorieExams())
+    setState(initNewCategorieLits())
     onHide()
   }
   
@@ -106,20 +106,20 @@ export async function onPostCategorieExamSubmit(
   
 }
 
-export async function onPatchCategorieExamSubmit(
+export async function onPatchCategorieLitSubmit(
   e: FormEvent<HTMLFormElement>,
-  state: SaveCategorieExam,
-  setErrors: Dispatch<SetStateAction<CategorieExamError>>,
-  onSubmit: (data: SaveCategorieExam) => Promise<any>,
+  state: SaveCategorieLit,
+  setErrors: Dispatch<SetStateAction<CategorieLitError>>,
+  onSubmit: (data: SaveCategorieLit) => Promise<any>,
   onHide: () => void,
   onRefresh?: () => void
 ): Promise<void> {
   
   e.preventDefault()
-  setErrors(initCategorieExamErrorState())
+  setErrors(initCategorieLitErrorState())
   
   try {
-    const { data, error }: JsonLdApiResponseInt<CategorieExam> = await onSubmit(state)
+    const { data, error }: JsonLdApiResponseInt<CategorieLit> = await onSubmit(state)
     if (error && error?.data) {
       const { violations } = error.data
       if (violations) violations.forEach(({ message, propertyPath }): void => {

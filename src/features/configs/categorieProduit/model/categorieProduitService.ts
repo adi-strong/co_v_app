@@ -3,7 +3,7 @@ import toast from "react-hot-toast";
 import type {JsonLdApiResponseInt} from "../../../../interfaces/JsonLdApiResponseInt.ts";
 
 // INTERFACES OR TYPES
-export interface CategorieExam {
+export interface CategorieProduit {
   '@id'?: string
   id: number
   nom: string
@@ -13,33 +13,33 @@ export interface CategorieExam {
   selected: boolean
 }
 
-export interface SaveCategorieExam {
+export interface SaveCategorieProduit {
   id: number
   nom: string
 }
 
-export interface NewCategorieExam {
+export interface NewCategorieProduit {
   nom: string
   error: string | null
 }
 
-export interface CategorieExamError { nom: string | null }
+export interface CategorieLitError { nom: string | null }
 // END INTERFACES OR TYPES
 
 /* ------------------------------------------- */
 
 // INIT
-export const initNewCategorieExams = (): NewCategorieExam[] => [{ nom: '', error: null }]
+export const initNewCategorieProduits = (): NewCategorieProduit[] => [{ nom: '', error: null }]
 
-export const initCategorieExamState = (): SaveCategorieExam => ({ nom: '', id: 0 })
+export const initCategorieProduitState = (): SaveCategorieProduit => ({ nom: '', id: 0 })
 
-export const initCategorieExamErrorState = (): CategorieExamError => ({ nom: null })
+export const initCategorieProduitErrorState = (): CategorieLitError => ({ nom: null })
 // END INIT
 
 /* ------------------------------------------- */
 
 // EVENTS & FUNCTIONS
-export const CategorieExamFakeData = (): CategorieExam[] => [
+export const getCategorieProduitFakeData = (): CategorieProduit[] => [
   {
     id: 1,
     nom: 'Malaria',
@@ -58,25 +58,25 @@ export const CategorieExamFakeData = (): CategorieExam[] => [
   },
 ]
 
-export async function onPostCategorieExamSubmit(
+export async function onPostCategorieProduitSubmit(
   e: FormEvent<HTMLFormElement>,
-  state: NewCategorieExam[],
-  setState: Dispatch<SetStateAction<NewCategorieExam[]>>,
-  onSubmit: (data: NewCategorieExam) => Promise<any>,
+  state: NewCategorieProduit[],
+  setState: Dispatch<SetStateAction<NewCategorieProduit[]>>,
+  onSubmit: (data: NewCategorieProduit) => Promise<any>,
   onHide: () => void,
   onRefresh?: () => void
 ): Promise<void> {
   
   e.preventDefault()
-  const categories: NewCategorieExam[] = [...state]
-  const remainingCategories: NewCategorieExam[] = []
+  const categories: NewCategorieProduit[] = [...state]
+  const remainingCategories: NewCategorieProduit[] = []
   
   try {
     for (let i: number = 0; i < categories.length; i++) {
-      const category: NewCategorieExam = categories[i]
+      const category: NewCategorieProduit = categories[i]
       
       try {
-        const { data, error }: JsonLdApiResponseInt<CategorieExam> = await onSubmit(category)
+        const { data, error }: JsonLdApiResponseInt<CategorieProduit> = await onSubmit(category)
         
         if (error && error?.data) {
           const { violations } = error.data
@@ -98,7 +98,7 @@ export async function onPostCategorieExamSubmit(
   setState(remainingCategories)
   
   if (remainingCategories.length === 0) {
-    setState(initNewCategorieExams())
+    setState(initNewCategorieProduits())
     onHide()
   }
   
@@ -106,20 +106,20 @@ export async function onPostCategorieExamSubmit(
   
 }
 
-export async function onPatchCategorieExamSubmit(
+export async function onPatchCategorieProduitSubmit(
   e: FormEvent<HTMLFormElement>,
-  state: SaveCategorieExam,
-  setErrors: Dispatch<SetStateAction<CategorieExamError>>,
-  onSubmit: (data: SaveCategorieExam) => Promise<any>,
+  state: SaveCategorieProduit,
+  setErrors: Dispatch<SetStateAction<CategorieLitError>>,
+  onSubmit: (data: SaveCategorieProduit) => Promise<any>,
   onHide: () => void,
   onRefresh?: () => void
 ): Promise<void> {
   
   e.preventDefault()
-  setErrors(initCategorieExamErrorState())
+  setErrors(initCategorieProduitErrorState())
   
   try {
-    const { data, error }: JsonLdApiResponseInt<CategorieExam> = await onSubmit(state)
+    const { data, error }: JsonLdApiResponseInt<CategorieProduit> = await onSubmit(state)
     if (error && error?.data) {
       const { violations } = error.data
       if (violations) violations.forEach(({ message, propertyPath }): void => {

@@ -3,7 +3,7 @@ import toast from "react-hot-toast";
 import type {JsonLdApiResponseInt} from "../../../../interfaces/JsonLdApiResponseInt.ts";
 
 // INTERFACES OR TYPES
-export interface CategorieExam {
+export interface UniteConsommation {
   '@id'?: string
   id: number
   nom: string
@@ -13,33 +13,33 @@ export interface CategorieExam {
   selected: boolean
 }
 
-export interface SaveCategorieExam {
+export interface SaveUniteConsommation {
   id: number
   nom: string
 }
 
-export interface NewCategorieExam {
+export interface NewUniteConsommation {
   nom: string
   error: string | null
 }
 
-export interface CategorieExamError { nom: string | null }
+export interface DepartementError { nom: string | null }
 // END INTERFACES OR TYPES
 
 /* ------------------------------------------- */
 
 // INIT
-export const initNewCategorieExams = (): NewCategorieExam[] => [{ nom: '', error: null }]
+export const initNewUniteConsommations = (): NewUniteConsommation[] => [{ nom: '', error: null }]
 
-export const initCategorieExamState = (): SaveCategorieExam => ({ nom: '', id: 0 })
+export const initUniteConsommationState = (): SaveUniteConsommation => ({ nom: '', id: 0 })
 
-export const initCategorieExamErrorState = (): CategorieExamError => ({ nom: null })
+export const initUniteConsommationErrorState = (): DepartementError => ({ nom: null })
 // END INIT
 
 /* ------------------------------------------- */
 
 // EVENTS & FUNCTIONS
-export const CategorieExamFakeData = (): CategorieExam[] => [
+export const getUniteConsommationFakeData = (): UniteConsommation[] => [
   {
     id: 1,
     nom: 'Malaria',
@@ -58,25 +58,25 @@ export const CategorieExamFakeData = (): CategorieExam[] => [
   },
 ]
 
-export async function onPostCategorieExamSubmit(
+export async function onPostUniteConsommationSubmit(
   e: FormEvent<HTMLFormElement>,
-  state: NewCategorieExam[],
-  setState: Dispatch<SetStateAction<NewCategorieExam[]>>,
-  onSubmit: (data: NewCategorieExam) => Promise<any>,
+  state: NewUniteConsommation[],
+  setState: Dispatch<SetStateAction<NewUniteConsommation[]>>,
+  onSubmit: (data: NewUniteConsommation) => Promise<any>,
   onHide: () => void,
   onRefresh?: () => void
 ): Promise<void> {
   
   e.preventDefault()
-  const categories: NewCategorieExam[] = [...state]
-  const remainingCategories: NewCategorieExam[] = []
+  const categories: NewUniteConsommation[] = [...state]
+  const remainingCategories: NewUniteConsommation[] = []
   
   try {
     for (let i: number = 0; i < categories.length; i++) {
-      const category: NewCategorieExam = categories[i]
+      const category: NewUniteConsommation = categories[i]
       
       try {
-        const { data, error }: JsonLdApiResponseInt<CategorieExam> = await onSubmit(category)
+        const { data, error }: JsonLdApiResponseInt<UniteConsommation> = await onSubmit(category)
         
         if (error && error?.data) {
           const { violations } = error.data
@@ -89,7 +89,7 @@ export async function onPostCategorieExamSubmit(
           toast.success('Opération bien effectué.')
         } else remainingCategories.push(category)
       } catch (e) {
-        toast.error('Erreur lors de la soumission de la catégorie')
+        toast.error("Erreur lors de la soumission de l'Unité")
         remainingCategories.push({ ...category, error: 'Erreur lors de la soumission.' })
       }
     }
@@ -98,7 +98,7 @@ export async function onPostCategorieExamSubmit(
   setState(remainingCategories)
   
   if (remainingCategories.length === 0) {
-    setState(initNewCategorieExams())
+    setState(initNewUniteConsommations())
     onHide()
   }
   
@@ -106,20 +106,20 @@ export async function onPostCategorieExamSubmit(
   
 }
 
-export async function onPatchCategorieExamSubmit(
+export async function onPatchUniteConsommationSubmit(
   e: FormEvent<HTMLFormElement>,
-  state: SaveCategorieExam,
-  setErrors: Dispatch<SetStateAction<CategorieExamError>>,
-  onSubmit: (data: SaveCategorieExam) => Promise<any>,
+  state: SaveUniteConsommation,
+  setErrors: Dispatch<SetStateAction<DepartementError>>,
+  onSubmit: (data: SaveUniteConsommation) => Promise<any>,
   onHide: () => void,
   onRefresh?: () => void
 ): Promise<void> {
   
   e.preventDefault()
-  setErrors(initCategorieExamErrorState())
+  setErrors(initUniteConsommationErrorState())
   
   try {
-    const { data, error }: JsonLdApiResponseInt<CategorieExam> = await onSubmit(state)
+    const { data, error }: JsonLdApiResponseInt<UniteConsommation> = await onSubmit(state)
     if (error && error?.data) {
       const { violations } = error.data
       if (violations) violations.forEach(({ message, propertyPath }): void => {
