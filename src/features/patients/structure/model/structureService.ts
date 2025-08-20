@@ -1,78 +1,62 @@
-import type {User} from "../../../user/model/userService.ts";
 import type {Dispatch, FormEvent, SetStateAction} from "react";
-import toast from "react-hot-toast";
 import type {JsonLdApiResponseInt} from "../../../../interfaces/JsonLdApiResponseInt.ts";
+import toast from "react-hot-toast";
 import type {NavigateFunction} from "react-router-dom";
 
 // INTERFACES OR TYPES
-export interface Fournisseur {
+export interface Structure {
   '@id'?: string
   id: number
-  nom?: string
-  nomCommercial: string
-  abreviation: string
+  nom: string
+  focal?: string
   tel: string
   email?: string
-  focal?: string
-  adresse?: string
-  fkUser?: User
-  slug?: string
   createdAt?: string
   updatedAt?: string
-  selected: boolean
+  slug?: string
 }
 
-export interface SaveFournisseur {
+export interface SaveStructure {
   id: number
   nom: string
-  nomCommercial: string
-  abreviation: string
+  focal: string
   tel: string
   email: string
-  focal: string
-  adresse: string
 }
 
-export interface FournisseurError {
+export interface StructureError {
+  id: string | null
   nom: string | null
-  nomCommercial: string | null
-  abreviation: string | null
+  focal: string | null
   tel: string | null
   email: string | null
-  focal: string | null
-  adresse: string | null
 }
 // END INTERFACES OR TYPES
 
 /* ------------------------------------------- */
 
 // INIT
-export const initFournisseurState = (): SaveFournisseur => ({
+export const initStructureState = (): SaveStructure => ({
+  id: 1,
   nom: '',
-  id: 0,
-  abreviation: '',
-  adresse: '',
+  tel: '',
   email: '',
   focal: '',
-  tel: '',
-  nomCommercial: '',
 })
 
-export const initFournisseurErrorState = (): FournisseurError => ({
+export const initStructureErrorState = (): StructureError => ({
+  id: null,
   nom: null,
-  nomCommercial: null,
-  abreviation: null,
+  focal: null,
   tel: null,
   email: null,
-  focal: null,
-  adresse: null,
 })
 // END INIT
 
 /* ------------------------------------------- */
 
 // EVENTS & FUNCTIONS
-export const getFournisseurFakeData = (): Fournisseur[] => [
+export const getStructureFakeData = (): Structure[] => [
   {
     id: 1,
     nom: 'Back Office Pro',
@@ -88,11 +72,11 @@ export const getFournisseurFakeData = (): Fournisseur[] => [
   },
 ]
 
-export async function onFournisseurSubmit(
+export async function onStructureSubmit(
   e: FormEvent<HTMLFormElement>,
-  state: SaveFournisseur,
-  setErrors: Dispatch<SetStateAction<FournisseurError>>,
-  onSubmit: (data: SaveFournisseur) => Promise<any>,
+  state: SaveStructure,
+  setErrors: Dispatch<SetStateAction<StructureError>>,
+  onSubmit: (data: SaveStructure) => Promise<any>,
   onHide: () => void,
   onRefresh?: () => void
 ): Promise<void> {
@@ -100,7 +84,7 @@ export async function onFournisseurSubmit(
   e.preventDefault()
   const { id } = state
   try {
-    const { data, error}: JsonLdApiResponseInt<Fournisseur> = await onSubmit(state)
+    const { data, error}: JsonLdApiResponseInt<Structure> = await onSubmit(state)
     if (data) {
       toast.success(`${id > 0 ? 'Modification ' : 'Enregistrement '} bien effectué${'e'}`)
       if (onRefresh) onRefresh()
@@ -117,21 +101,21 @@ export async function onFournisseurSubmit(
   
 }
 
-export async function onDeleteFournisseur(
-  state: Fournisseur,
-  onSubmit: (data: Fournisseur) => Promise<void>,
+export async function onDeleteStructure(
+  state: Structure,
+  onSubmit: (data: Structure) => Promise<void>,
   onRefresh: () => void,
   navigate?: NavigateFunction
 ): Promise<void> {
   
   try {
-    const { error }: JsonLdApiResponseInt<Fournisseur> = await onSubmit(state)
+    const { error }: JsonLdApiResponseInt<Structure> = await onSubmit(state)
     if (error) {
       if (error?.data) toast.error(error.data.detail)
     } else {
       toast.success('Suppression bien effectuée.')
       onRefresh()
-      if (navigate) navigate('/app/fournisseurs')
+      if (navigate) navigate('/app/structures')
     }
   } catch (e) { toast.error('Problème réseau.') }
   

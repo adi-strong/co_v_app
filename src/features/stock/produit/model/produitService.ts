@@ -1,10 +1,10 @@
 import type {User} from "../../../user/model/userService.ts";
-import type {CategorieProduit} from "../../../configs/categorieProduit/model/categorieProduitService.ts";
+import type {CategorieProduit} from "../../categorieProduit/model/categorieProduitService.ts";
 import type {ImageListType} from "react-images-uploading";
 import type {MediaObjectInt} from "../../../../interfaces/MediaObjectInt.ts";
 import type {SingleValue} from "react-select";
 import type {SelectOptionType} from "../../../../services/services.ts";
-import {getCategorieProduitFakeData} from "../../../configs/categorieProduit/model/categorieProduitService.ts";
+import {getCategorieProduitFakeData} from "../../categorieProduit/model/categorieProduitService.ts";
 import type {Dispatch, FormEvent, SetStateAction} from "react";
 import type {NavigateFunction} from "react-router-dom";
 import type {JsonLdApiResponseInt} from "../../../../interfaces/JsonLdApiResponseInt.ts";
