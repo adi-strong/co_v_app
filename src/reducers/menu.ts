@@ -1,9 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
-import type {AppMenuItemInt} from "../interfaces/AppMenuItemInt.ts";
+import type {MenuItemInt} from "../interfaces/MenuItemInt.ts";
 
 export interface MenuInterface {
-  menuItems: AppMenuItemInt[],
+  menuItems: MenuItemInt[],
 }
 
 const initialState: MenuInterface = {
@@ -15,29 +15,94 @@ const initialState: MenuInterface = {
       icon: 'bi bi-grid',
       isActive: false,
       isOpen: false,
-    },
+    }, // 0 - Tableau de bord
     {
-      label: 'Articles',
+      label: 'Prescriptions (ordonnances)',
+      to: '/app/prescriptions',
+      key: 'prescriptions',
+      icon: 'bi bi-chat-dots',
+      isActive: false,
+      isOpen: false,
+    }, // 1 - Prescriptions
+    
+    // Accueil
+    {
+      label: 'Accueil',
       to: '#!',
-      key: 'articles',
+      key: 'home',
       icon: 'bi bi-file-text',
       isActive: false,
       isOpen: false,
       subItems: [
-        {label: 'Tous les articles', to: '/app/articles'},
-        {label: 'Ajouter un article', to: '/app/articles/new'},
-        {label: 'Catégories', to: '/app/categories'},
-        {label: 'Étiquettes (Tags)', to: '/app/tags'}
+        {label: 'Fiches des réceptions', to: '/app/receptions'},
+        {label: 'Rendez-vous', to: '/app/rendez-vous'},
       ],
-    },
+    }, // 2 - Accueil
+    
+    // Opérations
     {
-      label: 'Commentaires',
-      to: '/app/commentaires',
-      key: 'comments',
-      icon: 'bi bi-chat-dots',
+      label: 'Patients',
+      to: '#!',
+      key: 'patients',
+      icon: 'bi bi-people',
       isActive: false,
       isOpen: false,
-    },
+      subItems: [
+        {label: 'Tous les patients', to: '/app/patients'},
+        {label: 'Ajouter un patient', to: '/app/patients/new'},
+        {label: 'Structures (Conventions)', to: '/app/structures'},
+      ],
+    }, // 3 - Patients
+    {
+      label: 'Traitements',
+      to: '#!',
+      key: 'treats',
+      icon: 'bi bi-people',
+      isActive: false,
+      isOpen: false,
+      subItems: [
+        {label: 'Fiches des consultations', to: '/app/consultations'},
+        {label: 'Nouvelle fiche de consultation', to: '/app/consultations/new'},
+        {label: 'Documents des suivi', to: '/app/suivis'},
+        {label: 'Laboratoire', to: '/app/labs'},
+        {label: 'Examens', to: '/app/examens'},
+        {label: 'Lits', to: '/app/lits'},
+        {label: 'Hospitalisations', to: '/app/hospitalisations'},
+      ],
+    }, // 4 - Traitements
+    {
+      label: 'Pharmacie',
+      to: '#!',
+      key: 'pharmacy',
+      icon: 'bi bi-people',
+      isActive: false,
+      isOpen: false,
+      subItems: [
+        {label: 'Tous les produits', to: '/app/produits'},
+        {label: 'Ajouter un produit', to: '/app/produits/new'},
+        {label: 'Catégories des produits', to: '/app/categories-produits'},
+        {label: 'Fournisseurs', to: '/app/fournisseurs'},
+        {label: 'Approvisionnements', to: '/app/approvisionnements'},
+        {label: 'Mouvements en stocks', to: '/app/mouvements-stocks'},
+        {label: 'Pertes', to: '/app/pertes-produits'},
+        {label: 'Factures', to: '/app/factures-des-produits'},
+      ],
+    }, // 5 - Pharmacie
+    {
+      label: 'Personnel',
+      to: '#!',
+      key: 'agents',
+      icon: 'bi bi-people',
+      isActive: false,
+      isOpen: false,
+      subItems: [
+        {label: 'Tous les agents', to: '/app/agents'},
+        {label: 'Ajouter un agent', to: '/app/agents/new'},
+        {label: 'Départements', to: '/app/departements'},
+        {label: 'Services', to: '/app/services'},
+        {label: 'Fonctions', to: '/app/fonctions'},
+      ],
+    }, // 6 - Personnel
     {
       label: 'Utilisateurs',
       to: '#!',
@@ -50,49 +115,35 @@ const initialState: MenuInterface = {
         {label: 'Ajouter un compte', to: '/app/users/new'},
         {label: 'Mon profil', to: '/app/profil'},
       ],
-    },
+    }, // 7 - Utilisateurs
     {
-      label: 'Contacts',
-      to: '/app/contacts',
-      key: 'contacts',
-      icon: 'bi bi-phone-vibrate',
-      isActive: false,
-      isOpen: false,
-    },
-    {
-      label: 'Team',
+      label: 'Finances',
       to: '#!',
-      key: 'team',
-      icon: 'bi bi-person-square',
+      key: 'finances',
+      icon: 'bi bi-people',
       isActive: false,
       isOpen: false,
       subItems: [
-        {label: 'Tous les membres', to: '/app/team'},
-        {label: 'Ajouter un membre', to: '/app/team/new'},
-        {label: 'Fonctions de membres', to: '/app/fonctions'},
+        {label: 'Bons des dépenses', to: '/app/bons-des-depenses'},
+        {label: 'Bons des entrées', to: '/app/bons-des-entrees'},
+        {label: 'Comptes', to: '/app/comptes'},
       ],
-    },
+    }, // 8 - Finances
     {
-      label: 'Projets',
+      label: 'Factures',
       to: '#!',
-      key: 'projects',
-      icon: 'bi bi-suitcase2',
+      key: 'invoices',
+      icon: 'bi bi-people',
       isActive: false,
       isOpen: false,
       subItems: [
-        {label: 'Tous les projets', to: '/app/projets'},
-        {label: 'Ajouter un projet', to: '/app/projets/new'},
-        {label: 'Types de projets', to: '/app/types-projets'},
+        {label: 'Factures consultations', to: '/app/factures-consultations'},
+        {label: 'Factures suivi traitements', to: '/app/factures-traitements'},
+        {label: 'Factures des produits', to: '/app/factures-produits'},
       ],
-    },
-    {
-      label: 'Rendez-vous',
-      to: '/app/rendez-vous',
-      key: 'rdv',
-      icon: 'bi bi-calendar2-event',
-      isActive: false,
-      isOpen: false,
-    },
+    }, // 9 - Factures
+    
+    // Configurations
     {
       label: 'Réglages',
       to: '#!',
@@ -104,8 +155,10 @@ const initialState: MenuInterface = {
         {label: 'Réglages généraux', to: '/app/params'},
         {label: 'Réglages des profils', to: '/app/params/profils'},
         {label: 'Autorisations', to: '/app/params/autorisations'},
+        {label: 'Catégories des examens', to: '/app/categories-examens'},
+        {label: 'Catégories des lits', to: '/app/categories-lits'},
       ],
-    },
+    }, // 10 - Réglages
   ]
 }
 
