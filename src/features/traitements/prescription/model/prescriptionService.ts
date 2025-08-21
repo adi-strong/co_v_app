@@ -14,6 +14,8 @@ export interface ExamenPrescrit {
   fkExam: Examen
   prixHt: number
   prixTtc: number
+  resultats?: string
+  valeurNormale?: string
 }
 
 export interface ProduitPrescrit {
