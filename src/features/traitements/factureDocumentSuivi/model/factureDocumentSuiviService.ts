@@ -1,8 +1,7 @@
-import type {Consultation} from "../../consultation/model/consultationService.ts";
-import type {Agent} from "../../../personnel/agent/model/agentService.ts";
+import type {DocumentSuivi} from "../../documentSuivi/model/documentSuiviService.ts";
 import type {User} from "../../../user/model/userService.ts";
+import type {Agent} from "../../../personnel/agent/model/agentService.ts";
 import type {CompteCaisse} from "../../../finances/compteCaisse/model/compteCaisseService.ts";
-import type {Structure} from "../../../patients/structure/model/structureService.ts";
 import type {SingleValue} from "react-select";
 import type {SelectOptionType} from "../../../../services/services.ts";
 import type {Dispatch, FormEvent, SetStateAction} from "react";
@@ -10,74 +9,69 @@ import type {JsonLdApiResponseInt} from "../../../../interfaces/JsonLdApiRespons
 import toast from "react-hot-toast";
 
 // INTERFACES OR TYPES
-export interface FactureConsultation {
+export interface FactureDocumentSuivi {
   '@id'?: string
   id: number
-  valid: boolean
-  fkConsultation: Consultation
-  taux: number
-  fkAgent: Agent
-  fkUser?: User
-  montantPaye: number
-  fkCaisse?: CompteCaisse
+  amount: number
+  fkDocSuivi: DocumentSuivi
   remise?: number
-  fkStructure?: Structure
-  estCeConventionne: boolean
+  valid: boolean
+  fkUser?: User
+  fkAgent: Agent
+  fkCaisse?: CompteCaisse
+  montantPaye: number
+  taux: number
   releasedAt?: string
   updatedAt?: string
 }
 
-export interface SaveFactureConsultation {
+export interface SaveFactureDocumentSuivi {
   id: number
   amount: number
   end: boolean
+  remise: number
   fkAgent: SingleValue<SelectOptionType> | null
   montantPaye: number
-  remise: number
-  releasedAt: string
 }
 
-export interface FactureConsultationError {
+export interface FactureDocumentSuiviError {
   amount: string | null
   end: string | null
+  remise: string | null
   fkAgent: string | null
   montantPaye: string | null
-  remise: string | null
-  releasedAt: string | null
 }
 // END INTERFACES OR TYPES
 
 /* ------------------------------------------- */
 
 // INIT
-export const initFactureConsultationState = (): SaveFactureConsultation => ({
+export const initFactureDocumentSuiviState = (): SaveFactureDocumentSuivi => ({
   id: 0,
-  amount: 0,
   end: false,
+  amount: 0,
   fkAgent: null,
   montantPaye: 0,
   remise: 0,
-  releasedAt: '',
 })
 
-export const initFactureConsultationErrorState = (): FactureConsultationError => ({
+export const initFactureDocumentSuiviErrorState = (): FactureDocumentSuiviError => ({
   amount: null,
   end: null,
+  remise: null,
   fkAgent: null,
   montantPaye: null,
-  remise: null,
-  releasedAt: null,
 })
 // END INIT
 
 /* ------------------------------------------- */
 
 // EVENTS & FUNCTIONS
-export async function onPatchFactureConsultationSubmit(
+export async function onPatchFactureDocumentSuiviSubmit(
   e: FormEvent<HTMLFormElement>,
-  state: SaveFactureConsultation,
-  setErrors: Dispatch<SetStateAction<FactureConsultationError>>,
-  onSubmit: (data: SaveFactureConsultation) => Promise<any>,
+  state: SaveFactureDocumentSuivi,
+  setErrors: Dispatch<SetStateAction<FactureDocumentSuiviError>>,
+  onSubmit: (data: SaveFactureDocumentSuivi) => Promise<any>,
   onHide: () => void,
   onRefresh?: () => void
 ): Promise<void> {
@@ -85,7 +79,7 @@ export async function onPatchFactureConsultationSubmit(
   e.preventDefault()
   const { id } = state
   try {
-    const { data, error}: JsonLdApiResponseInt<FactureConsultation> = await onSubmit(state)
+    const { data, error}: JsonLdApiResponseInt<FactureDocumentSuivi> = await onSubmit(state)
     if (data) {
       toast.success(`${id > 0 ? 'Modification ' : 'Enregistrement '} bien effectué${'e'}`)
       if (onRefresh) onRefresh()
