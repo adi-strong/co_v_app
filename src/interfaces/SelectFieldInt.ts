@@ -1,6 +1,14 @@
 import type {ChangeEventHandler} from "react";
 import type {SelectOptionType} from "../services/services.ts";
 
+export type SubDataType = {
+  label: string
+  value: string
+  data?: string | undefined
+  id?: number | undefined | null
+  typeId?: number | undefined | null
+}
+
 export interface SelectFieldInt {
   autoFocus?: boolean
   autoComplete?: string

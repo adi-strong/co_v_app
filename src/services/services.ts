@@ -1,4 +1,5 @@
 import type {Dispatch, SetStateAction} from "react";
+import type {MultiValue} from "react-select";
 
 const TableCSStyle = {
   table: {
@@ -31,6 +32,7 @@ export type SelectOptionType = {
   data?: string
   id?: number | null
   typeId?: number | null
+  subData?: MultiValue<SelectOptionType>
 }
 
 export type SelectType = { option: string }
@@ -115,6 +117,17 @@ export const onGetRandomPasswordText = (length: number, setState: Dispatch<SetSt
   }
   
   setState(prev => ({ ...prev, password: result }))
+}
+
+export const formatDecimalNumberWithSpaces = (value: string | number): string => {
+  const number = typeof value === 'number' ? value : parseFloat(value.toString().replace(',', '.'));
+  if (isNaN(number)) return '';
+  
+  const [intPart, decimalPart] = number.toFixed(2).split('.');
+  
+  const formattedInt = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+  
+  return `${formattedInt}.${decimalPart}`;
 }
 
 // END INIT
