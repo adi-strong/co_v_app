@@ -1,18 +1,27 @@
-// Service Profil à implémenter
-  
-// INTERFACES OR TYPES
-export interface Profil {
+// INTERFACES
+export interface ChangeProfilePassword {
+  password: string
+  repeatPassword: string
 }
-// END INTERFACES OR TYPES
 
-/* ------------------------------------------- */
+export interface ChangeProfilePasswordError {
+  password: string | null
+  repeatPassword: string | null
+}
+// END INTERFACES
 
-// INIT
-// END INIT
+// ---
 
-/* ------------------------------------------- */
+// INIT STATES
+export const initPasswordState = (): ChangeProfilePassword => ({
+  password: '',
+  repeatPassword: '',
+})
 
-// EVENTS & FUNCTIONS
-// END EVENTS & FUNCTIONS
+export const initPasswordErrorState = (): ChangeProfilePasswordError => ({
+  password: null,
+  repeatPassword: null,
+})
+// END INIT STATES
 
-/* ------------------------------------------- */
+// ---

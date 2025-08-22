@@ -15,7 +15,10 @@ export type RouteType = {
 const
   Auth = lazy(() => import('../auth/view/authView.tsx')),
   Dash = lazy(() => import('../dashboard/view/dashboardView.tsx')),
-  Profil = lazy(() => import('../profil/view/profilView.tsx'))
+  Profil = lazy(() => import('../profil/view/profilView.tsx')),
+  
+  CatLits = lazy(() =>
+    import('../traitements/categorieLit/view/categorieLitView.tsx'))
 
 const pages: RouteType[] = [
   {
@@ -33,7 +36,6 @@ const pages: RouteType[] = [
     routes: [
       {
         path: 'dashboard',
-        index: true,
         element: <Dash />
       },
       {
@@ -41,6 +43,13 @@ const pages: RouteType[] = [
         index: true,
         element: <Profil />
       },
+      
+      // Lits
+      {
+        path: 'categories-lits',
+        element: <CatLits />
+      },
+      // End Lits
     ]
   },
 ]

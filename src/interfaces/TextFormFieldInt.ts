@@ -16,4 +16,6 @@ export interface TextFormFieldInt {
   error?: string | null
   accept?: string | undefined
   text?: string
+  minLength?: number
+  maxLength?: number
 }

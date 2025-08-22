@@ -1,5 +1,5 @@
 import type {MultiValue} from "react-select";
-import type {SelectOptionType} from "../../../services/services.ts";
+import type {SelectOptionType, TabInt} from "../../../services/services.ts";
 import type {Dispatch, FormEvent, SetStateAction} from "react";
 import type {JsonLdApiResponseInt} from "../../../interfaces/JsonLdApiResponseInt.ts";
 import toast from "react-hot-toast";
@@ -16,6 +16,7 @@ export interface User {
   fkUser?: User
   fullName: string
   active: boolean
+  selected: boolean
   slug?: string
   createdAt?: string
   updatedAt?: string
@@ -44,6 +45,8 @@ export interface UserError {
   fullName: string | null
   active: string | null
 }
+
+export type UserRoleKeys = 'ROLE_CONTRIBUTOR' | 'ROLE_AUTHOR' | 'ROLE_EDITOR' | 'ROLE_ADMIN' | 'ROLE_SUPER_ADMIN'
 // END INTERFACES OR TYPES
 
 /* ------------------------------------------- */
@@ -71,11 +74,48 @@ export const initUserErrorState = (): UserError => ({
   fullName: null,
   active: null,
 })
+
+export const userRoleLabel: Record<UserRoleKeys, string> = {
+  ROLE_ADMIN: 'Administrateur/administratrice',
+  ROLE_AUTHOR: 'Auteur/autrice',
+  ROLE_CONTRIBUTOR: 'Contributeur/contributrice',
+  ROLE_EDITOR: 'Éditeur/éditrice',
+  ROLE_SUPER_ADMIN: 'Super administrateur/administratrice'
+}
+
+export const userRoleColor: Record<UserRoleKeys, string> = {
+  ROLE_ADMIN: 'danger',
+  ROLE_SUPER_ADMIN: 'primary',
+  ROLE_AUTHOR: 'warning',
+  ROLE_CONTRIBUTOR: 'dark',
+  ROLE_EDITOR: 'success',
+}
+
+export const getProfileTabItems = (): TabInt[] => [
+  { title: 'Aperçu', event: 'overview' },
+  { title: 'Changer le mot de passe', event: 'edit_password' },
+]
 // END INIT
 
 /* ------------------------------------------- */
 
 // EVENTS & FUNCTIONS
+export const getUserFakeData = (): User[] => [
+  {
+    id: 1,
+    tel: '0891759667',
+    active: true,
+    email: 'adi.life91@gmail.com',
+    roles: ['ROLE_SUPER_ADMIN'],
+    fullName: 'Adivin Lifwa',
+    createdAt: new Date().toISOString(),
+    username: 'adi.life91',
+    slug: 'adi',
+    authorizations: [],
+    selected: false
+  },
+]
+
 export async function onUserSubmit(
   e: FormEvent<HTMLFormElement>,
   state: SaveUser,

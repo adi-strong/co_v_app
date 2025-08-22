@@ -1,6 +1,7 @@
 import type {Dispatch, FormEvent, SetStateAction} from "react";
 import toast from "react-hot-toast";
 import type {JsonLdApiResponseInt} from "../../../../interfaces/JsonLdApiResponseInt.ts";
+import type {SelectOptionType} from "../../../../services/services.ts";
 
 // INTERFACES OR TYPES
 export interface CategorieLit {
@@ -39,7 +40,7 @@ export const initCategorieLitErrorState = (): CategorieLitError => ({ nom: null 
 /* ------------------------------------------- */
 
 // EVENTS & FUNCTIONS
-export const CategorieLitFakeData = (): CategorieLit[] => [
+export const getCategorieLitFakeData = (): CategorieLit[] => [
   {
     id: 1,
     nom: 'Malaria',
@@ -56,6 +57,11 @@ export const CategorieLitFakeData = (): CategorieLit[] => [
     "@id": '/api/categorie_exams/2',
     selected: false,
   },
+]
+
+export const getgetCategorieLitActionsOptions = (): SelectOptionType[] => [
+  { label: '-- Actions groupées --', value: '' },
+  { label: 'Supprimer', value: 'ON_DELETE' },
 ]
 
 export async function onPostCategorieLitSubmit(
@@ -106,7 +112,7 @@ export async function onPostCategorieLitSubmit(
   
 }
 
-export async function onPatchCategorieLitSubmit(
+export async function onCategorieLitSubmit(
   e: FormEvent<HTMLFormElement>,
   state: SaveCategorieLit,
   setErrors: Dispatch<SetStateAction<CategorieLitError>>,
@@ -116,6 +122,7 @@ export async function onPatchCategorieLitSubmit(
 ): Promise<void> {
   
   e.preventDefault()
+  const { id } = state
   setErrors(initCategorieLitErrorState())
   
   try {
@@ -128,7 +135,7 @@ export async function onPatchCategorieLitSubmit(
     }
     
     if (data) {
-      toast.success('Modification bien effectuée.')
+      toast.success(`${id < 1 ? 'Enregistrement' : 'Modification'} bien effectué${id > 0 ? '(e)' : ''}.`)
       if (onRefresh) onRefresh()
       onHide()
     }

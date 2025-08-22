@@ -1,7 +1,7 @@
 import {Button, Modal} from "react-bootstrap";
 import {ReactNode, useState} from "react";
 
-export default function (props: {
+export default function RemoveModal(props: {
   show: boolean
   isItIrreversible?: boolean
   data: any,

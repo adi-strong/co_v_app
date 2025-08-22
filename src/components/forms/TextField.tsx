@@ -20,6 +20,8 @@ const TextField = (
     placeholder,
     autoComplete = 'off',
     text,
+    minLength,
+    maxLength
   }: TextFormFieldInt) => {
 
   return (
@@ -45,6 +47,8 @@ const TextField = (
         required={required}
         className={className}
         accept={accept}
+        minLength={minLength}
+        maxLength={maxLength}
       />
       
       {text && <Form.Text>{text}</Form.Text>}

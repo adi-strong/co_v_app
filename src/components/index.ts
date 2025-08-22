@@ -16,8 +16,12 @@ import MultiSelectField from "./forms/MultiSelectField.tsx";
 import SideContent from "./SideContent.tsx";
 import ProfileHeaderComponent from "./ProfileHeaderComponent.tsx";
 import ColDataContent from "./ColDataContent.tsx";
+import SearchComp from "./SearchComp.tsx";
+import ActionsComp from "./ActionsComp.tsx";
 
 export {
+  ActionsComp,
+  SearchComp,
   ColDataContent,
   ProfileHeaderComponent,
   SideContent,

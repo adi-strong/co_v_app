@@ -37907,4 +37907,4 @@ div.code-toolbar > .toolbar > .toolbar-item > span:hover, div.code-toolbar > .to
 
 .read-white-space { white-space: pre-line }
 
-td.actions .actions:hover { display: block }
+td:hover .actions { display: block }
