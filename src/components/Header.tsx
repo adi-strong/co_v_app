@@ -1,11 +1,14 @@
 import HeaderLastMenuItem from "./HeaderLastMenuItem.tsx";
+import {onSideMenuToggle} from "../services/services.ts";
+import {useState} from "react";
 
 export default function Header() {
+  const [show, setShow] = useState<boolean>(false)
   
   return (
     <div className='header @@classList'>
       <div className='navbar-classic navbar navbar-expand-lg'>
-        <span className='nav-toggle cursor-pointer'>
+        <span className='nav-toggle cursor-pointer' onClick={(): void => onSideMenuToggle(show, setShow)}>
           <svg
             xmlns='http://www.w3.org/2000/svg'
             width={24}

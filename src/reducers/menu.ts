@@ -17,10 +17,10 @@ const initialState: MenuInterface = {
       isOpen: false,
     }, // 0 - Tableau de bord
     {
-      label: 'Prescriptions (ordonnances)',
+      label: 'Prescriptions',
       to: '/app/prescriptions',
       key: 'prescriptions',
-      icon: 'bi bi-chat-dots',
+      icon: 'bi bi-file-earmark-medical',
       isActive: false,
       isOpen: false,
     }, // 1 - Prescriptions
@@ -30,7 +30,7 @@ const initialState: MenuInterface = {
       label: 'Accueil',
       to: '#!',
       key: 'home',
-      icon: 'bi bi-file-text',
+      icon: 'bi bi-house-up',
       isActive: false,
       isOpen: false,
       subItems: [
@@ -57,12 +57,12 @@ const initialState: MenuInterface = {
       label: 'Traitements',
       to: '#!',
       key: 'treats',
-      icon: 'bi bi-people',
+      icon: 'bi bi-h-circle',
       isActive: false,
       isOpen: false,
       subItems: [
         {label: 'Fiches des consultations', to: '/app/consultations'},
-        {label: 'Nouvelle fiche de consultation', to: '/app/consultations/new'},
+        {label: 'Nouvelle fiche', to: '/app/consultations/new'},
         {label: 'Documents des suivi', to: '/app/suivis'},
         {label: 'Laboratoire', to: '/app/labs'},
         {label: 'Examens', to: '/app/examens'},
@@ -74,7 +74,7 @@ const initialState: MenuInterface = {
       label: 'Pharmacie',
       to: '#!',
       key: 'pharmacy',
-      icon: 'bi bi-people',
+      icon: 'bi bi-capsule',
       isActive: false,
       isOpen: false,
       subItems: [
@@ -92,7 +92,7 @@ const initialState: MenuInterface = {
       label: 'Personnel',
       to: '#!',
       key: 'agents',
-      icon: 'bi bi-people',
+      icon: 'bi bi-person-check',
       isActive: false,
       isOpen: false,
       subItems: [
@@ -107,7 +107,7 @@ const initialState: MenuInterface = {
       label: 'Utilisateurs',
       to: '#!',
       key: 'accounts',
-      icon: 'bi bi-people',
+      icon: 'bi bi-person',
       isActive: false,
       isOpen: false,
       subItems: [
@@ -120,7 +120,7 @@ const initialState: MenuInterface = {
       label: 'Finances',
       to: '#!',
       key: 'finances',
-      icon: 'bi bi-people',
+      icon: 'bi bi-piggy-bank',
       isActive: false,
       isOpen: false,
       subItems: [
@@ -133,7 +133,7 @@ const initialState: MenuInterface = {
       label: 'Factures',
       to: '#!',
       key: 'invoices',
-      icon: 'bi bi-people',
+      icon: 'bi bi-receipt-cutoff',
       isActive: false,
       isOpen: false,
       subItems: [

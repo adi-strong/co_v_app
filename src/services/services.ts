@@ -130,6 +130,18 @@ export const formatDecimalNumberWithSpaces = (value: string | number): string =>
   return `${formattedInt}.${decimalPart}`;
 }
 
+export const onSideMenuToggle = (state: boolean, setState: Dispatch<SetStateAction<boolean>>): void => {
+  const dbWrapper: Element = document.querySelector('#db-wrapper')
+  const show: boolean = !state
+  
+  if (show)
+    dbWrapper.classList.add('toggled')
+  else
+    dbWrapper.classList.remove('toggled')
+  
+  setState(show)
+}
+
 // END INIT
 
 // ******************************************* ******************************************** //

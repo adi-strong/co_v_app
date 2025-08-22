@@ -5,7 +5,7 @@ import {Link} from "react-router-dom";
 import type {Dispatch, ReactNode, SetStateAction} from "react";
 import type {TabInt} from "../services/services.ts";
 import type {MediaObjectInt} from "../interfaces/MediaObjectInt.ts";
-import {APP_ENTRYPOINT} from "../config/services.ts";
+import {APP_ENTRYPOINT} from "../config/configs.ts";
 
 export default function ProfileHeaderComponent(props: {
   name: string
