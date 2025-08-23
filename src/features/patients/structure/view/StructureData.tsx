@@ -2,22 +2,22 @@ import type {Dispatch, SetStateAction} from "react";
 import {Table} from "react-bootstrap";
 import {CheckField} from "../../../../components";
 import {selectAllStateItems, tableWhiteStyle} from "../../../../services/services.ts";
-import type {TypeConsultation} from "../model/typeConsultationService.ts";
-import TypeConsultItem from "./TypeConsultItem.tsx";
-import {getTypeConsultTheadItems} from "../model/typeConsultationService.ts";
+import type {Structure} from "../model/structureService.ts";
+import StructureItem from "./StructureItem.tsx";
+import {getStructureHeadItems} from "../model/structureService.ts";
 
-export default function TypeConsultData(props: {
+export default function StructureData(props: {
   isSelectedAll: boolean
   setIsSelectedAll: Dispatch<SetStateAction<boolean>>
-  typesConsults: TypeConsultation[]
-  setTypesConsults: Dispatch<SetStateAction<TypeConsultation[]>>
+  structure: Structure[]
+  setStructures: Dispatch<SetStateAction<Structure[]>>
 }) {
   
   const {
     isSelectedAll,
     setIsSelectedAll,
-    typesConsults,
-    setTypesConsults,
+    structure,
+    setStructures,
   } = props
   
   return (
@@ -29,26 +29,24 @@ export default function TypeConsultData(props: {
             <CheckField
               inline
               name='isSelectedAll'
-              onChange={(): void => selectAllStateItems(isSelectedAll, setIsSelectedAll, setTypesConsults)}
+              onChange={(): void => selectAllStateItems(isSelectedAll, setIsSelectedAll, setStructures)}
               value={isSelectedAll}
               checked={isSelectedAll}
               className='me-0'
             />
             Nom
           </th>
-          {getTypeConsultTheadItems().length > 0 && getTypeConsultTheadItems().map((t =>
-            <th key={t.th} style={{ fontSize: '1rem' }}>
-              {t.th}
-            </th>))}
+          {getStructureHeadItems().length > 0 && getStructureHeadItems().map(t =>
+            <th key={t.th}>{t.th}</th>)}
         </tr>
         </thead>
         
         <tbody style={tableWhiteStyle.tbody}>
-        {typesConsults.length > 0 && typesConsults.map((c: TypeConsultation, index: number) =>
-          <TypeConsultItem
+        {structure.length > 0 && structure.map((c: Structure, index: number) =>
+          <StructureItem
             key={index}
-            typeConsult={c}
-            setTypesConsults={setTypesConsults}
+            structure={c}
+            setStructures={setStructures}
             index={index}
           />)}
         </tbody>

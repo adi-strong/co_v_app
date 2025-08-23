@@ -1,11 +1,25 @@
-import {memo} from 'react';
+import {memo, ReactNode} from 'react';
+import {useActivePage, useDocumentTitle} from "../../../../hooks";
+import {ParamLayout} from "../../../../layouts";
+import {BodyContainer, PageTitles} from "../../../../components";
+import ComptesList from "./ComptesList.tsx";
 
 const CompteCaisseView = () => {
 
+  useActivePage('finances')
+  useDocumentTitle('Comptes caisses')
+  
   return (
-    <div>
-      <h1>CompteCaisse View</h1>
-    </div>
+    <BodyContainer>
+      <PageTitles title='Caisse' />
+      <ParamLayout
+        title='Comptes caisses'
+        loader={false}
+        onRefresh={(): void => { }}
+        subTitle='Liste des comptes'
+        children={(<ComptesList/>) as ReactNode}
+      />
+    </BodyContainer>
   )
   
 };

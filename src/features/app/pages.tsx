@@ -44,7 +44,13 @@ const
     import('../stock/uniteConsommation/view/uniteConsommationView.tsx')),
   
   CatProd = lazy(() =>
-    import('../stock/categorieProduit/view/categorieProduitView.tsx'))
+    import('../stock/categorieProduit/view/categorieProduitView.tsx')),
+  
+  Struct = lazy(() =>
+    import('../patients/structure/view/structureView.tsx')),
+  
+  CCaisses = lazy(() =>
+    import('../finances/compteCaisse/view/compteCaisseView.tsx'))
 
 const pages: RouteType[] = [
   {
@@ -136,6 +142,20 @@ const pages: RouteType[] = [
         element: <CatProd />
       },
       // End produits
+      
+      // Structures
+      {
+        path: 'structures',
+        element: <Struct />
+      },
+      // End Structures
+      
+      // comptes
+      {
+        path: 'comptes',
+        element: <CCaisses />
+      },
+      // End comptes
     ]
   },
 ]

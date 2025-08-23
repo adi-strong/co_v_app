@@ -42,7 +42,7 @@ export default function UniteConsommationItem(props: {
             onChange={(): void => setSelectedDataItem(index, setUnites)}
             className='me-0'
           />
-          <Link to={`/app/services/${unite.id}/${unite?.slug}`}>
+          <Link to={`/app/unites-consommations/${unite.id}/${unite?.slug}`}>
             {unite.nom.toUpperCase()}
           </Link>
           

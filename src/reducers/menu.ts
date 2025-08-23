@@ -50,7 +50,6 @@ const initialState: MenuInterface = {
       subItems: [
         {label: 'Tous les patients', to: '/app/patients'},
         {label: 'Ajouter un patient', to: '/app/patients/new'},
-        {label: 'Structures (Conventions)', to: '/app/structures'},
       ],
     }, // 3 - Patients
     {
@@ -127,7 +126,7 @@ const initialState: MenuInterface = {
       subItems: [
         {label: 'Bons des dépenses', to: '/app/bons-des-depenses'},
         {label: 'Bons des entrées', to: '/app/bons-des-entrees'},
-        {label: 'Comptes', to: '/app/comptes'},
+        {label: 'Caisse', to: '/app/comptes'},
       ],
     }, // 8 - Finances
     {
@@ -139,7 +138,7 @@ const initialState: MenuInterface = {
       isOpen: false,
       subItems: [
         {label: 'Factures consultations', to: '/app/factures-consultations'},
-        {label: 'Factures suivi traitements', to: '/app/factures-traitements'},
+        {label: 'Factures suivi', to: '/app/factures-traitements'},
         {label: 'Factures des produits', to: '/app/factures-produits'},
       ],
     }, // 9 - Factures
@@ -161,6 +160,15 @@ const initialState: MenuInterface = {
         {label: 'Catégories des lits', to: '/app/categories-lits'},
       ],
     }, // 10 - Réglages
+    
+    {
+      label: 'Structures (Conventions)',
+      to: '/app/structures',
+      key: 'structures',
+      icon: 'bi bi-file-earmark-medical',
+      isActive: false,
+      isOpen: false,
+    }, // 11 - Structures
   ]
 }
 

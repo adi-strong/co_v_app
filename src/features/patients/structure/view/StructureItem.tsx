@@ -5,21 +5,21 @@ import {CheckField, RemoveModal, SideContent} from "../../../../components";
 import {Link} from "react-router-dom";
 import {Button} from "react-bootstrap";
 import moment from "moment";
-import type {CategorieProduit} from "../model/categorieProduitService.ts";
-import CategorieProduitForm from "./CategorieProduitForm.tsx";
+import type {Structure} from "../model/structureService.ts";
+import StructureForm from "./StructureForm.tsx";
 
 function onSubmit(data: any, onHide: () => void, onRefresh: () => void): void { onHide() }
 
-export default function CategorieProduitItem(props: {
-  category: CategorieProduit
-  setCategories: Dispatch<SetStateAction<CategorieProduit[]>>
+export default function StructureItem(props: {
+  structure: Structure
+  setStructures: Dispatch<SetStateAction<Structure[]>>
   index: number
 }) {
   
   const {
-    category,
+    structure,
     index,
-    setCategories,
+    setStructures,
   } = props
   
   const [isEdit, setIsEdit] = useState<boolean>(false)
@@ -37,13 +37,13 @@ export default function CategorieProduitItem(props: {
           <CheckField
             inline
             name='selected'
-            value={category.selected}
-            checked={category.selected}
-            onChange={(): void => setSelectedDataItem(index, setCategories)}
+            value={structure.selected}
+            checked={structure.selected}
+            onChange={(): void => setSelectedDataItem(index, setStructures)}
             className='me-0'
           />
-          <Link to={`/app/categories-produits/${category.id}/${category?.slug}`}>
-            {category.nom.toUpperCase()}
+          <Link to={`/app/structures/${structure.id}/${structure?.slug}`}>
+            {structure.nom.toUpperCase()}
           </Link>
           
           <div id={`actions-${index}`} hidden>
@@ -56,25 +56,28 @@ export default function CategorieProduitItem(props: {
           </div>
         </td>
         
-        <td>{category?.createdAt ? moment(category.createdAt).format('DD/MM/YY') : '—'}</td>
+        <td>{structure?.focal?.toUpperCase() ?? '—'}</td>
+        <td>{structure.tel}</td>
+        <td>{structure?.email?.toLowerCase() ?? '—'}</td>
+        <td>{structure?.createdAt ? moment(structure.createdAt).format('DD/MM/YY') : '—'}</td>
       </tr>
       
       <RemoveModal
         isItIrreversible
-        onSubmit={() => onSubmit(category, (): void => handleShow(setIsDel), (): void => { })}
+        onSubmit={() => onSubmit(structure, (): void => handleShow(setIsDel), (): void => { })}
         onHide={(): void => handleShow(setIsDel)}
-        data={category}
+        data={structure}
         show={isDel}
         onRefresh={(): void => { }}
-        title={<>catégorie : {category.nom.toUpperCase()}</>}
+        title={<><br/> structure : {structure.nom.toUpperCase()}</>}
       />
       
       <SideContent
         show={isEdit}
         onHide={(): void => handleShow(setIsEdit)}
-        title='Modifier une catégorie'
+        title='Modifier une structure'
         onRefresh={() => { }}
-        children={<CategorieProduitForm data={category}/> as ReactNode}
+        children={<StructureForm data={structure}/> as ReactNode}
       />
     </>
   )

@@ -53,6 +53,14 @@ const NavItems = () => {
         onClick={toggleSubMenu}
       /> {/* Patients */}
       
+      <NavItem
+        items={menuItems}
+        index={11}
+        pathname={pathname}
+        onClick={toggleMenu}
+        menuKey={menuItems[11].key}
+      /> {/* Structures */}
+      
       <NavSubItem
         items={menuItems}
         index={4}

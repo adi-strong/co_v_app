@@ -43,9 +43,7 @@ const ParamLayout = (props: {
         
         <Col xl={9} lg={8} md={12}>
           <Card>
-            <Card.Body>
-              {(loader ? <LogoLoader /> : children) as ReactNode}
-            </Card.Body>
+            {(loader ? <LogoLoader /> : children) as ReactNode}
           </Card>
         </Col>
       </Row>

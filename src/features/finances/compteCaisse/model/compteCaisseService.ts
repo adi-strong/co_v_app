@@ -3,6 +3,8 @@ import type {CurrencyInt} from "../../../../interfaces/CurrencyInt.ts";
 import type {Dispatch, FormEvent, SetStateAction} from "react";
 import toast from "react-hot-toast";
 import type {JsonLdApiResponseInt} from "../../../../interfaces/JsonLdApiResponseInt.ts";
+import {getUserFakeData} from "../../../user/model/userService.ts";
+import type {THeadItemType} from "../../../../services/services.ts";
 
 // INTERFACES
 export interface CompteCaisse {
@@ -17,6 +19,7 @@ export interface CompteCaisse {
   estCeParDefaut: boolean
   createdAt?: string
   updatedAt?: string
+  slug?: string
   selected: boolean
 }
 
@@ -76,6 +79,42 @@ export const initCompteCaisseErrorState = (): CompteCaisseError => ({
 /* ------------------------------------------- */
 
 // EVENTS & FUNCTIONS
+export const getComptesCaissesFakeData = (): CompteCaisse[] => [
+  {
+    id: 1,
+    nom: 'Box par défaut',
+    createdAt: new Date().toISOString(),
+    first: {
+      code: 'CDF',
+      value: 'DR Congo (CDF)',
+      symbol: 'FC',
+      label: 'DR Congo (CDF)',
+      image: 'https://flagcdn.com/cd.svg',
+      flag: 'https://flagcdn.com/cd.svg',
+    },
+    last: {
+      code: 'USD',
+      value: 'United States (USD)',
+      symbol: '$',
+      label: 'United States (USD)',
+      image: 'https://flagcdn.com/us.svg',
+      flag: 'https://flagcdn.com/us.svg',
+    },
+    taux: 2850,
+    selected: false,
+    fkUser: getUserFakeData()[0],
+    solde: 28900,
+    estCeParDefaut: true,
+  },
+]
+
+export const getCompteHeadItems = (): THeadItemType[] => [
+  { th: '1ère devise' },
+  { th: '2ème devise' },
+  { th: 'Taux' },
+  { th: 'Solde' },
+]
+
 export async function onCompteCaisseSubmit(
   e: FormEvent<HTMLFormElement>,
   state: SaveCompteCaisse,

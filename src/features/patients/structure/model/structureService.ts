@@ -2,6 +2,7 @@ import type {Dispatch, FormEvent, SetStateAction} from "react";
 import type {JsonLdApiResponseInt} from "../../../../interfaces/JsonLdApiResponseInt.ts";
 import toast from "react-hot-toast";
 import type {NavigateFunction} from "react-router-dom";
+import type {THeadItemType} from "../../../../services/services.ts";
 
 // INTERFACES OR TYPES
 export interface Structure {
@@ -14,6 +15,7 @@ export interface Structure {
   createdAt?: string
   updatedAt?: string
   slug?: string
+  selected: boolean
 }
 
 export interface SaveStructure {
@@ -59,17 +61,21 @@ export const initStructureErrorState = (): StructureError => ({
 export const getStructureFakeData = (): Structure[] => [
   {
     id: 1,
-    nom: 'Back Office Pro',
+    nom: 'BOP',
+    focal: 'Adivin',
     tel: '0891759667',
-    adresse: 'Lorem Ispum',
-    abreviation: 'BOP',
-    focal: 'Life',
-    email: 'bop@gmail.com',
-    slug: 'bop',
     createdAt: new Date().toISOString(),
-    nomCommercial: 'BOP',
+    slug: 'adi',
     selected: false,
+    email: 'adi.life91@gmail.com',
   },
+]
+
+export const getStructureHeadItems = (): THeadItemType[] => [
+  { th: 'Point focal' },
+  { th: 'N° Tél.' },
+  { th: 'E-mail' },
+  { th: 'Date' },
 ]
 
 export async function onStructureSubmit(
