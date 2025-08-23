@@ -1,10 +1,11 @@
 import type {CategorieLit} from "../../categorieLit/model/categorieLitService.ts";
 import type {SingleValue} from "react-select";
-import type {SelectOptionType} from "../../../../services/services.ts";
+import type {SelectOptionType, THeadItemType} from "../../../../services/services.ts";
 import type {Dispatch, FormEvent, SetStateAction} from "react";
 import type {JsonLdApiResponseInt} from "../../../../interfaces/JsonLdApiResponseInt.ts";
 import toast from "react-hot-toast";
-  
+import {getCategorieLitFakeData} from "../../categorieLit/model/categorieLitService.ts";
+
 // INTERFACES OR TYPES
 export interface Lit {
   '@id'?: string
@@ -17,6 +18,7 @@ export interface Lit {
   createdAt?: string
   updatedAt?: string
   slug?: string
+  selected: boolean
 }
 
 export interface SaveLit {
@@ -57,6 +59,32 @@ export const initLitErrorState = (): LitError => ({
 /* ------------------------------------------- */
 
 // EVENTS & FUNCTIONS
+export const getLitsFakeData = (): Lit[] => [
+  {
+    id: 1,
+    createdAt: new Date().toISOString(),
+    fkCategorie: getCategorieLitFakeData()[0],
+    slug: 'lit',
+    mode: 'PAR_JOUR',
+    prix: 10,
+    numero: '001',
+    estCeOccuppe: false,
+    selected: false,
+  },
+]
+
+export const getLitModeOptions = (): SelectOptionType[] => [
+  { label: '-- Aucun mode sélectionné --', value: 'NONE' },
+  { label: 'Par Jour', value: 'PAR_JOUR' },
+  { label: 'Par Heure', value: 'PAR_HEURE' },
+]
+
+export const getLitHeadItems = (): THeadItemType[] => [
+  { th: 'Mode' },
+  { th: 'Prix' },
+  { th: 'Date' },
+]
+
 export async function onLitSubmit(
   e: FormEvent<HTMLFormElement>,
   state: SaveLit,

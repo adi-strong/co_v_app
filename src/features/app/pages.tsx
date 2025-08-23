@@ -19,6 +19,8 @@ const
   
   CatLits = lazy(() =>
     import('../traitements/categorieLit/view/categorieLitView.tsx')),
+  Lits = lazy(() =>
+    import('../traitements/lit/view/litView.tsx')),
   
   CatExams = lazy(() =>
     import('../traitements/categorieExam/view/categorieExamView.tsx')),
@@ -36,7 +38,13 @@ const
     import('../personnel/service/view/serviceView.tsx')),
   
   Depart = lazy(() =>
-    import('../personnel/departement/view/departementView.tsx'))
+    import('../personnel/departement/view/departementView.tsx')),
+  
+  UCons = lazy(() =>
+    import('../stock/uniteConsommation/view/uniteConsommationView.tsx')),
+  
+  CatProd = lazy(() =>
+    import('../stock/categorieProduit/view/categorieProduitView.tsx'))
 
 const pages: RouteType[] = [
   {
@@ -66,6 +74,10 @@ const pages: RouteType[] = [
       {
         path: 'categories-lits',
         element: <CatLits />
+      },
+      {
+        path: 'lits',
+        element: <Lits />
       },
       // End Lits
       
@@ -110,6 +122,20 @@ const pages: RouteType[] = [
         element: <Depart />
       },
       // End Services
+      
+      // Services
+      {
+        path: 'unites-consommations',
+        element: <UCons />
+      },
+      // End Services
+      
+      // produits
+      {
+        path: 'categories-produits',
+        element: <CatProd />
+      },
+      // End produits
     ]
   },
 ]
