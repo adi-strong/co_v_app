@@ -2,6 +2,7 @@ import type {Dispatch, FormEvent, SetStateAction} from "react";
 import toast from "react-hot-toast";
 import type {JsonLdApiResponseInt} from "../../../../interfaces/JsonLdApiResponseInt.ts";
 import type {CategorieExam} from "../../categorieExam/model/categorieExamService.ts";
+import type {NavigateFunction} from "react-router-dom";
 
 // INTERFACES OR TYPES
 export interface Examen {
@@ -81,7 +82,7 @@ export async function onExamenSubmit(
   state: Examen,
   setErrors: Dispatch<SetStateAction<ExamenError>>,
   onSubmit: (data: Examen) => Promise<any>,
-  onHide: () => void,
+  navigate: NavigateFunction,
   onRefresh?: () => void
 ): Promise<void> {
   
@@ -92,7 +93,7 @@ export async function onExamenSubmit(
     if (data) {
       toast.success(`${id > 0 ? 'Modification ' : 'Enregistrement '} bien effectué${'e'}`)
       if (onRefresh) onRefresh()
-      onHide()
+      navigate('/app/categories-examens')
     }
     
     if (error && error?.data) {

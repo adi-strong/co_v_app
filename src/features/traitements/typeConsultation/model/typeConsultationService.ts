@@ -1,7 +1,9 @@
-import type {Dispatch, FormEvent, SetStateAction} from "react";
+import type {ChangeEvent, Dispatch, FormEvent, SetStateAction} from "react";
 import toast from "react-hot-toast";
 import type {JsonLdApiResponseInt} from "../../../../interfaces/JsonLdApiResponseInt.ts";
 import type {NavigateFunction} from "react-router-dom";
+import type {PriceType} from "../../../../services/services.ts";
+import {onSetPrixHtChange, onSetTaxChange} from "../../../../services/services.ts";
 
 // INTERFACES OR TYPES
 export interface TypeConsultation {
@@ -10,6 +12,8 @@ export interface TypeConsultation {
   nom: string
   prixHt: number
   prixTtc: number
+  selected: boolean
+  taxe?: number
   createdAt?: string
   updatedAt?: string
   slug?: string
@@ -20,12 +24,14 @@ export interface SaveTypeConsultation {
   nom: string
   prixHt: number
   prixTtc: number
+  taxe: number
 }
 
 export interface TypeConsultationError {
   nom: string | null
   prixHt: string | null
   prixTtc: string | null
+  taxe: string | null
 }
 // END INTERFACES OR TYPES
 
@@ -37,12 +43,14 @@ export const initTypeConsultationState = (): SaveTypeConsultation => ({
   nom: '',
   prixTtc: 0,
   prixHt: 0,
+  taxe: 0,
 })
 
 export const initTypeConsultationErrorState = (): TypeConsultationError => ({
   nom: null,
   prixHt: null,
   prixTtc: null,
+  taxe: null,
 })
 // END INIT
 
@@ -57,6 +65,7 @@ export const getTypeConsultationFakeData = (): TypeConsultation[] => [
     prixHt: 12,
     prixTtc: 15,
     createdAt: new Date().toISOString(),
+    selected: false,
   },
 ]
 
@@ -106,6 +115,42 @@ export async function onDeleteTypeConsultation(
       if (navigate) navigate('/app/fournisseurs')
     }
   } catch (e) { toast.error('Problème réseau.') }
+  
+}
+
+export const onConsultPrixHTChange = (
+  e: ChangeEvent<HTMLInputElement>,
+  setState: Dispatch<SetStateAction<SaveTypeConsultation>>): void => {
+  setState((prev: SaveTypeConsultation) => {
+    
+    const prices: PriceType = onSetPrixHtChange(e, prev.taxe)
+    const prixHt: number = prices.prixHt
+    const prixTtc: number = prices.prixTtc
+    
+    return {
+      ...prev,
+      prixHt,
+      prixTtc,
+    }
+  })
+}
+
+export const onConsultTaxChange = (
+  e: ChangeEvent<HTMLInputElement>,
+  setState: Dispatch<SetStateAction<SaveTypeConsultation>>): void => {
+  
+  setState((prev: SaveTypeConsultation) => {
+    const prices: PriceType = onSetTaxChange(e, prev.taxe, prev.prixHt)
+    
+    const taxe: number = prices.taxe
+    const prixTtc: number = prices.prixTtc
+    
+    return {
+      ...prev,
+      taxe,
+      prixTtc,
+    }
+  })
   
 }
 // END EVENTS & FUNCTIONS

@@ -81,6 +81,7 @@ const initialState: MenuInterface = {
         {label: 'Tous les produits', to: '/app/produits'},
         {label: 'Ajouter un produit', to: '/app/produits/new'},
         {label: 'Catégories des produits', to: '/app/categories-produits'},
+        {label: 'U. des consommations', to: '/app/unites-consommations'},
         {label: 'Fournisseurs', to: '/app/fournisseurs'},
         {label: 'Approvisionnements', to: '/app/approvisionnements'},
         {label: 'Mouvements en stocks', to: '/app/mouvements-stocks'},

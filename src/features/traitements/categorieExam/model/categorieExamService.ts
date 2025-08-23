@@ -1,6 +1,7 @@
 import type {Dispatch, FormEvent, SetStateAction} from "react";
 import toast from "react-hot-toast";
 import type {JsonLdApiResponseInt} from "../../../../interfaces/JsonLdApiResponseInt.ts";
+import type {NavigateFunction} from "react-router-dom";
 
 // INTERFACES OR TYPES
 export interface CategorieExam {
@@ -39,7 +40,7 @@ export const initCategorieExamErrorState = (): CategorieExamError => ({ nom: nul
 /* ------------------------------------------- */
 
 // EVENTS & FUNCTIONS
-export const CategorieExamFakeData = (): CategorieExam[] => [
+export const getCategorieExamFakeData = (): CategorieExam[] => [
   {
     id: 1,
     nom: 'Malaria',
@@ -106,16 +107,17 @@ export async function onPostCategorieExamSubmit(
   
 }
 
-export async function onPatchCategorieExamSubmit(
+export async function onCategorieExamSubmit(
   e: FormEvent<HTMLFormElement>,
   state: SaveCategorieExam,
   setErrors: Dispatch<SetStateAction<CategorieExamError>>,
   onSubmit: (data: SaveCategorieExam) => Promise<any>,
-  onHide: () => void,
+  navigate: NavigateFunction,
   onRefresh?: () => void
 ): Promise<void> {
   
   e.preventDefault()
+  const { id } = state
   setErrors(initCategorieExamErrorState())
   
   try {
@@ -128,9 +130,9 @@ export async function onPatchCategorieExamSubmit(
     }
     
     if (data) {
-      toast.success('Modification bien effectuée.')
+      toast.success(`${id < 1 ? 'Enregistrement' : 'Modification'} bien effectué${id > 0 ? 'e' : ''}.`)
       if (onRefresh) onRefresh()
-      onHide()
+      navigate('/app/categories-examens')
     }
   } catch (e) { toast.error('Problème réseau.') }
   

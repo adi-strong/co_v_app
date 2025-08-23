@@ -1,14 +1,14 @@
-import type {CategorieLit} from "../model/categorieLitService.ts";
 import {useState} from "react";
-import {initCategorieLitErrorState, initCategorieLitState} from "../model/categorieLitService.ts";
+import {Button, Card} from "react-bootstrap";
 import {TextField} from "../../../../components";
 import {handleChange} from "../../../../config/form.hander.service.ts";
-import {Button, Card} from "react-bootstrap";
+import type {CategorieExam} from "../model/categorieExamService.ts";
+import {initCategorieExamErrorState, initCategorieExamState} from "../model/categorieExamService.ts";
 
-export default function CategorieLitForm({ data }: { data?: CategorieLit }) {
+export default function CategorieExamForm({ data }: { data?: CategorieExam }) {
   
-  const [category, setCategory] = useState(initCategorieLitState())
-  const [errors/*, setErrors */] = useState(initCategorieLitErrorState())
+  const [category, setCategory] = useState(initCategorieExamState())
+  const [errors/*, setErrors */] = useState(initCategorieExamErrorState())
   
   return (
     <>
@@ -35,7 +35,7 @@ export default function CategorieLitForm({ data }: { data?: CategorieLit }) {
         
         <Button disabled={false} type='submit' size='sm' className={data ? 'w-100' : ''}>
           {data ? 'Modifier ' : 'Ajouter '}
-          une catégorie de lits
+          une catégorie d'examens
         </Button>
       </form>
     </>

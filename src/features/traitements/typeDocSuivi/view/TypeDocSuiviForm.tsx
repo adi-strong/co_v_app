@@ -1,19 +1,19 @@
-import type {CategorieLit} from "../model/categorieLitService.ts";
 import {useState} from "react";
-import {initCategorieLitErrorState, initCategorieLitState} from "../model/categorieLitService.ts";
+import {Button, Card} from "react-bootstrap";
 import {TextField} from "../../../../components";
 import {handleChange} from "../../../../config/form.hander.service.ts";
-import {Button, Card} from "react-bootstrap";
+import type {TypeDocSuivi} from "../model/typeDocSuiviService.ts";
+import {initTypeDocSuiviErrorState, initTypeDocSuiviState} from "../model/typeDocSuiviService.ts";
 
-export default function CategorieLitForm({ data }: { data?: CategorieLit }) {
+export default function TypeDocSuiviForm({ data }: { data?: TypeDocSuivi }) {
   
-  const [category, setCategory] = useState(initCategorieLitState())
-  const [errors/*, setErrors */] = useState(initCategorieLitErrorState())
+  const [typeDoc, setTypeDoc] = useState(initTypeDocSuiviState())
+  const [errors/*, setErrors */] = useState(initTypeDocSuiviErrorState())
   
   return (
     <>
       <form className={!data ? 'pt-13' : ''} onSubmit={e => e.preventDefault()}>
-        {!data && <Card.Title as='h5' className='mb-6 text-dark'>Ajouter une catégorie</Card.Title>}
+        {!data && <Card.Title as='h5' className='mb-6 text-dark'>Ajouter un type</Card.Title>}
         
         <Card.Text as='p'>Veuillez renseigner les champs (<code>*</code>) obligatoires :</Card.Text>
         
@@ -22,10 +22,10 @@ export default function CategorieLitForm({ data }: { data?: CategorieLit }) {
             required
             disabled={false}
             name='nom'
-            onChange={(e): void => handleChange(e, category, setCategory)}
-            value={category.nom}
+            onChange={(e): void => handleChange(e, typeDoc, setTypeDoc)}
+            value={typeDoc.nom}
             text='Ce champ ne peut dépasser 255 caractères.'
-            label='Nom de la catégorie'
+            label='Nom du type'
             size='sm'
             minLength={2}
             maxLength={255}
@@ -35,7 +35,7 @@ export default function CategorieLitForm({ data }: { data?: CategorieLit }) {
         
         <Button disabled={false} type='submit' size='sm' className={data ? 'w-100' : ''}>
           {data ? 'Modifier ' : 'Ajouter '}
-          une catégorie de lits
+          un type de documents de suivi
         </Button>
       </form>
     </>

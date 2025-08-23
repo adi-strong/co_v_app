@@ -1,4 +1,4 @@
-import type {Dispatch, SetStateAction} from "react";
+import type {ChangeEvent, Dispatch, SetStateAction} from "react";
 import type {MultiValue} from "react-select";
 
 const TableCSStyle = {
@@ -140,6 +140,42 @@ export const onSideMenuToggle = (state: boolean, setState: Dispatch<SetStateActi
     dbWrapper.classList.remove('toggled')
   
   setState(show)
+}
+
+export type PriceType = { prixHt: number, prixTtc: number, taxe: number }
+export const onSetPrixHtChange = (e: ChangeEvent<HTMLInputElement>, tax: number): PriceType => {
+  
+  const value: string = e.target.value
+  
+  let prixTtc: number
+  const taxe: number = isNaN(tax) ? 0 : tax
+  const prixHt: number = isNaN(Number(value)) || Number(value) < 0.00 ? 0 : Number(value)
+  
+  if (taxe > 0.00) {
+    const plusValue: number = (prixHt * taxe) / 100
+    prixTtc = prixHt + plusValue
+  } else prixTtc = prixHt
+  
+  return { prixHt, prixTtc, taxe }
+  
+}
+
+export const onSetTaxChange = (e: ChangeEvent<HTMLInputElement>, tax: number, ht: number): PriceType => {
+  
+  const value: string = e.target.value
+  
+  const taxe: number = isNaN(Number(value)) || Number(value) < 0.00 ? 0 : Number(value)
+  
+  let prixTtc: number
+  const prixHt: number = ht
+  
+  if (taxe > 0.00) {
+    const plusValue: number = (prixHt * taxe) / 100
+    prixTtc = prixHt + plusValue
+  } else prixTtc = prixHt
+  
+  return { prixHt, prixTtc, taxe }
+  
 }
 
 // END INIT

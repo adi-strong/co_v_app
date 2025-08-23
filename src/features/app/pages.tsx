@@ -18,7 +18,16 @@ const
   Profil = lazy(() => import('../profil/view/profilView.tsx')),
   
   CatLits = lazy(() =>
-    import('../traitements/categorieLit/view/categorieLitView.tsx'))
+    import('../traitements/categorieLit/view/categorieLitView.tsx')),
+  
+  CatExams = lazy(() =>
+    import('../traitements/categorieExam/view/categorieExamView.tsx')),
+
+  TDocSuivi = lazy(() =>
+    import('../traitements/typeDocSuivi/view/typeDocSuiviView.tsx')),
+  
+  TFiches = lazy(() =>
+    import('../traitements/typeConsultation/view/typeConsultationView.tsx'))
 
 const pages: RouteType[] = [
   {
@@ -50,6 +59,27 @@ const pages: RouteType[] = [
         element: <CatLits />
       },
       // End Lits
+      
+      // Examens
+      {
+        path: 'categories-examens',
+        element: <CatExams />
+      },
+      // End Examens
+      
+      // Doc suivi
+      {
+        path: 'types-documents-suivis',
+        element: <TDocSuivi />
+      },
+      // End Doc suivi
+      
+      // Fiches consultations
+      {
+        path: 'types-des-fiches',
+        element: <TFiches />
+      },
+      // End Fiches consultations
     ]
   },
 ]
