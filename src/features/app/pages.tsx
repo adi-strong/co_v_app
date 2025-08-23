@@ -27,7 +27,16 @@ const
     import('../traitements/typeDocSuivi/view/typeDocSuiviView.tsx')),
   
   TFiches = lazy(() =>
-    import('../traitements/typeConsultation/view/typeConsultationView.tsx'))
+    import('../traitements/typeConsultation/view/typeConsultationView.tsx')),
+  
+  Fonc = lazy(() =>
+    import('../personnel/fonction/view/fonctionView.tsx')),
+  
+  Serv = lazy(() =>
+    import('../personnel/service/view/serviceView.tsx')),
+  
+  Depart = lazy(() =>
+    import('../personnel/departement/view/departementView.tsx'))
 
 const pages: RouteType[] = [
   {
@@ -80,6 +89,27 @@ const pages: RouteType[] = [
         element: <TFiches />
       },
       // End Fiches consultations
+      
+      // Fiches consultations
+      {
+        path: 'fonctions',
+        element: <Fonc />
+      },
+      // End Fiches consultations
+      
+      // Services
+      {
+        path: 'services',
+        element: <Serv />
+      },
+      // End Services
+      
+      // Services
+      {
+        path: 'departements',
+        element: <Depart />
+      },
+      // End Services
     ]
   },
 ]

@@ -2,7 +2,7 @@ import type {ChangeEvent, Dispatch, FormEvent, SetStateAction} from "react";
 import toast from "react-hot-toast";
 import type {JsonLdApiResponseInt} from "../../../../interfaces/JsonLdApiResponseInt.ts";
 import type {NavigateFunction} from "react-router-dom";
-import type {PriceType} from "../../../../services/services.ts";
+import type {PriceType, THeadItemType} from "../../../../services/services.ts";
 import {onSetPrixHtChange, onSetTaxChange} from "../../../../services/services.ts";
 
 // INTERFACES OR TYPES
@@ -67,6 +67,13 @@ export const getTypeConsultationFakeData = (): TypeConsultation[] => [
     createdAt: new Date().toISOString(),
     selected: false,
   },
+]
+
+export const getTypeConsultTheadItems = (): THeadItemType[] => [
+  { th: 'Taxe(s) / TVA' },
+  { th: 'Prix HT' },
+  { th: 'Prix TTC' },
+  { th: 'Date' },
 ]
 
 export async function onTypeConsultationSubmit(

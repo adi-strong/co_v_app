@@ -2,22 +2,22 @@ import type {Dispatch, SetStateAction} from "react";
 import {Table} from "react-bootstrap";
 import {CheckField} from "../../../../components";
 import {selectAllStateItems, tableWhiteStyle} from "../../../../services/services.ts";
-import type {TypeConsultation} from "../model/typeConsultationService.ts";
-import TypeConsultItem from "./TypeConsultItem.tsx";
-import {getTypeConsultTheadItems} from "../model/typeConsultationService.ts";
+import type {TypeDocSuivi} from "../../../traitements/typeDocSuivi/model/typeDocSuiviService.ts";
+import type {Service} from "../model/serviceService.ts";
+import ServiceItem from "./ServiceItem.tsx";
 
-export default function TypeConsultData(props: {
+export default function ServiceData(props: {
   isSelectedAll: boolean
   setIsSelectedAll: Dispatch<SetStateAction<boolean>>
-  typesConsults: TypeConsultation[]
-  setTypesConsults: Dispatch<SetStateAction<TypeConsultation[]>>
+  services: Service[]
+  setServices: Dispatch<SetStateAction<Service[]>>
 }) {
   
   const {
     isSelectedAll,
     setIsSelectedAll,
-    typesConsults,
-    setTypesConsults,
+    services,
+    setServices,
   } = props
   
   return (
@@ -29,26 +29,23 @@ export default function TypeConsultData(props: {
             <CheckField
               inline
               name='isSelectedAll'
-              onChange={(): void => selectAllStateItems(isSelectedAll, setIsSelectedAll, setTypesConsults)}
+              onChange={(): void => selectAllStateItems(isSelectedAll, setIsSelectedAll, setServices)}
               value={isSelectedAll}
               checked={isSelectedAll}
               className='me-0'
             />
             Nom
           </th>
-          {getTypeConsultTheadItems().length > 0 && getTypeConsultTheadItems().map((t =>
-            <th style={{ fontSize: '1rem' }}>
-              {t.th}
-            </th>))}
+          <th style={{ fontSize: '1rem' }}>Date</th>
         </tr>
         </thead>
         
         <tbody style={tableWhiteStyle.tbody}>
-        {typesConsults.length > 0 && typesConsults.map((c: TypeConsultation, index: number) =>
-          <TypeConsultItem
+        {services.length > 0 && services.map((c: TypeDocSuivi, index: number) =>
+          <ServiceItem
             key={index}
-            typeConsult={c}
-            setTypesConsults={setTypesConsults}
+            service={c}
+            setServices={setServices}
             index={index}
           />)}
         </tbody>

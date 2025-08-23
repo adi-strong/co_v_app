@@ -15,11 +15,11 @@ const TypeConsultationView = () => {
       <PageTitles title='Types des fiches de consultations'/>
       
       <Row>
-        <Col md={4} className='mb-3'>
+        <Col md={3} className='mb-3'>
           <TypeConsultForm/>
         </Col> {/* Forumulaore */}
         
-        <Col md={8} className='mb-3'>
+        <Col md={9} className='mb-3'>
           <TypeConsultList/>
         </Col> {/* Liste */}
       </Row>

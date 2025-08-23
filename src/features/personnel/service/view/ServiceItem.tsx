@@ -1,31 +1,25 @@
 import type {Dispatch, ReactNode, SetStateAction} from "react";
 import {useState} from "react";
-import {
-  formatDecimalNumberWithSpaces,
-  handleShow,
-  onMouseEnterEvent,
-  onMouseLeaveEvent,
-  setSelectedDataItem
-} from "../../../../services/services.ts";
+import {handleShow, onMouseEnterEvent, onMouseLeaveEvent, setSelectedDataItem} from "../../../../services/services.ts";
 import {CheckField, RemoveModal, SideContent} from "../../../../components";
 import {Link} from "react-router-dom";
 import {Button} from "react-bootstrap";
-import moment from "moment";
-import type {TypeConsultation} from "../model/typeConsultationService.ts";
-import TypeConsultForm from "./TypeConsultForm.tsx";
+import moment from "moment/moment";
+import type {Service} from "../model/serviceService.ts";
+import ServiceForm from "./ServiceForm.tsx";
 
 function onSubmit(data: any, onHide: () => void, onRefresh: () => void): void { onHide() }
 
-export default function TypeConsultItem(props: {
-  typeConsult: TypeConsultation
-  setTypesConsults: Dispatch<SetStateAction<TypeConsultation[]>>
+export default function ServiceItem(props: {
+  service: Service
+  setServices: Dispatch<SetStateAction<Service[]>>
   index: number
 }) {
   
   const {
-    typeConsult,
+    service,
     index,
-    setTypesConsults,
+    setServices,
   } = props
   
   const [isEdit, setIsEdit] = useState<boolean>(false)
@@ -43,13 +37,13 @@ export default function TypeConsultItem(props: {
           <CheckField
             inline
             name='selected'
-            value={typeConsult.selected}
-            checked={typeConsult.selected}
-            onChange={(): void => setSelectedDataItem(index, setTypesConsults)}
+            value={service.selected}
+            checked={service.selected}
+            onChange={(): void => setSelectedDataItem(index, setServices)}
             className='me-0'
           />
-          <Link to={`/app/types-des-fiches/${typeConsult.id}/${typeConsult?.slug}`}>
-            {typeConsult.nom.toUpperCase()}
+          <Link to={`/app/services/${service.id}/${service?.slug}`}>
+            {service.nom.toUpperCase()}
           </Link>
           
           <div id={`actions-${index}`} hidden>
@@ -62,28 +56,25 @@ export default function TypeConsultItem(props: {
           </div>
         </td>
         
-        <td>{typeConsult?.taxe ? formatDecimalNumberWithSpaces(typeConsult.taxe) : '—'}</td>
-        <td>{formatDecimalNumberWithSpaces(typeConsult.prixHt)}</td>
-        <td>{formatDecimalNumberWithSpaces(typeConsult.prixTtc)}</td>
-        <td>{typeConsult?.createdAt ? moment(typeConsult.createdAt).format('DD/MM/YY') : '—'}</td>
+        <td>{service?.createdAt ? moment(service.createdAt).format('DD/MM/YY') : '—'}</td>
       </tr>
       
       <RemoveModal
         isItIrreversible
-        onSubmit={() => onSubmit(typeConsult, (): void => handleShow(setIsDel), (): void => { })}
+        onSubmit={() => onSubmit(service, (): void => handleShow(setIsDel), (): void => { })}
         onHide={(): void => handleShow(setIsDel)}
-        data={typeConsult}
+        data={service}
         show={isDel}
         onRefresh={(): void => { }}
-        title={<>Type de fiches : {typeConsult.nom.toUpperCase()}</>}
+        title={<>service : {service.nom.toUpperCase()}</>}
       />
       
       <SideContent
         show={isEdit}
         onHide={(): void => handleShow(setIsEdit)}
-        title='Modifier le type de fiches'
+        title='Modifier le service'
         onRefresh={() => { }}
-        children={<TypeConsultForm data={typeConsult}/> as ReactNode}
+        children={<ServiceForm data={service}/> as ReactNode}
       />
     </>
   )
