@@ -8,6 +8,7 @@ import type {NavigateFunction} from "react-router-dom";
 import type {JsonLdApiResponseInt} from "../../../../interfaces/JsonLdApiResponseInt.ts";
 import toast from "react-hot-toast";
 import type {Structure} from "../../structure/model/structureService.ts";
+import {getUserFakeData} from "../../../user/model/userService.ts";
 
 // INTERFACES OR TYPES
 export interface Patient {
@@ -34,6 +35,7 @@ export interface Patient {
   slug?: string
   createdAt?: string
   updatedAt?: string
+  selected: boolean
 }
 
 export interface SavePatient {
@@ -125,20 +127,26 @@ export const initPatientErrorState = (): PatientError => ({
 export const getPatientFakeData = (): Patient[] => [
   {
     id: 1,
-    nom: 'AKONDJAKA',
-    adresse: 'Lorem',
-    postNom: 'NDJOKU',
-    fkStructure: {},
-    prenom: 'Romeo',
+    nom: 'lifwa',
+    tel: '0901759667',
+    fullName: 'adivin lifwa wan\'etumba',
+    etatCivil: 'CELIBATAIRE',
     estCeConventionne: false,
+    selected: false,
+    email: 'adi.life91@gmail.com',
+    nationalite: 'Congolaise',
+    mere: 'Nkolo Jeanine',
     sexe: 'H',
     createdAt: new Date().toISOString(),
-    etatCivil: 'CELIBATAIRE',
-    dateDeNaissance: new Date().toISOString(),
-    fullName: 'akondjaka ndjoku roméo',
-    nationalite: 'Congolaise',
-    tel: '0904651464',
-    email: 'romeoakondjaka@gmail.com',
+    prenom: 'adivin',
+    dateDeNaissance: new Date('1991-03-05').toISOString(),
+    postNom: 'wan\'etumba',
+    adresse: 'Limete 7ème rue',
+    pere: 'Lifwa JR',
+    fkUser: getUserFakeData()[0],
+    lieuDeNaissance: 'Kinshasa',
+    slug: 'adivin',
+    '@id': '/api/patients/1',
   },
 ]
 

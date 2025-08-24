@@ -178,6 +178,12 @@ export const onSetTaxChange = (e: ChangeEvent<HTMLInputElement>, tax: number, ht
   
 }
 
+export const getSexOptions = (): SelectOptionType[] => [
+  { label: '-- Aucune option sélectionnée --', value: '' },
+  { label: 'Homme', value: 'H' },
+  { label: 'Femme', value: 'F' },
+]
+
 // END INIT
 
 // ******************************************* ******************************************** //

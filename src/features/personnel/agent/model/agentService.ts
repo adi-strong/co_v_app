@@ -112,21 +112,7 @@ export const getAgentFakeData = (): Agent[] => [
     fkFonction: getFonctionFakeData()[0],
     createdAt: new Date().toISOString(),
     fkDepartement: getDepartementFakeData()[0],
-  },
-  {
-    id: 2,
-    nom: 'LIFWA',
-    email: 'adi.life91@gmail.com',
-    postNom: 'Wan\'etumba',
-    fullName: 'Adivin LIFWA WAN\'ETUMBA',
-    fkService: getServiceFakeData()[0],
-    tel: '+243 04 651 464',
-    slug: 'adivin-lifwa-wanetumba',
-    sexe: 'H',
-    prenom: 'Adivin',
-    fkFonction: getFonctionFakeData()[0],
-    createdAt: new Date().toISOString(),
-    fkDepartement: getDepartementFakeData()[0],
+    '@id': '/api/agents/1',
   },
 ]
 

@@ -1,11 +1,22 @@
 import {memo} from 'react';
+import {useActivePage, useDocumentTitle} from "../../../hooks";
+import {Card} from "react-bootstrap";
+import {BodyContainer, PageTitles} from "../../../components";
+import UsersList from "./UsersList.tsx";
 
 const UserView = () => {
-
+  
+  useDocumentTitle('Utilisateurs')
+  useActivePage('accounts')
+  
   return (
-    <div>
-      <h1>User View</h1>
-    </div>
+    <BodyContainer>
+      <PageTitles title='Utilisateurs' />
+      
+      <Card>
+        <UsersList />
+      </Card>
+    </BodyContainer>
   )
   
 };

@@ -1,7 +1,7 @@
 import type {User} from "../../user/model/userService.ts";
 import type {Agent} from "../../personnel/agent/model/agentService.ts";
 import type {SingleValue} from "react-select";
-import type {SelectOptionType} from "../../../services/services.ts";
+import type {SelectOptionType, THeadItemType} from "../../../services/services.ts";
 import type {Dispatch, FormEvent, SetStateAction} from "react";
 import type {JsonLdApiResponseInt} from "../../../interfaces/JsonLdApiResponseInt.ts";
 import toast from "react-hot-toast";
@@ -21,6 +21,7 @@ export interface RendezVous {
   done: boolean
   releasedAt?: string
   slug?: string
+  selected: boolean
 }
 
 export interface SaveRendezVous {
@@ -29,7 +30,6 @@ export interface SaveRendezVous {
   objet: string
   tel: string
   email: string
-  contenu: string
   date: string
   fkAgent: SingleValue<SelectOptionType> | null
   end: boolean
@@ -52,7 +52,6 @@ export interface RendezVousError {
 // INIT
 export const initRendezVousState = (): SaveRendezVous => ({
   id: 0,
-  contenu: '',
   date: '',
   email: '',
   end: false,
@@ -77,6 +76,12 @@ export const initRendezVousErrorState = (): RendezVousError => ({
 /* ------------------------------------------- */
 
 // EVENTS & FUNCTIONS
+export const getRdvHeadItems = (): THeadItemType[] => [
+  { th: 'Objet' },
+  { th: 'N° Tél.' },
+  { th: 'Date' },
+]
+
 export async function onRendezVousSubmit(
   e: FormEvent<HTMLFormElement>,
   state: SaveRendezVous,

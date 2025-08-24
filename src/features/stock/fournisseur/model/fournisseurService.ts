@@ -3,6 +3,7 @@ import type {Dispatch, FormEvent, SetStateAction} from "react";
 import toast from "react-hot-toast";
 import type {JsonLdApiResponseInt} from "../../../../interfaces/JsonLdApiResponseInt.ts";
 import type {NavigateFunction} from "react-router-dom";
+import type {THeadItemType} from "../../../../services/services.ts";
 
 // INTERFACES OR TYPES
 export interface Fournisseur {
@@ -86,6 +87,25 @@ export const getFournisseurFakeData = (): Fournisseur[] => [
     nomCommercial: 'BOP',
     selected: false,
   },
+  {
+    id: 2,
+    nom: 'J-1',
+    tel: '0891759667',
+    adresse: 'Lorem Ispum',
+    abreviation: 'Guy',
+    email: 'j-1@gmail.com',
+    slug: 'bop',
+    createdAt: new Date().toISOString(),
+    nomCommercial: 'Joel Corp',
+    selected: false,
+  },
+]
+
+export const getFournisseurHeadItems = (): THeadItemType[] => [
+  { th: 'Point focal' },
+  { th: 'N° Tél.' },
+  { th: 'E-mail' },
+  { th: 'Date' },
 ]
 
 export async function onFournisseurSubmit(

@@ -23,8 +23,7 @@ export default function ComptesList() {
               Comptes
               
               <Button variant='link' className='mx-5' title='Nouveau compte' onClick={(): void => handleShow(setShow)}>
-                <i className='bi bi-plus'/>
-                <i className='bi bi-chevron-right'/>
+                <i className='bi bi-plus'/> Nouveau
               </Button>
             </h4>
           </Col>

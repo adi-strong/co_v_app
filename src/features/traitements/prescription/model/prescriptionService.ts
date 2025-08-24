@@ -6,6 +6,7 @@ import type {User} from "../../../user/model/userService.ts";
 import type {Patient} from "../../../patients/patient/model/patientService.ts";
 import type {Consultation} from "../../consultation/model/consultationService.ts";
 import type {DocumentSuivi} from "../../documentSuivi/model/documentSuiviService.ts";
+import type {THeadItemType} from "../../../../services/services.ts";
   
 // INTERFACES OR TYPES
 export interface ExamenPrescrit {
@@ -48,12 +49,17 @@ export interface Prescription {
   releasedAt?: string
   updatedAt?: string
   autresProduits: AutreProduit[]
+  selected: boolean
 }
 // END INTERFACES OR TYPES
 
 /* ------------------------------------------- */
 
 // INIT
+export const getPrescHeadItems = (): THeadItemType[] => [
+  { th: 'Effectué par' },
+  { th: 'Date' },
+]
 // END INIT
 
 /* ------------------------------------------- */

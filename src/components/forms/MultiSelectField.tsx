@@ -2,6 +2,7 @@ import type {ReactNode} from "react";
 import type {MultiValue} from "react-select";
 import type {SelectOptionType} from "../../services/services.ts";
 import Select from "react-select";
+import {Form} from "react-bootstrap";
 
 type SelectMultipleProps = {
   options: MultiValue<SelectOptionType> | []
@@ -41,10 +42,9 @@ const MultiSelectField: React.FC<SelectMultipleProps> = (
               {!disabled && <i className='bi bi-arrow-clockwise cursor-pointer text-primary me-1' onClick={onRefresh}/>}
               {disabled && <Spinner animation='grow' size='sm' className='me-1 text-primary' />}
             </>
-          )}
-          
+          ) as ReactNode}
           {label}
-          {required && <code className='mx-1'>*</code>}
+          {(required && <code className='mx-1'>*</code>) as ReactNode}
         </Form.Label>
       )}
       

@@ -61,8 +61,9 @@ export const initFactureProduitErrorState = (): FactureProduitError => ({
 
 // EVENTS & FUNCTIONS
 export const getFactureHeadItems = (): THeadItemType[] => [
-  { th: 'Montant' },
-  { th: 'Effectué par' },
+  { th: 'Montant (CDF)' },
+  { th: 'Montant (USD)' },
+  { th: 'Taux' },
   { th: 'Date' },
 ]
 
