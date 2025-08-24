@@ -1,7 +1,7 @@
 import type {User} from "../../../user/model/userService.ts";
 import type {Agent} from "../../../personnel/agent/model/agentService.ts";
 import type {SingleValue} from "react-select";
-import type {SelectOptionType} from "../../../../services/services.ts";
+import type {SelectOptionType, THeadItemType} from "../../../../services/services.ts";
 import type {Dispatch, FormEvent, SetStateAction} from "react";
 import type {JsonLdApiResponseInt} from "../../../../interfaces/JsonLdApiResponseInt.ts";
 import toast from "react-hot-toast";
@@ -60,6 +60,12 @@ export const initFactureProduitErrorState = (): FactureProduitError => ({
 /* ------------------------------------------- */
 
 // EVENTS & FUNCTIONS
+export const getFactureHeadItems = (): THeadItemType[] => [
+  { th: 'Montant' },
+  { th: 'Effectué par' },
+  { th: 'Date' },
+]
+
 export async function onFactureProduitSubmit(
   e: FormEvent<HTMLFormElement>,
   state: FactureProduit,

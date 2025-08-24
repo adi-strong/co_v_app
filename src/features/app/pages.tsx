@@ -50,7 +50,14 @@ const
     import('../patients/structure/view/structureView.tsx')),
   
   CCaisses = lazy(() =>
-    import('../finances/compteCaisse/view/compteCaisseView.tsx'))
+    import('../finances/compteCaisse/view/compteCaisseView.tsx')),
+  
+  FactProd = lazy(() =>
+    import('../stock/factureProduit/view/factureProduitView.tsx')),
+  FactDocs = lazy(() =>
+    import('../traitements/factureDocumentSuivi/view/factureDocumentSuiviView.tsx')),
+  FactConsults = lazy(() =>
+    import('../traitements/factureConsultation/view/factureConsultationView.tsx'))
 
 const pages: RouteType[] = [
   {
@@ -156,6 +163,21 @@ const pages: RouteType[] = [
         element: <CCaisses />
       },
       // End comptes
+      
+      // factures
+      {
+        path: 'factures-produits',
+        element: <FactProd />
+      },
+      {
+        path: 'factures-traitements',
+        element: <FactDocs />
+      },
+      {
+        path: 'factures-consultations',
+        element: <FactConsults />
+      },
+      // End factures
     ]
   },
 ]

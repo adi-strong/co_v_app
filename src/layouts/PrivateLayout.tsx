@@ -17,7 +17,7 @@ export default function PrivateLayout() {
                 src={logo}
                 alt=''
               />
-              BOP
+              C.O
             </Link>
             
             <QuixNav />
