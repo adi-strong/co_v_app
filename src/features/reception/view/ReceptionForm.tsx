@@ -15,7 +15,7 @@ import {
   setReceptionEstCePatient,
   setReceptionPatientName
 } from "../model/receptionService.ts";
-import {handleChange} from "../../../config/form.hander.service.ts";
+import {handleChange} from "../../../services/form.hander.service.ts";
 import useGetPatientsOptions from "../../patients/patient/hooks/useGetPatientsOptions.ts";
 import SelectField from "../../../components/forms/SelectField.tsx";
 import {getSexOptions, handleShow} from "../../../services/services.ts";

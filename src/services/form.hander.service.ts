@@ -1,4 +1,3 @@
-import type {ImageListType} from "react-images-uploading";
 import type {ChangeEvent, Dispatch, SetStateAction} from "react";
 
 export const handleChange = (
@@ -77,16 +76,6 @@ export const handleSubItemToTheItemArrayChange = (
     return dataState
   });
 };
-
-
-export const handleImageChange = (
-  imageList: ImageListType,
-  field: string,
-  setState: Dispatch<SetStateAction<any>>
-): void => setState(prev => ({
-  ...prev,
-  [field]: imageList
-}))
 
 export const handleAddSubItemToTheItemArray = (
   state: object,

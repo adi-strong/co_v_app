@@ -1,7 +1,7 @@
 import {TextField} from "./index.ts";
 import {Button, Col, Row} from "react-bootstrap";
 import type {Dispatch, SetStateAction} from "react";
-import {handleChange} from "../config/form.hander.service.ts";
+import {handleChange} from "../services/form.hander.service.ts";
 
 const SearchComp = ({ state, setState, value, btnLabel, loader, onSubmit, size, md1, md2, md3, md4 }: {
   value: any,

@@ -1,6 +1,6 @@
 import type {Fournisseur} from "../model/fournisseurService.ts";
 import {FormRequiredFieldsNoticeText, TextAreaField, TextField} from "../../../../components";
-import {handleChange} from "../../../../config/form.hander.service.ts";
+import {handleChange} from "../../../../services/form.hander.service.ts";
 import {useState} from "react";
 import {initFournisseurErrorState, initFournisseurState} from "../model/fournisseurService.ts";
 import {Button} from "react-bootstrap";

@@ -6,7 +6,7 @@ import FactureProduitItem from "./FactureProduitItem.tsx";
 import {getFactureHeadItems} from "../model/factureProduitService.ts";
 import {useState} from "react";
 import {TextField} from "../../../../components";
-import {handleChange} from "../../../../config/form.hander.service.ts";
+import {handleChange} from "../../../../services/form.hander.service.ts";
 
 export default function FactureProduitData(props: {
   factures: FactureProduit[]

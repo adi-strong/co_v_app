@@ -1,7 +1,7 @@
 import {useState} from "react";
 import {Button, Card, Col, Row, Table} from "react-bootstrap";
 import {TextField} from "../../../../components";
-import {handleChange} from "../../../../config/form.hander.service.ts";
+import {handleChange} from "../../../../services/form.hander.service.ts";
 import {getFactureHeadItems} from "../../../stock/factureProduit/model/factureProduitService.ts";
 import {tableWhiteStyle} from "../../../../services/services.ts";
 import type {FactureConsultation} from "../model/factureConsultationService.ts";

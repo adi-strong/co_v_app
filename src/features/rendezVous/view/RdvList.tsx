@@ -4,7 +4,7 @@ import {getgetCategorieLitActionsOptions} from "../../traitements/categorieLit/m
 import type {RendezVous} from "../model/rendezVousService.ts";
 import RdvData from "./RdvData.tsx";
 import {Button, Col} from "react-bootstrap";
-import {handleChange} from "../../../config/form.hander.service.ts";
+import {handleChange} from "../../../services/form.hander.service.ts";
 
 export default function RdvList() {
   

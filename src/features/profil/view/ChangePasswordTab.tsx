@@ -4,7 +4,7 @@ import type {ChangeProfilePassword, ChangeProfilePasswordError} from "../model/p
 import {initPasswordErrorState, initPasswordState} from "../model/profilService.ts";
 import {Button, Card, Col, Form, Row} from "react-bootstrap";
 import {handleShow, onGetRandomPasswordText} from "../../../services/services.ts";
-import {handleChange} from "../../../config/form.hander.service.ts";
+import {handleChange} from "../../../services/form.hander.service.ts";
 import {TextField} from "../../../components";
 
 export default function ChangePasswordTab({ data }: { data: User }) {

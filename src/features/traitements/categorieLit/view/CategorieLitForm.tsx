@@ -2,7 +2,7 @@ import type {CategorieLit} from "../model/categorieLitService.ts";
 import {useState} from "react";
 import {initCategorieLitErrorState, initCategorieLitState} from "../model/categorieLitService.ts";
 import {TextField} from "../../../../components";
-import {handleChange} from "../../../../config/form.hander.service.ts";
+import {handleChange} from "../../../../services/form.hander.service.ts";
 import {Button, Card} from "react-bootstrap";
 
 export default function CategorieLitForm({ data }: { data?: CategorieLit }) {

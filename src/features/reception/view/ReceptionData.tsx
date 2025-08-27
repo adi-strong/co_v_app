@@ -2,7 +2,7 @@ import {useState} from "react";
 import {Button, Card, Col, Row, Table} from "react-bootstrap";
 import {tableWhiteStyle} from "../../../services/services.ts";
 import {TextField} from "../../../components";
-import {handleChange} from "../../../config/form.hander.service.ts";
+import {handleChange} from "../../../services/form.hander.service.ts";
 import ReceptionItem from "./ReceptionItem.tsx";
 import type {Reception} from "../model/receptionService.ts";
 import {Link} from "react-router-dom";

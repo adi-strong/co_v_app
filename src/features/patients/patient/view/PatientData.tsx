@@ -1,20 +1,20 @@
 import type {Dispatch, SetStateAction} from "react";
 import {useState} from "react";
 import {Button, Card, Col, Row, Table} from "react-bootstrap";
-import {selectAllStateItems, tableWhiteStyle} from "../../../services/services.ts";
-import {CheckField, TextField} from "../../../components";
-import {handleChange} from "../../../services/form.hander.service.ts";
-import type {User} from "../model/userService.ts";
 import {Link} from "react-router-dom";
-import {getUserHeadItems} from "../model/userService.ts";
-import UserItem from "./UserItem.tsx";
+import {CheckField, TextField} from "../../../../components";
+import {handleChange} from "../../../../services/form.hander.service.ts";
+import {selectAllStateItems, tableWhiteStyle} from "../../../../services/services.ts";
+import type {Patient} from "../model/patientService.ts";
+import PatientItem from "./PatientItem.tsx";
+import {getPatientHeadItems} from "../model/patientService.ts";
 
-export default function UserData(props: {
-  users: User[]
-  setUsers: Dispatch<SetStateAction<User[]>>
+export default function PatientData(props: {
+  patients: Patient[]
+  setPatients: Dispatch<SetStateAction<Patient[]>>
 }) {
   
-  const { users, setUsers } = props
+  const { patients, setPatients } = props
   
   const [search, setSearch] = useState<{ keyword: string }>({ keyword: '' })
   const [isSelectedAll, setIsSelectedAll] = useState<boolean>(false)
@@ -27,10 +27,10 @@ export default function UserData(props: {
             <Button variant='link' size='sm' className='me-2'>
               <i className='bi bi-arrow-clockwise'/>
             </Button>
-            Liste des comptes utilisateurs
+            Liste des patients
             
-            <Link to='/app/users/new' className='mx-5 btn btn-sm btn-link' title='Nouveau fournisseur'>
-              <i className='bi bi-plus'/> Nouveau compte
+            <Link to='/app/patients/new' className='mx-5 btn btn-sm btn-link' title='Nouvel enregistrement'>
+              <i className='bi bi-plus'/> Nouveau
             </Link>
           </Card.Title>
         </Col>
@@ -49,7 +49,7 @@ export default function UserData(props: {
             
             <Col md={5} className='mb-1'>
               <Button type='submit' disabled={false} variant='outline-primary' className='w-100' size='sm'>
-                Rechercher des utilisateurs
+                Rechercher des patients
               </Button>
             </Col>
           </form>
@@ -82,23 +82,23 @@ export default function UserData(props: {
               name='isSelectedAll'
               value={isSelectedAll}
               checked={isSelectedAll}
-              onChange={(): void => selectAllStateItems(isSelectedAll, setIsSelectedAll, setUsers)}
+              onChange={(): void => selectAllStateItems(isSelectedAll, setIsSelectedAll, setPatients)}
               className='me-0'
             />
-            Username
+            Nom complet
           </th>
           
-          {getUserHeadItems().length > 0 && getUserHeadItems().map(t =>
+          {getPatientHeadItems().length > 0 && getPatientHeadItems().map(t =>
             <th key={t.th} style={{ fontSize: '1rem' }}>{t.th}</th>)}
         </tr>
         </thead>
         
         <tbody style={tableWhiteStyle.tbody}>
-        {users.length > 0 && users.map((c, index: number) =>
-          <UserItem
+        {patients.length > 0 && patients.map((c, index: number) =>
+          <PatientItem
             key={index}
-            user={c}
-            setUsers={setUsers}
+            patient={c}
+            setPatients={setPatients}
             index={index}
             isSelectedAll={isSelectedAll}
             setIsSelectedAll={setIsSelectedAll}

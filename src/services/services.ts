@@ -43,6 +43,34 @@ export type TabType = { title: string, event: string, count: number }
 
 export interface TabInt { title: string, event: string }
 
+export type SexKey = 'H' | 'F'
+
+export const sexLabel: Record<SexKey, string> = {
+  H: 'Homme',
+  F: 'Femme',
+}
+
+export const sexOptions = (): SelectOptionType[] => [
+  { label: '-- Aucune valeur sélectionnée --', value: '' },
+  { label: 'Homme', value: 'H' },
+  { label: 'Femme', value: 'F' },
+]
+
+export type MaritalStatusKey = 'CELIBATAIRE' | 'MARIE(E)' | 'VEUF(VE)'
+
+export const martialStatusLabel: Record<MaritalStatusKey, string> = {
+  'MARIE(E)': 'Marié(e)',
+  'VEUF(VE)': 'Veuf(ve)',
+  CELIBATAIRE: 'Célibataire',
+}
+
+export const martialStatusOptions = (): SelectOptionType[] => [
+  { label: '-- Aucune valeure sélectionnée --', value: '' },
+  { label: 'Célibataire', value: 'CELIBATAIRE' },
+  { label: 'Marié(e)', value: 'MARIE(E)' },
+  { label: 'Veuf(ve)', value: 'VEUF(VE)' },
+]
+
 
 // ******************************************* ******************************************** //
 // ******************************************* ******************************************** //

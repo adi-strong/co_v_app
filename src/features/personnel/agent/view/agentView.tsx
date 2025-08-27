@@ -1,11 +1,22 @@
 import {memo} from 'react';
+import {useActivePage, useDocumentTitle} from "../../../../hooks";
+import {BodyContainer, PageTitles} from "../../../../components";
+import {Card} from "react-bootstrap";
+import AgentsList from "./AgentsList.tsx";
 
 const AgentView = () => {
-
+  
+  useDocumentTitle('Agents')
+  useActivePage('agents')
+  
   return (
-    <div>
-      <h1>Agent View</h1>
-    </div>
+    <BodyContainer>
+      <PageTitles title='Agents' />
+      
+      <Card>
+        <AgentsList />
+      </Card>
+    </BodyContainer>
   )
   
 };

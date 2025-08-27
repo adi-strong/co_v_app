@@ -4,7 +4,7 @@ import type {MediaObjectInt} from "../../../../interfaces/MediaObjectInt.ts";
 import type {Service} from "../../service/model/serviceService.ts";
 import type {Fonction} from "../../fonction/model/fonctionService.ts";
 import type {SingleValue} from "react-select";
-import type {SelectOptionType} from "../../../../services/services.ts";
+import type {SelectOptionType, THeadItemType} from "../../../../services/services.ts";
 import type {ImageListType} from "react-images-uploading";
 import {getServiceFakeData} from "../../service/model/serviceService.ts";
 import {getFonctionFakeData} from "../../fonction/model/fonctionService.ts";
@@ -33,6 +33,7 @@ export interface Agent {
   slug?: string
   createdAt?: string
   updatedAt?: string
+  selected: boolean
 }
 
 export interface SaveAgent {
@@ -55,7 +56,7 @@ export interface AgentError {
   prenom: string | null
   sexe: string | null
   tel: string | null
-  emai: string | null
+  email: string | null
   fkDepartement: string | null
   fkService: string | null
   fkFonction: string | null
@@ -86,7 +87,7 @@ export const initAgentErrorState = (): AgentError => ({
   prenom: null,
   sexe: null,
   tel: null,
-  emai: null,
+  email: null,
   fkDepartement: null,
   fkService: null,
   fkFonction: null,
@@ -113,6 +114,7 @@ export const getAgentFakeData = (): Agent[] => [
     createdAt: new Date().toISOString(),
     fkDepartement: getDepartementFakeData()[0],
     '@id': '/api/agents/1',
+    selected: false,
   },
 ]
 
@@ -145,6 +147,13 @@ const castAgentFormData = (state: SaveAgent): FormData => {
   
   return formData
 }
+
+export const getAgentHeadItems = (): THeadItemType[] => [
+  { th: 'Sexe' },
+  { th: 'Fonction' },
+  { th: 'N° Tél.' },
+  { th: 'Date d\'enregistrement' },
+]
 
 /**
  *

@@ -1,7 +1,7 @@
 import type {User} from "../../../user/model/userService.ts";
 import type {MediaObjectInt} from "../../../../interfaces/MediaObjectInt.ts";
 import type {SingleValue} from "react-select";
-import type {SelectOptionType} from "../../../../services/services.ts";
+import type {SelectOptionType, THeadItemType} from "../../../../services/services.ts";
 import type {ImageListType} from "react-images-uploading";
 import type {Dispatch, FormEvent, SetStateAction} from "react";
 import type {NavigateFunction} from "react-router-dom";
@@ -192,6 +192,14 @@ const castPatientFormData = (state: SavePatient): FormData => {
   return formData
 }
 
+export const getPatientHeadItems = (): THeadItemType[] => [
+  { th: 'Convention' },
+  { th: 'Sexe' },
+  { th: 'Âge' },
+  { th: 'N° Tél.' },
+  { th: 'Date d\'enregistrement' },
+]
+
 /**
  *
  * @param e
@@ -290,6 +298,14 @@ export async function onDeletePatient(
     }
   } catch (e) { toast.error('Problème réseau.') }
   
+}
+
+export const onIsStructureChange = (setState: Dispatch<SetStateAction<SavePatient>>): void => {
+  setState(a => ({
+    ...a,
+    estCeConventionne: !a.estCeConventionne,
+    fkStructure: null,
+  }))
 }
 // END EVENTS & FUNCTIONS
 

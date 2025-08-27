@@ -3,7 +3,7 @@ import {useState} from "react";
 import {initServiceErrorState, initServiceState} from "../../../personnel/service/model/serviceService.ts";
 import {Button, Card} from "react-bootstrap";
 import {TextField} from "../../../../components";
-import {handleChange} from "../../../../config/form.hander.service.ts";
+import {handleChange} from "../../../../services/form.hander.service.ts";
 import type {Lit} from "../model/litService.ts";
 import {getLitModeOptions, initLitErrorState, initLitState} from "../model/litService.ts";
 import SelectField from "../../../../components/forms/SelectField.tsx";

@@ -1,7 +1,7 @@
 import type {CompteCaisse} from "../model/compteCaisseService.ts";
 import {Button, Card, Col, Form, Row} from "react-bootstrap";
 import {TextField} from "../../../../components";
-import {handleChange} from "../../../../config/form.hander.service.ts";
+import {handleChange} from "../../../../services/form.hander.service.ts";
 import {useState} from "react";
 import {initCompteCaisseErrorState, initCompteCaisseState} from "../model/compteCaisseService.ts";
 

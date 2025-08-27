@@ -1,7 +1,7 @@
 import {useState} from "react";
 import {Button, Card} from "react-bootstrap";
 import {TextField} from "../../../../components";
-import {handleChange} from "../../../../config/form.hander.service.ts";
+import {handleChange} from "../../../../services/form.hander.service.ts";
 import type {UniteConsommation} from "../model/uniteConsommationService.ts";
 import {initUniteConsommationErrorState, initUniteConsommationState} from "../model/uniteConsommationService.ts";
 

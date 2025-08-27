@@ -2,7 +2,7 @@ import {Button, Col, Row} from "react-bootstrap";
 import {ReactNode, useState} from "react";
 import {handleShow} from "../../../../services/services.ts";
 import {SideContent, TextField} from "../../../../components";
-import {handleChange} from "../../../../config/form.hander.service.ts";
+import {handleChange} from "../../../../services/form.hander.service.ts";
 import ComptesData from "./ComptesData.tsx";
 import {getComptesCaissesFakeData} from "../model/compteCaisseService.ts";
 import CompteForm from "./CompteForm.tsx";

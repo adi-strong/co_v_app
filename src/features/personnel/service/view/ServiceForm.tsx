@@ -1,7 +1,7 @@
 import {useState} from "react";
 import {Button, Card} from "react-bootstrap";
 import {TextField} from "../../../../components";
-import {handleChange} from "../../../../config/form.hander.service.ts";
+import {handleChange} from "../../../../services/form.hander.service.ts";
 import type {Service} from "../model/serviceService.ts";
 import {initServiceErrorState, initServiceState} from "../model/serviceService.ts";
 

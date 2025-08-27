@@ -3,7 +3,7 @@ import {useState} from "react";
 import {getUserRolesOptions, initUserErrorState, initUserState} from "../model/userService.ts";
 import {Button, Col, Form, Row} from "react-bootstrap";
 import {CheckField, MultiSelectField, SingleSelectField, TextField} from "../../../components";
-import {handleChange} from "../../../config/form.hander.service.ts";
+import {handleChange} from "../../../services/form.hander.service.ts";
 import {handleShow, onGetRandomPasswordText} from "../../../services/services.ts";
 import useGetAgentsOptions from "../../personnel/agent/hooks/useGetAgentsOptions.ts";
 

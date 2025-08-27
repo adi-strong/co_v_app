@@ -2,7 +2,7 @@ import type {Dispatch, ReactNode, SetStateAction} from "react";
 import {useState} from "react";
 import {Button, Card, Col, Row, Table} from "react-bootstrap";
 import {CheckField, SideContent, TextField} from "../../../../components";
-import {handleChange} from "../../../../config/form.hander.service.ts";
+import {handleChange} from "../../../../services/form.hander.service.ts";
 import {handleShow, selectAllStateItems, tableWhiteStyle} from "../../../../services/services.ts";
 import type {Fournisseur} from "../model/fournisseurService.ts";
 import FournisseurItem from "./FournisseurItem.tsx";

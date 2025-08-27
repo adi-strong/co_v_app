@@ -4,77 +4,52 @@ import {Button, Card, Col, Row, Table} from "react-bootstrap";
 import {selectAllStateItems, tableWhiteStyle} from "../../../../services/services.ts";
 import {CheckField, TextField} from "../../../../components";
 import {handleChange} from "../../../../services/form.hander.service.ts";
-import {getFournisseurHeadItems} from "../../../stock/fournisseur/model/fournisseurService.ts";
-import type {Prescription} from "../model/prescriptionService.ts";
-import PrescriptionItem from "./PrescriptionItem.tsx";
-import {getPrescHeadItems} from "../model/prescriptionService.ts";
+import type {Agent} from "../model/agentService.ts";
+import {Link} from "react-router-dom";
+import AgentItem from "./AgentItem.tsx";
+import {getAgentHeadItems} from "../model/agentService.ts";
 
-export default function PrescriptionData(props: {
-  prescriptions: Prescription[]
-  setPrescriptions: Dispatch<SetStateAction<Prescription[]>>
+export default function AgentData(props: {
+  agents: Agent[]
+  setAgents: Dispatch<SetStateAction<Agent[]>>
 }) {
   
-  const { prescriptions, setPrescriptions } = props
+  const { agents, setAgents } = props
   
+  const [search, setSearch] = useState<{ keyword: string }>({ keyword: '' })
   const [isSelectedAll, setIsSelectedAll] = useState<boolean>(false)
-  const [search, setSearch] = useState<{ start: string, end: '', factId: string }>({
-    end: '',
-    factId: '',
-    start: '',
-  })
   
   return (
     <>
       <Row>
-        <Col md={3}>
+        <Col md={6}>
           <Card.Title as='h5' className='mx-4 mt-5 me-4'>
             <Button variant='link' size='sm' className='me-2'>
               <i className='bi bi-arrow-clockwise'/>
             </Button>
-            Liste d'ordonnances
+            Liste des agents
+            
+            <Link to='/app/agents/new' className='mx-5 btn btn-sm btn-link' title='Nouvel agent'>
+              <i className='bi bi-plus'/> Nouvel agent
+            </Link>
           </Card.Title>
         </Col>
         
-        <Col md={9} className='pt-4 pt-5 px-4 text-md-end'>
+        <Col md={6} className='pt-4 pt-5 px-4 text-md-end'>
           <form className='row' onSubmit={e => e.preventDefault()}>
-            <Col md={2} className='mb-1'>
+            <Col md={7} className='mb-1'>
               <TextField
                 disabled={false}
                 size='sm'
-                name='factId'
-                value={search.factId}
+                name='keyword'
+                value={search.keyword}
                 onChange={e => handleChange(e, search, setSearch)}
-                placeholder='N° prescription'
               />
             </Col>
             
-            <Col md={3} className='mb-1'>
-              <TextField
-                disabled={false}
-                type='date'
-                size='sm'
-                name='start'
-                value={search.start}
-                onChange={e => handleChange(e, search, setSearch)}
-                placeholder='N° facture'
-              />
-            </Col>
-            
-            <Col md={3} className='mb-1'>
-              <TextField
-                disabled={false}
-                type='date'
-                size='sm'
-                name='end'
-                value={search.end}
-                onChange={e => handleChange(e, search, setSearch)}
-                placeholder='N° facture'
-              />
-            </Col>
-            
-            <Col md={4} className='mb-1'>
+            <Col md={5} className='mb-1'>
               <Button type='submit' disabled={false} variant='outline-primary' className='w-100' size='sm'>
-                Rechercher des ordonnances
+                Rechercher des agents
               </Button>
             </Col>
           </form>
@@ -100,33 +75,30 @@ export default function PrescriptionData(props: {
       <Table hover responsive>
         <thead className='table-light'>
         <tr>
-          <th style={{fontSize: '1rem'}}>
+          <th style={{ fontSize: '1rem' }}>
             <CheckField
               inline
               disabled={false}
               name='isSelectedAll'
               value={isSelectedAll}
               checked={isSelectedAll}
-              onChange={(): void => selectAllStateItems(isSelectedAll, setIsSelectedAll, setPrescriptions)}
+              onChange={(): void => selectAllStateItems(isSelectedAll, setIsSelectedAll, setAgents)}
               className='me-0'
             />
-            N°
+            Nom complet
           </th>
-          <th style={{fontSize: '1rem'}}>
-            Patient
-            <span className='text-lowercase'>(e)</span>
-          </th>
-          {getPrescHeadItems().length > 0 && getPrescHeadItems().map(t =>
-            <th key={t.th} style={{fontSize: '1rem'}}>{t.th}</th>)}
+          
+          {getAgentHeadItems().length > 0 && getAgentHeadItems().map(t =>
+            <th key={t.th} style={{ fontSize: '1rem' }}>{t.th}</th>)}
         </tr>
         </thead>
         
         <tbody style={tableWhiteStyle.tbody}>
-        {prescriptions.length > 0 && prescriptions.map((c, index: number) =>
-          <PrescriptionItem
+        {agents.length > 0 && agents.map((c, index: number) =>
+          <AgentItem
             key={index}
-            prescription={c}
-            setPrescription={setPrescriptions}
+            agent={c}
+            setAgents={setAgents}
             index={index}
             isSelectedAll={isSelectedAll}
             setIsSelectedAll={setIsSelectedAll}

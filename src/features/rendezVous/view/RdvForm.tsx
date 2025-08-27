@@ -1,7 +1,7 @@
 import {useState} from "react";
 import {Button, Card} from "react-bootstrap";
 import {SingleSelectField, TextField} from "../../../components";
-import {handleChange} from "../../../config/form.hander.service.ts";
+import {handleChange} from "../../../services/form.hander.service.ts";
 import type {RendezVous} from "../model/rendezVousService.ts";
 import {initRendezVousErrorState, initRendezVousState} from "../model/rendezVousService.ts";
 import useGetAgentsOptions from "../../personnel/agent/hooks/useGetAgentsOptions.ts";

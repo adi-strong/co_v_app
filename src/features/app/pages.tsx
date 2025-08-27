@@ -52,6 +52,12 @@ const
   
   Struct = lazy(() =>
     import('../patients/structure/view/structureView.tsx')),
+  Pat = lazy(() =>
+    import('../patients/patient/view/patientView.tsx')),
+  NPat = lazy(() =>
+    import('../patients/patient/view/newPatient.tsx')),
+  EPat = lazy(() =>
+    import('../patients/patient/view/editPatient.tsx')),
   
   CCaisses = lazy(() =>
     import('../finances/compteCaisse/view/compteCaisseView.tsx')),
@@ -70,7 +76,13 @@ const
   
   Users = lazy(() => import('../user/view/userView.tsx')),
   NUser = lazy(() => import('../user/view/newUser.tsx')),
-  EUser = lazy(() => import('../user/view/editUser.tsx'))
+  EUser = lazy(() => import('../user/view/editUser.tsx')),
+  
+  IGen = lazy(() => import('../configs/infosGen/view/infosGenView.tsx')),
+  
+  Agents = lazy(() => import('../personnel/agent/view/agentView.tsx')),
+  NAgent = lazy(() => import('../personnel/agent/view/newAgent.tsx')),
+  EAgent = lazy(() => import('../personnel/agent/view/editAgent.tsx'))
 
 const pages: RouteType[] = [
   {
@@ -171,12 +183,24 @@ const pages: RouteType[] = [
       },
       // End produits
       
-      // Structures
+      // patients
       {
         path: 'structures',
         element: <Struct />
       },
-      // End Structures
+      {
+        path: 'patients',
+        element: <Pat />
+      },
+      {
+        path: 'patients/new',
+        element: <NPat />
+      },
+      {
+        path: 'patients/:id/:slug/edit',
+        element: <EPat />
+      },
+      // End patients
       
       // comptes
       {
@@ -219,7 +243,7 @@ const pages: RouteType[] = [
       },
       // End accueil
       
-      // accueil
+      // users
       {
         path: 'users',
         element: <Users />
@@ -232,7 +256,29 @@ const pages: RouteType[] = [
         path: 'users/:id/:slug/edit',
         element: <EUser />
       },
-      // End accueil
+      // End users
+      
+      // paramètres
+      {
+        path: 'params',
+        element: <IGen />
+      },
+      // End paramètres
+      
+      // agents
+      {
+        path: 'agents',
+        element: <Agents />
+      },
+      {
+        path: 'agents/new',
+        element: <NAgent />
+      },
+      {
+        path: 'agents/:id/:slug/edit',
+        element: <EAgent />
+      },
+      // End agents
     ]
   },
 ]
