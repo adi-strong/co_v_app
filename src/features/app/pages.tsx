@@ -49,6 +49,10 @@ const
     import('../stock/categorieProduit/view/categorieProduitView.tsx')),
   Fourn = lazy(() =>
     import('../stock/fournisseur/view/fournisseurView.tsx')),
+  Prod = lazy(() =>
+    import('../stock/produit/view/produitView.tsx')),
+  NProd = lazy(() =>
+    import('../stock/produit/view/newProduit.tsx')),
   
   Struct = lazy(() =>
     import('../patients/structure/view/structureView.tsx')),
@@ -180,6 +184,14 @@ const pages: RouteType[] = [
       {
         path: 'fournisseurs',
         element: <Fourn />
+      },
+      {
+        path: 'produits',
+        element: <Prod />
+      },
+      {
+        path: 'produits/new',
+        element: <NProd />
       },
       // End produits
       

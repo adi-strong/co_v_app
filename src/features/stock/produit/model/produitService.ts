@@ -3,12 +3,13 @@ import type {CategorieProduit} from "../../categorieProduit/model/categorieProdu
 import type {ImageListType} from "react-images-uploading";
 import type {MediaObjectInt} from "../../../../interfaces/MediaObjectInt.ts";
 import type {SingleValue} from "react-select";
-import type {SelectOptionType} from "../../../../services/services.ts";
+import type {SelectOptionType, THeadItemType} from "../../../../services/services.ts";
 import {getCategorieProduitFakeData} from "../../categorieProduit/model/categorieProduitService.ts";
 import type {Dispatch, FormEvent, SetStateAction} from "react";
 import type {NavigateFunction} from "react-router-dom";
 import type {JsonLdApiResponseInt} from "../../../../interfaces/JsonLdApiResponseInt.ts";
 import toast from "react-hot-toast";
+import type {UniteConsommation} from "../../uniteConsommation/model/uniteConsommationService.ts";
 
 // INTERFACES OR TYPES
 export interface Produit {
@@ -21,6 +22,7 @@ export interface Produit {
   description?: string
   fkUser?: User
   fkCategorie?: CategorieProduit
+  fkUnite?: UniteConsommation
   image?: MediaObjectInt
   slug?: string
   createdAt?: string
@@ -36,6 +38,7 @@ export interface SaveProduit {
   codeQr: string
   description: string
   fkCategorie: SingleValue<SelectOptionType> | null
+  fkUnite: SingleValue<SelectOptionType> | null
   file: ImageListType
 }
 
@@ -46,6 +49,7 @@ export interface ProduitError {
   codeQr: string | null
   description: string | null
   fkCategorie: string | null
+  fkUnite: string | null
   file: string | null
 }
 // END INTERFACES OR TYPES
@@ -54,14 +58,15 @@ export interface ProduitError {
 
 // INIT
 export const initProduitState = (): SaveProduit => ({
-  code: '',
   id: 0,
+  code: '',
   codeBar: '',
-  file: [],
   codeQr: '',
+  file: [],
   nom: '',
   description: '',
   fkCategorie: null,
+  fkUnite: null,
 })
 
 export const initProduitErrorState = (): ProduitError => ({
@@ -71,6 +76,7 @@ export const initProduitErrorState = (): ProduitError => ({
   codeQr: null,
   description: null,
   fkCategorie: null,
+  fkUnite: null,
   file: null,
 })
 // END INIT
@@ -114,6 +120,14 @@ const castProduitToForomData = (state: SaveProduit): FormData => {
   
   return formData
 }
+
+export const getProduitHeadItems = (): THeadItemType[] => [
+  { th: 'Code' },
+  { th: 'Quantité' },
+  { th: 'U.C' },
+  { th: 'Prix TTC' },
+  { th: 'Péremption' },
+]
 
 /**
  *

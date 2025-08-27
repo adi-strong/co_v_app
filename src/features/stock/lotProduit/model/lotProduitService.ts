@@ -30,6 +30,7 @@ export interface LotProduit {
   fkLot: NumLot
   fkUnite?: UniteConsommation
   releasedAt?: string
+  selected: boolean
 }
 
 export interface SaveLotProduit {
@@ -74,7 +75,6 @@ export const initLotProduitErrorState = (): LotProduitError => ({
 /* ------------------------------------------- */
 
 // EVENTS & FUNCTIONS
-
 /**
  *
  * @param e
