@@ -32,6 +32,10 @@ const
     import('../traitements/typeConsultation/view/typeConsultationView.tsx')),
   Presc = lazy(() =>
     import('../traitements/prescription/view/prescriptionView.tsx')),
+  Consult = lazy(() =>
+    import('../traitements/consultation/view/consultationView.tsx')),
+  NConsult = lazy(() =>
+    import('../traitements/consultation/view/newConsult.tsx')),
   
   Fonc = lazy(() =>
     import('../personnel/fonction/view/fonctionView.tsx')),
@@ -145,6 +149,14 @@ const pages: RouteType[] = [
       {
         path: 'prescriptions',
         element: <Presc />
+      },
+      {
+        path: 'consultations',
+        element: <Consult />
+      },
+      {
+        path: 'consultations/new',
+        element: <NConsult />
       },
       // End Fiches consultations
       

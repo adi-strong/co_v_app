@@ -6,8 +6,8 @@ import type {Traitement} from "../../traitement/model/traitementService.ts";
 import type {ExamenPrescrit, ProduitPrescrit} from "../../prescription/model/prescriptionService.ts";
 import type {Hospitalisation} from "../../hospitalisation/model/hospitalisationService.ts";
 import type {DocumentSuivi} from "../../documentSuivi/model/documentSuiviService.ts";
-import type {SingleValue} from "react-select";
-import type {SelectOptionType} from "../../../../services/services.ts";
+import type {MultiValue, SingleValue} from "react-select";
+import type {SelectOptionType, THeadItemType} from "../../../../services/services.ts";
 import type {Dispatch, FormEvent, SetStateAction} from "react";
 import type {JsonLdApiResponseInt} from "../../../../interfaces/JsonLdApiResponseInt.ts";
 import toast from "react-hot-toast";
@@ -59,6 +59,7 @@ export interface Consultation {
   examPrescrits: ExamenPrescrit[]
   createdAt?: string
   updatedAt?: string
+  slug?: string
 }
 
 export interface SoinItem { traitementID: number }
@@ -82,7 +83,6 @@ export interface PrescriptionItem {
 
 export interface SaveConsultation {
   id: number
-  motif: string
   diagnostic: string
   conclusion: string
   comment: string
@@ -90,15 +90,22 @@ export interface SaveConsultation {
   renseignementClinic: string
   dateDebut: string
   dateFin: string
-  finished: boolean
   fkPatient: SingleValue<SelectOptionType> | null
   fkAgent: SingleValue<SelectOptionType> | null
   fkType: SingleValue<SelectOptionType> | null
   
   end: boolean
-  soinsItems: SoinItem[]
+  
+  isSoins: boolean
+  soinsItems?: SoinItem | null
+  
+  isExam: boolean
+  exams: MultiValue<SelectOptionType>
   examsItems: ExamItem[]
-  signes: SigneItem[]
+  
+  isSign: boolean
+  signes?: SigneItem | null
+  
   prescriptionsItems: PrescriptionItem[]
 }
 
@@ -127,25 +134,39 @@ export interface ConsultationError {
 /* ------------------------------------------- */
 
 // INIT
+export const initConsultSignes = (): SigneItem => {
+  return {
+    frequenceCardiaque: '',
+    saturationEnOxygene: '',
+    temperature: 0,
+    comment: '',
+    tensionArterielle: '',
+    frequenceRespiratoire: '',
+    poids: 0,
+  }
+}
+
 export const initConsultationState = (): SaveConsultation => ({
   id: 0,
   end: false,
-  comment: '',
-  conclusion: '',
-  examsItems: [],
-  dateDebut: '',
-  dateFin: '',
-  diagnostic: '',
-  finished: false,
-  fkAgent: null,
-  signes: [],
-  fkPatient: null,
+  signes: null,
   fkType: null,
-  motif: '',
+  fkAgent: null,
+  comment: '',
+  fkPatient: null,
+  renseignementClinic: '',
+  statut: 'EN_COURS',
+  dateFin: '',
+  soinsItems: null,
   prescriptionsItems: [],
-  soinsItems: [],
-  statut: 'NONE',
-  renseignementClinic: ''
+  dateDebut: '',
+  diagnostic: '',
+  examsItems: [],
+  isSign: false,
+  conclusion: '',
+  exams: [],
+  isSoins: false,
+  isExam: false,
 })
 
 export const initConsultationErrorState = (): ConsultationError => ({
@@ -173,6 +194,21 @@ export const initConsultationErrorState = (): ConsultationError => ({
 /* ------------------------------------------- */
 
 // EVENTS & FUNCTIONS
+export const getConsultHeadItems = (): THeadItemType[] => [
+  { th: 'Fiche' },
+  { th: 'Statut' },
+  { th: 'Date début' },
+]
+
+/**
+ *
+ * @param e
+ * @param state
+ * @param setErrors
+ * @param onSubmit
+ * @param onHide
+ * @param onRefresh
+ */
 export async function onConsultSubmit(
   e: FormEvent<HTMLFormElement>,
   state: SaveConsultation,
@@ -201,6 +237,56 @@ export async function onConsultSubmit(
   } catch (e) { toast.error('Problème réseau.') }
   
 }
+
+export const onConsultIsSignChange = (setState: Dispatch<SetStateAction<SaveConsultation>>): void => {
+  setState(consult => {
+    const isSign: boolean = !consult.isSign
+    const signes: SigneItem | null = isSign ? initConsultSignes() : null
+    return {
+      ...consult,
+      isSign,
+      signes,
+    }
+  })
+}
+
+export const onConsultIsExamsChange = (setState: Dispatch<SetStateAction<SaveConsultation>>): void => {
+  setState(consult => {
+    return {
+      ...consult,
+      exams: [],
+      isExam: !consult.isExam,
+      examsItems: [],
+      renseignementClinic: '',
+    }
+  })
+}
+
+export const onConsultExamsChange = (
+  exams: MultiValue<SelectOptionType>,
+  setState: Dispatch<SetStateAction<SaveConsultation>>
+): void => {
+  setState(consult => {
+    let examsItems: ExamItem[] = []
+    if (exams && exams.length > 0) {
+      exams.forEach(({ id }): void => {
+        if (id) examsItems.push({ id })
+      })
+    }
+    return {
+      ...consult,
+      exams,
+      examsItems,
+    }
+  })
+}
+
+export const getConsultStatusOptions = (): SingleValue<SelectOptionType>[] => [
+  { label: '-- Aucune option sélectionnée --', value: '' },
+  { label: 'EN COURS', value: 'EN_COURS' },
+  { label: 'ANNULÉE', value: 'ANNULEE' },
+  { label: 'TERMINÉE', value: 'TERMINEE' },
+]
 // END EVENTS & FUNCTIONS
 
 /* ------------------------------------------- */

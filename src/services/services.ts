@@ -30,7 +30,7 @@ export type SelectOptionType = {
   label: string
   value: string
   data?: string
-  id?: number | null
+  id?: number
   typeId?: number | null
   subData?: MultiValue<SelectOptionType>
 }

@@ -1,11 +1,21 @@
 import {memo} from 'react';
+import {useActivePage, useDocumentTitle} from "../../../../hooks";
+import {BodyContainer, PageTitles} from "../../../../components";
+import ConsultationList from "./ConsultationList.tsx";
+import {Card} from "react-bootstrap";
 
 const ConsultationView = () => {
+  
+  useDocumentTitle('Fiches de consultation')
+  useActivePage('treats')
 
   return (
-    <div>
-      <h1>Consultation View</h1>
-    </div>
+    <BodyContainer>
+      <PageTitles title='Fiches de consultation'/>
+      <Card>
+        <ConsultationList/>
+      </Card>
+    </BodyContainer>
   )
   
 };
