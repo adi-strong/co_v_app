@@ -1,11 +1,20 @@
 import {memo} from 'react';
+import {useDocumentTitle} from "../../../../hooks";
+import {BodyContainer, PageTitles} from "../../../../components";
+import {Card} from "react-bootstrap";
+import LabList from "./LabList.tsx";
 
 const LabView = () => {
+  
+  useDocumentTitle('Laboratoire')
 
   return (
-    <div>
-      <h1>Lab View</h1>
-    </div>
+    <BodyContainer>
+      <PageTitles title="Liste des documents d'analyses au labo"/>
+      <Card>
+        <LabList/>
+      </Card>
+    </BodyContainer>
   )
   
 };

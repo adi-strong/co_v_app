@@ -1,10 +1,11 @@
 import type {Lit} from "../../lit/model/litService.ts";
 import type {SingleValue} from "react-select";
-import type {SelectOptionType} from "../../../../services/services.ts";
+import type {SelectOptionType, THeadItemType} from "../../../../services/services.ts";
 import type {Dispatch, FormEvent, SetStateAction} from "react";
 import type {JsonLdApiResponseInt} from "../../../../interfaces/JsonLdApiResponseInt.ts";
 import toast from "react-hot-toast";
-  
+import type {Consultation} from "../../consultation/model/consultationService.ts";
+
 // INTERFACES OR TYPES
 export interface Hospitalisation {
   '@id'?: string
@@ -23,6 +24,7 @@ export interface Hospitalisation {
   nbreHeures?: number
   finished: boolean
   releasedAt?: string
+  fkConsultation: Consultation
 }
 
 export interface SaveHospitalisation {
@@ -87,6 +89,12 @@ export const initHospitalisationErrorState = (): HospitalisationError => ({
 /* ------------------------------------------- */
 
 // EVENTS & FUNCTIONS
+export const getHospHeadItems = (): THeadItemType[] => [
+  { th: 'Mode d\'entrée' },
+  { th: 'Statut' },
+  { th: 'Date d\'enregistrement' },
+]
+
 export async function onHospitalisationSubmit(
   e: FormEvent<HTMLFormElement>,
   state: SaveHospitalisation,

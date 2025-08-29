@@ -3,12 +3,12 @@ import {Button, Card, Col, Row, Table} from "react-bootstrap";
 import {Link} from "react-router-dom";
 import {TextField} from "../../../../components";
 import {handleChange} from "../../../../services/form.hander.service.ts";
+import {getConsultHeadItems} from "../../consultation/model/consultationService.ts";
 import {tableWhiteStyle} from "../../../../services/services.ts";
-import type {Consultation} from "../model/consultationService.ts";
-import {getConsultHeadItems} from "../model/consultationService.ts";
-import ConsultItem from "./ConsultItem.tsx";
+import type {DocumentSuivi} from "../model/documentSuiviService.ts";
+import DocumentItem from "./DocumentItem.tsx";
 
-export default function ConsultData({ consultations }: { consultations: Consultation[] }) {
+export default function DocumentData({ docs }: { docs: DocumentSuivi[] }) {
   
   const [search, setSearch] = useState<{ start: string, end: '' }>({
     end: '',
@@ -23,9 +23,9 @@ export default function ConsultData({ consultations }: { consultations: Consulta
             <Button variant='link' size='sm' className='me-2'>
               <i className='bi bi-arrow-clockwise'/>
             </Button>
-            Liste de fiches
+            Liste des fiches
             
-            <Link to='/app/consultations/new' className='mx-5 btn btn-sm btn-link' title='Nouvel enregistrement'>
+            <Link to='/app/suivis/new' className='mx-5 btn btn-sm btn-link' title='Nouvel enregistrement'>
               <i className='bi bi-plus'/> Nouvelle fiche
             </Link>
           </Card.Title>
@@ -96,10 +96,10 @@ export default function ConsultData({ consultations }: { consultations: Consulta
         </thead>
         
         <tbody style={tableWhiteStyle.tbody}>
-        {consultations.length > 0 && consultations.map((c, index: number) =>
-          <ConsultItem
+        {docs.length > 0 && docs.map((c, index: number) =>
+          <DocumentItem
             key={index}
-            consultation={c}
+            doc={c}
             index={index}
           />)}
         </tbody>

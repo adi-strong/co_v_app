@@ -4,6 +4,7 @@ import type {Consultation} from "../../consultation/model/consultationService.ts
 import type {Dispatch, FormEvent, SetStateAction} from "react";
 import type {JsonLdApiResponseInt} from "../../../../interfaces/JsonLdApiResponseInt.ts";
 import toast from "react-hot-toast";
+import type {THeadItemType} from "../../../../services/services.ts";
   
 // INTERFACES OR TYPES
 export interface Lab {
@@ -52,6 +53,12 @@ export const initLabErrorState = (): LabError => ({
 /* ------------------------------------------- */
 
 // EVENTS & FUNCTIONS
+export const getLabHeadItems = (): THeadItemType[] => [
+  { th: 'Fiche' },
+  { th: 'Médecin' },
+  { th: 'Date' },
+]
+
 export async function onLabSubmit(
   e: FormEvent<HTMLFormElement>,
   state: SaveLab,

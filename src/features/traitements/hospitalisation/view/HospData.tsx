@@ -1,14 +1,13 @@
 import {useState} from "react";
 import {Button, Card, Col, Row, Table} from "react-bootstrap";
-import {Link} from "react-router-dom";
 import {TextField} from "../../../../components";
 import {handleChange} from "../../../../services/form.hander.service.ts";
 import {tableWhiteStyle} from "../../../../services/services.ts";
-import type {Consultation} from "../model/consultationService.ts";
-import {getConsultHeadItems} from "../model/consultationService.ts";
-import ConsultItem from "./ConsultItem.tsx";
+import type {Hospitalisation} from "../model/hospitalisationService.ts";
+import HospItem from "./HospItem.tsx";
+import {getHospHeadItems} from "../model/hospitalisationService.ts";
 
-export default function ConsultData({ consultations }: { consultations: Consultation[] }) {
+export default function HospData({ hosps }: { hosps: Hospitalisation[] }) {
   
   const [search, setSearch] = useState<{ start: string, end: '' }>({
     end: '',
@@ -18,20 +17,16 @@ export default function ConsultData({ consultations }: { consultations: Consulta
   return (
     <>
       <Row>
-        <Col md={4}>
+        <Col md={5}>
           <Card.Title as='h5' className='mx-4 mt-5 me-4'>
             <Button variant='link' size='sm' className='me-2'>
               <i className='bi bi-arrow-clockwise'/>
             </Button>
-            Liste de fiches
-            
-            <Link to='/app/consultations/new' className='mx-5 btn btn-sm btn-link' title='Nouvel enregistrement'>
-              <i className='bi bi-plus'/> Nouvelle fiche
-            </Link>
+            Historique des hospitalisations
           </Card.Title>
         </Col>
         
-        <Col md={8} className='pt-4 pt-5 px-4 text-md-end'>
+        <Col md={7} className='pt-4 pt-5 px-4 text-md-end'>
           <form className='row' onSubmit={e => e.preventDefault()}>
             <Col md={4} className='mb-1'>
               <TextField
@@ -90,16 +85,16 @@ export default function ConsultData({ consultations }: { consultations: Consulta
             <span className='text-lowercase'>(e)</span>
           </th>
           
-          {getConsultHeadItems().length > 0 && getConsultHeadItems().map(t =>
+          {getHospHeadItems().length > 0 && getHospHeadItems().map(t =>
             <th key={t.th} style={{ fontSize: '1rem' }}>{t.th}</th>)}
         </tr>
         </thead>
         
         <tbody style={tableWhiteStyle.tbody}>
-        {consultations.length > 0 && consultations.map((c, index: number) =>
-          <ConsultItem
+        {hosps.length > 0 && hosps.map((c, index: number) =>
+          <HospItem
             key={index}
-            consultation={c}
+            hosp={c}
             index={index}
           />)}
         </tbody>

@@ -29,7 +29,7 @@ export default function ConsultForm({ data }: { data?: Consultation }) {
   return (
     <>
       <FormRequiredFieldsNoticeText/>
-      <h3 className='mb-3'><i className='bi bi-lungs-fill'/> Formuaire de consultation</h3>
+      <h3 className='mb-3'><i className='bi bi-lungs-fill'/> Formulaire de consultation</h3>
       <form onSubmit={e => {
         e.preventDefault()
         handleShow(setShow)
@@ -50,7 +50,6 @@ export default function ConsultForm({ data }: { data?: Consultation }) {
           
           <Col md={4} className='mb-3'>
             <SingleSelectField
-              required
               disabled={false}
               options={[]}
               value={state?.fkAgent ?? null}

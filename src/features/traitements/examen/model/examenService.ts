@@ -3,6 +3,8 @@ import toast from "react-hot-toast";
 import type {JsonLdApiResponseInt} from "../../../../interfaces/JsonLdApiResponseInt.ts";
 import type {CategorieExam} from "../../categorieExam/model/categorieExamService.ts";
 import type {NavigateFunction} from "react-router-dom";
+import type {SingleValue} from "react-select";
+import type {SelectOptionType, THeadItemType} from "../../../../services/services.ts";
 
 // INTERFACES OR TYPES
 export interface Examen {
@@ -23,7 +25,7 @@ export interface SaveExamen {
   nom: string
   prixHt: number
   prixTtc: number
-  fkCategorie: string | null
+  fkCategorie: SingleValue<SelectOptionType> | null
 }
 
 export interface ExamenError {
@@ -75,6 +77,13 @@ export const getExamenFakeData = (): Examen[] => [
     prixTtc: 0,
     selected: false,
   },
+]
+
+export const getExamHeadItems = (): THeadItemType[] => [
+  { th: 'Catégorie' },
+  { th: 'Prix HT' },
+  { th: 'Prix TTC' },
+  { th: 'Date' },
 ]
 
 export async function onExamenSubmit(

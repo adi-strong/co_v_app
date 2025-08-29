@@ -4,19 +4,29 @@ import type {Agent} from "../../../personnel/agent/model/agentService.ts";
 import type {Hospitalisation} from "../../hospitalisation/model/hospitalisationService.ts";
 import type {
   Consultation,
-  PrescriptionItem,
   SigneVital
 } from "../../consultation/model/consultationService.ts";
 import type {Prescription} from "../../prescription/model/prescriptionService.ts";
 import type {Patient} from "../../../patients/patient/model/patientService.ts";
-import type {SuiviTraitement} from "../../suiviTraitement/model/suiviTraitementService.ts";
 import type {SingleValue} from "react-select";
 import type {SelectOptionType} from "../../../../services/services.ts";
 import type {Dispatch, FormEvent, SetStateAction} from "react";
 import type {JsonLdApiResponseInt} from "../../../../interfaces/JsonLdApiResponseInt.ts";
 import toast from "react-hot-toast";
-  
+import type {Traitement} from "../../traitement/model/traitementService.ts";
+
 // INTERFACES OR TYPES
+export interface SuiviTraitement {
+  id: number
+  prixHt: number
+  prixTtc: number
+  fkTraitement: Traitement
+  fkDocSuivi: DocumentSuivi
+  fkAgent: Agent
+  fkUser?: User
+  releasedAt?: string
+}
+
 export interface DocumentSuivi {
   '@id'?: string
   id: number
@@ -38,7 +48,7 @@ export interface DocumentSuivi {
   updatedAt?: string
 }
 
-export interface SuiviItem { traitementID: number }
+export interface SuiviItem { id: number }
 
 export interface SaveDocumentSuivi {
   id: number
@@ -49,13 +59,10 @@ export interface SaveDocumentSuivi {
   fkType: SingleValue<SelectOptionType> | null
   fkAgent: SingleValue<SelectOptionType> | null
   fkPatient: SingleValue<SelectOptionType> | null
-  finished: boolean
   
   end: boolean
   dateSortie: string
   suivisItems: SuiviItem[]
-  prescriptionsItems: PrescriptionItem[]
-  signes: SigneVital[]
 }
 
 export interface DocumentSuiviError {
@@ -82,18 +89,15 @@ export interface DocumentSuiviError {
 export const initDocumentSuiviState = (): SaveDocumentSuivi => ({
   id: 0,
   end: false,
-  prescriptionsItems: [],
   suivisItems: [],
   dateDebut: '',
   dateFin: '',
   dateSortie: '',
-  signes: [],
-  finished: false,
   fkAgent: null,
   fkPatient: null,
   fkType: null,
   motif: '',
-  statut: 'NONE',
+  statut: 'EN_COURS',
 })
 
 export const initDocumentSuiviErrorState = (): DocumentSuiviError => ({
@@ -116,6 +120,13 @@ export const initDocumentSuiviErrorState = (): DocumentSuiviError => ({
 /* ------------------------------------------- */
 
 // EVENTS & FUNCTIONS
+export const getDocStatusOptions = (): SelectOptionType[] => [
+  { label: '-- --', value: '' },
+  { label: 'EN COURS', value: 'EN_COURS' },
+  { label: 'TERMINÉE', value: 'TERMINEE' },
+  { label: 'ANNULÉE', value: 'ANNULEE' },
+]
+
 export async function onDocumentSuiviSubmit(
   e: FormEvent<HTMLFormElement>,
   state: SaveDocumentSuivi,

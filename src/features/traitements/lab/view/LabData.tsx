@@ -1,14 +1,13 @@
 import {useState} from "react";
 import {Button, Card, Col, Row, Table} from "react-bootstrap";
-import {Link} from "react-router-dom";
 import {TextField} from "../../../../components";
 import {handleChange} from "../../../../services/form.hander.service.ts";
 import {tableWhiteStyle} from "../../../../services/services.ts";
-import type {Consultation} from "../model/consultationService.ts";
-import {getConsultHeadItems} from "../model/consultationService.ts";
-import ConsultItem from "./ConsultItem.tsx";
+import type {Lab} from "../model/labService.ts";
+import LabItem from "./LabItem.tsx";
+import {getLabHeadItems} from "../model/labService.ts";
 
-export default function ConsultData({ consultations }: { consultations: Consultation[] }) {
+export default function LabData({ labs }: { labs: Lab[] }) {
   
   const [search, setSearch] = useState<{ start: string, end: '' }>({
     end: '',
@@ -23,11 +22,7 @@ export default function ConsultData({ consultations }: { consultations: Consulta
             <Button variant='link' size='sm' className='me-2'>
               <i className='bi bi-arrow-clockwise'/>
             </Button>
-            Liste de fiches
-            
-            <Link to='/app/consultations/new' className='mx-5 btn btn-sm btn-link' title='Nouvel enregistrement'>
-              <i className='bi bi-plus'/> Nouvelle fiche
-            </Link>
+            Liste des documents
           </Card.Title>
         </Col>
         
@@ -90,16 +85,16 @@ export default function ConsultData({ consultations }: { consultations: Consulta
             <span className='text-lowercase'>(e)</span>
           </th>
           
-          {getConsultHeadItems().length > 0 && getConsultHeadItems().map(t =>
+          {getLabHeadItems().length > 0 && getLabHeadItems().map(t =>
             <th key={t.th} style={{ fontSize: '1rem' }}>{t.th}</th>)}
         </tr>
         </thead>
         
         <tbody style={tableWhiteStyle.tbody}>
-        {consultations.length > 0 && consultations.map((c, index: number) =>
-          <ConsultItem
+        {labs.length > 0 && labs.map((c, index: number) =>
+          <LabItem
             key={index}
-            consultation={c}
+            lab={c}
             index={index}
           />)}
         </tbody>

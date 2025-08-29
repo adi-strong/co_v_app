@@ -36,6 +36,16 @@ const
     import('../traitements/consultation/view/consultationView.tsx')),
   NConsult = lazy(() =>
     import('../traitements/consultation/view/newConsult.tsx')),
+  Doc = lazy(() =>
+    import('../traitements/documentSuivi/view/documentSuiviView.tsx')),
+  NDoc = lazy(() =>
+    import('../traitements/documentSuivi/view/newDocument.tsx')),
+  Labs = lazy(() =>
+    import('../traitements/lab/view/labView.tsx')),
+  Exams = lazy(() =>
+    import('../traitements/examen/view/examenView.tsx')),
+  Hosp = lazy(() =>
+    import('../traitements/hospitalisation/view/hospitalisationView.tsx')),
   
   Fonc = lazy(() =>
     import('../personnel/fonction/view/fonctionView.tsx')),
@@ -157,6 +167,26 @@ const pages: RouteType[] = [
       {
         path: 'consultations/new',
         element: <NConsult />
+      },
+      {
+        path: 'suivis',
+        element: <Doc />
+      },
+      {
+        path: 'suivis/new',
+        element: <NDoc />
+      },
+      {
+        path: 'labs',
+        element: <Labs />
+      },
+      {
+        path: 'examens',
+        element: <Exams />
+      },
+      {
+        path: 'hospitalisations',
+        element: <Hosp />
       },
       // End Fiches consultations
       

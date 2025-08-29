@@ -105,8 +105,6 @@ export interface SaveConsultation {
   
   isSign: boolean
   signes?: SigneItem | null
-  
-  prescriptionsItems: PrescriptionItem[]
 }
 
 export interface ConsultationError {
@@ -158,7 +156,6 @@ export const initConsultationState = (): SaveConsultation => ({
   statut: 'EN_COURS',
   dateFin: '',
   soinsItems: null,
-  prescriptionsItems: [],
   dateDebut: '',
   diagnostic: '',
   examsItems: [],

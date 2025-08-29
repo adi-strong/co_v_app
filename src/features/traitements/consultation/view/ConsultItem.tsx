@@ -1,5 +1,4 @@
 import {
-  handleShow,
   onMouseEnterEvent,
   onMouseLeaveEvent,
 } from "../../../../services/services.ts";
