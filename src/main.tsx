@@ -70,9 +70,7 @@ moment.locale('fr', {
 });
 
 createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <Provider store={store}>
-      <App />
-    </Provider>
-  </StrictMode> as ReactNode,
+  <Provider store={store}>
+    <App />
+  </Provider> as ReactNode
 )

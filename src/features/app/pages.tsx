@@ -67,6 +67,10 @@ const
     import('../stock/produit/view/produitView.tsx')),
   NProd = lazy(() =>
     import('../stock/produit/view/newProduit.tsx')),
+  Appro = lazy(() =>
+    import('../stock/appro/view/approView.tsx')),
+  NAppro = lazy(() =>
+    import('../stock/appro/view/newAppro.tsx')),
   
   Struct = lazy(() =>
     import('../patients/structure/view/structureView.tsx')),
@@ -82,6 +86,8 @@ const
   
   FactProd = lazy(() =>
     import('../stock/factureProduit/view/factureProduitView.tsx')),
+  ProdInv = lazy(() =>
+    import('../stock/factureProduit/view/productInvoiceView.tsx')),
   FactDocs = lazy(() =>
     import('../traitements/factureDocumentSuivi/view/factureDocumentSuiviView.tsx')),
   FactConsults = lazy(() =>
@@ -235,6 +241,14 @@ const pages: RouteType[] = [
         path: 'produits/new',
         element: <NProd />
       },
+      {
+        path: 'approvisionnements',
+        element: <Appro />
+      },
+      {
+        path: 'approvisionnements/new',
+        element: <NAppro />
+      },
       // End produits
       
       // patients
@@ -267,6 +281,10 @@ const pages: RouteType[] = [
       {
         path: 'factures-produits',
         element: <FactProd />
+      },
+      {
+        path: 'factures-des-produits',
+        element: <ProdInv />
       },
       {
         path: 'factures-traitements',

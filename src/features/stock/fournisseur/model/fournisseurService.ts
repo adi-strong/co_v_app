@@ -11,7 +11,7 @@ export interface Fournisseur {
   id: number
   nom?: string
   nomCommercial: string
-  abreviation: string
+  abreviation?: string
   tel: string
   email?: string
   focal?: string

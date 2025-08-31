@@ -42,18 +42,18 @@ export const initUniteConsommationErrorState = (): DepartementError => ({ nom: n
 export const getUniteConsommationFakeData = (): UniteConsommation[] => [
   {
     id: 1,
-    nom: 'Malaria',
-    slug: 'malaria',
+    nom: 'pce',
+    slug: 'pce',
     createdAt: new Date().toISOString(),
-    "@id": '/api/categorie_exams/1',
+    "@id": '/api/unite_consommations/1',
     selected: false,
   },
   {
     id: 2,
-    nom: 'Typhoïde',
-    slug: 'typhoide',
+    nom: 'l',
+    slug: 'pce',
     createdAt: new Date().toISOString(),
-    "@id": '/api/categorie_exams/2',
+    "@id": '/api/unite_consommations/2',
     selected: false,
   },
 ]

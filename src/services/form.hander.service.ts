@@ -11,7 +11,7 @@ export const handleChange = (
   switch (target.type) {
     case 'number':
       const numValue = Number(target.value);
-      value = isNaN(numValue) || numValue < 0 ? ' ' : numValue;
+      value = isNaN(numValue) || numValue < 0 ? 0 : numValue;
       break;
     case 'file':
       if (target instanceof HTMLInputElement && target.files) {

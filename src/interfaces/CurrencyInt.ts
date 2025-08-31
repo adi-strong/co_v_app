@@ -3,6 +3,6 @@ export interface CurrencyInt {
   flag: string
   image: string
   label: string
-  value?: string
-  symbol?: string
+  value: string
+  symbol: string
 }

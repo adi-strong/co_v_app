@@ -29,7 +29,7 @@ export type SelectRecord = Record<string, string>
 export type SelectOptionType = {
   label: string
   value: string
-  data?: string
+  data?: any
   id?: number
   typeId?: number | null
   subData?: MultiValue<SelectOptionType>
@@ -148,7 +148,7 @@ export const onGetRandomPasswordText = (length: number, setState: Dispatch<SetSt
 }
 
 export const formatDecimalNumberWithSpaces = (value: string | number): string => {
-  const number = typeof value === 'number' ? value : parseFloat(value.toString().replace(',', '.'));
+  const number: number = typeof value === 'number' ? value : parseFloat(value.toString().replace(',', '.'));
   if (isNaN(number)) return '';
   
   const [intPart, decimalPart] = number.toFixed(2).split('.');

@@ -50,7 +50,7 @@ export default function FournisseurData(props: {
             
             <Col md={5} className='mb-1'>
               <Button type='submit' disabled={false} variant='outline-primary' className='w-100' size='sm'>
-                Rechercher des fournisseurs
+                Rechercher
               </Button>
             </Col>
           </form>

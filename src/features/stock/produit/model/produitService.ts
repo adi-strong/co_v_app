@@ -10,6 +10,7 @@ import type {NavigateFunction} from "react-router-dom";
 import type {JsonLdApiResponseInt} from "../../../../interfaces/JsonLdApiResponseInt.ts";
 import toast from "react-hot-toast";
 import type {UniteConsommation} from "../../uniteConsommation/model/uniteConsommationService.ts";
+import {getUniteConsommationFakeData} from "../../uniteConsommation/model/uniteConsommationService.ts";
 
 // INTERFACES OR TYPES
 export interface Produit {
@@ -94,6 +95,18 @@ export const getProduitFakeData = (): Produit[] => [
     createdAt: new Date().toISOString(),
     fkCategorie: getCategorieProduitFakeData()[0],
     selected: false,
+    fkUnite: getUniteConsommationFakeData()[0],
+  },
+  {
+    id: 2,
+    nom: 'Amoxycilline',
+    code: '01',
+    slug: 'amoxy',
+    description: 'Lorem Ipsum',
+    createdAt: new Date().toISOString(),
+    fkCategorie: getCategorieProduitFakeData()[0],
+    selected: false,
+    fkUnite: getUniteConsommationFakeData()[0],
   },
 ]
 

@@ -1,5 +1,5 @@
 import {useState} from "react";
-import HospData from "./HospData.tsx";
+import ApproData from "../../../stock/appro/view/ApproData.tsx";
 
 export default function HospList() {
   
@@ -7,7 +7,7 @@ export default function HospList() {
   
   return (
     <>
-      <HospData hosps={hosps} />
+      <ApproData appros={hosps} />
     </>
   )
   
