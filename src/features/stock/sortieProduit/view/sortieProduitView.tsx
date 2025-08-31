@@ -1,11 +1,21 @@
 import {memo} from 'react';
+import {useActivePage, useDocumentTitle} from "../../../../hooks";
+import {BodyContainer, PageTitles} from "../../../../components";
+import SortieProdList from "./SortieProdList.tsx";
+import {Card} from "react-bootstrap";
 
 const SortieProduitView = () => {
+  
+  useDocumentTitle('Mouvements en stock')
+  useActivePage('pharmacy')
 
   return (
-    <div>
-      <h1>SortieProduit View</h1>
-    </div>
+    <BodyContainer>
+      <PageTitles title='Mouvements en stock'/>
+      <Card>
+        <SortieProdList/>
+      </Card>
+    </BodyContainer>
   )
   
 };

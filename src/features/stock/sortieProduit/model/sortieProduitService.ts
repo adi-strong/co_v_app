@@ -3,7 +3,7 @@ import type {Agent} from "../../../personnel/agent/model/agentService.ts";
 import type {Produit} from "../../produit/model/produitService.ts";
 import type {UniteConsommation} from "../../uniteConsommation/model/uniteConsommationService.ts";
 import type {SingleValue} from "react-select";
-import type {SelectOptionType} from "../../../../services/services.ts";
+import type {SelectOptionType, THeadItemType} from "../../../../services/services.ts";
 import type {Dispatch, FormEvent, SetStateAction} from "react";
 import type {NavigateFunction} from "react-router-dom";
 import type {JsonLdApiResponseInt} from "../../../../interfaces/JsonLdApiResponseInt.ts";
@@ -83,6 +83,14 @@ export const initSortieProduitErrorState = (): SortieErrorProduit => ({
 /* ------------------------------------------- */
 
 // EVENTS & FUNCTIONS
+
+export const getSortieHeadItems = (): THeadItemType[] => [
+  { th: 'N°' },
+  { th: 'Taux' },
+  { th: 'Montant (CDF)' },
+  { th: 'Montant (USD)' },
+  { th: 'Date' },
+]
 
 /**
  *

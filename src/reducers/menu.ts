@@ -77,6 +77,7 @@ const initialState: MenuInterface = {
       isActive: false,
       isOpen: false,
       subItems: [
+        {label: 'Vente', to: '/app/produits/vente'},
         {label: 'Tous les produits', to: '/app/produits'},
         {label: 'Ajouter un produit', to: '/app/produits/new'},
         {label: 'Catégories des produits', to: '/app/categories-produits'},

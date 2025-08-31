@@ -11,6 +11,7 @@ import type {BaseTaxeInt} from "../../../../interfaces/BaseTaxeInt.ts";
 import useGetApproSubTotal from "../hooks/useGetApproSubTotal.ts";
 import useGetApproTaxTotal from "../hooks/useGetApproTaxTotal.ts";
 import useGetApproTotalAmount from "../hooks/useGetApproTotalAmount.ts";
+import moment from "moment";
 
 const ApproTabItem = (props: {
   product: ApproProductItem
@@ -29,6 +30,7 @@ const ApproTabItem = (props: {
     prixHt,
     price,
     tva,
+    datePeremption,
   } = props.product
   
   const { index, products, setState, taxes, setTaxes } = props
@@ -48,6 +50,8 @@ const ApproTabItem = (props: {
           ><i className='bi bi-trash3'/></Button>
           {nom}
         </td>
+        <td className='text-capitalize'>
+          {datePeremption ? `le ${moment(datePeremption).format('DD MMMM / YY')}` : '—'}</td>
         <td>{formatNumberWithSpaces(quantity)}</td>
         <td className='text-center text-capitalize'>{unite}</td>
         
@@ -70,9 +74,9 @@ export default function ApproTab({ state, setState, taxes = [], setTaxes }: {
   
   const { productItems, remise } = state
   
-  const subTotal = useGetApproSubTotal(state.productItems)
+  const subTotal = useGetApproSubTotal(state.productItems, state.remise)
   const taxesAmount = useGetApproTaxTotal(taxes)
-  const totalAmount = useGetApproTotalAmount(subTotal(), taxesAmount(), state.remise)
+  const totalAmount = useGetApproTotalAmount(subTotal(), taxesAmount())
   
   return (
     <>
@@ -91,6 +95,7 @@ export default function ApproTab({ state, setState, taxes = [], setTaxes }: {
             </Button>
             Produit
           </th>
+          <th>Péremption</th>
           <th>Qté</th>
           <th className='text-center'>U.C</th>
           <th className='text-end'>P.U ({state.devise})</th>

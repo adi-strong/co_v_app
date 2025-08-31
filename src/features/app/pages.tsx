@@ -71,6 +71,12 @@ const
     import('../stock/appro/view/approView.tsx')),
   NAppro = lazy(() =>
     import('../stock/appro/view/newAppro.tsx')),
+  MoveStk = lazy(() =>
+    import('../stock/sortieProduit/view/sortieProduitView.tsx')),
+  Perte = lazy(() =>
+    import('../stock/perteProduit/view/perteProduitView.tsx')),
+  Vente = lazy(() =>
+    import('../stock/sortieProduit/view/newVente.tsx')),
   
   Struct = lazy(() =>
     import('../patients/structure/view/structureView.tsx')),
@@ -248,6 +254,18 @@ const pages: RouteType[] = [
       {
         path: 'approvisionnements/new',
         element: <NAppro />
+      },
+      {
+        path: 'mouvements-stocks',
+        element: <MoveStk />
+      },
+      {
+        path: 'pertes-produits',
+        element: <Perte />
+      },
+      {
+        path: 'produits/vente',
+        element: <Vente />
       },
       // End produits
       

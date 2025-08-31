@@ -1,7 +1,7 @@
 import {useCallback} from "react";
 import type {ApproProductItem} from "../model/approService.ts";
 
-export default function useGetApproSubTotal(products: ApproProductItem[]) {
+export default function useGetApproSubTotal(products: ApproProductItem[], discount: number) {
   
   return useCallback(() => {
     let subTotal: number = 0
@@ -12,7 +12,12 @@ export default function useGetApproSubTotal(products: ApproProductItem[]) {
       subTotal += (price * quantity)
     })
     
+    if (discount > 0 && subTotal > 0) {
+      const discountSum: number = (subTotal * discount) / 100
+      subTotal -= discountSum
+    }
+    
     return subTotal
-  }, [products])
+  }, [products, discount])
   
 }
