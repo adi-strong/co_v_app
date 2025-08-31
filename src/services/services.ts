@@ -159,7 +159,7 @@ export const formatDecimalNumberWithSpaces = (value: string | number): string =>
 }
 
 export const onSideMenuToggle = (state: boolean, setState: Dispatch<SetStateAction<boolean>>): void => {
-  const dbWrapper: Element = document.querySelector('#db-wrapper')
+  const dbWrapper = document.getElementById('db-wrapper')
   const show: boolean = !state
   
   if (show)
@@ -188,7 +188,7 @@ export const onSetPrixHtChange = (e: ChangeEvent<HTMLInputElement>, tax: number)
   
 }
 
-export const onSetTaxChange = (e: ChangeEvent<HTMLInputElement>, tax: number, ht: number): PriceType => {
+export const onSetTaxChange = (e: ChangeEvent<HTMLInputElement>, ht: number): PriceType => {
   
   const value: string = e.target.value
   

@@ -3,7 +3,7 @@ import type {ReactNode} from "react";
 import {Button} from "react-bootstrap";
 import {RemoveModal} from "./index.ts";
 
-function onSubmit(data: any, onHide: () => void, onRefresh: () => void): void { onHide() }
+// function onSubmit(data: any, onHide: () => void, onRefresh: () => void): void { onHide() }
 
 export default function ItemInlineAction(props: {
   show?: boolean
@@ -64,7 +64,7 @@ export default function ItemInlineAction(props: {
         isItIrreversible={isItIrreversible}
         onHide={onDeleteClicked}
         data={data}
-        onSubmit={() => onSubmit(data, onDeleteClicked, (): void => { })}
+        onSubmit={(): void => { }}
         show={isDeleteClicked}
         onRefresh={(): void => { }}
         title={title}

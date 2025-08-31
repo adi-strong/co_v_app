@@ -147,7 +147,7 @@ export const onConsultTaxChange = (
   setState: Dispatch<SetStateAction<SaveTypeConsultation>>): void => {
   
   setState((prev: SaveTypeConsultation) => {
-    const prices: PriceType = onSetTaxChange(e, prev.taxe, prev.prixHt)
+    const prices: PriceType = onSetTaxChange(e, prev.prixHt)
     
     const taxe: number = prices.taxe
     const prixTtc: number = prices.prixTtc

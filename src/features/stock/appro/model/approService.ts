@@ -204,7 +204,7 @@ export const onApproTaxeChange = (
   setState: Dispatch<SetStateAction<ApproProductItem>>,
 ): void => {
   setState(state => {
-    const prices: PriceType = onSetTaxChange(e, state.tva, state.prixHt)
+    const prices: PriceType = onSetTaxChange(e, state.prixHt)
     
     let tva: number = prices.taxe
     let prixTtc: number = prices.prixTtc

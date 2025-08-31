@@ -8,7 +8,7 @@ export default function RemoveModal(props: {
   onHide: () => void
   onRefresh: () => void
   title: any
-  onSubmit: (data: any, onHide: () => void, onRefresh: () => void) => void
+  onSubmit: () => void
 }) {
   
   const [isConfirmed, setIsConfirmed] = useState<boolean>(false)
@@ -64,7 +64,7 @@ export default function RemoveModal(props: {
         {isConfirmed && onHide && onRefresh && (
           <Button variant='danger' onClick={(): void => {
             onConfirm()
-            onSubmit(data, onHide, onRefresh)
+            onSubmit()
           }}>
             <i className='bi bi-exclamation-circle-fill'/> Valider
           </Button>

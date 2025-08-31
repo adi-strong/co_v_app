@@ -1,5 +1,6 @@
 import type {ChangeEventHandler, ReactNode} from "react";
 import {Form} from "react-bootstrap";
+import {FeedbackError} from "./index.ts";
 
 export interface CheckFieldInterface {
   autoFocus?: boolean
@@ -56,6 +57,8 @@ const CheckField = (
           </>
         ) as ReactNode}
       />
+      
+      { error && <FeedbackError error={error} />}
     </>
   );
   

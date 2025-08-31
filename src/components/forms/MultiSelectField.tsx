@@ -2,7 +2,7 @@ import type {ReactNode} from "react";
 import type {MultiValue} from "react-select";
 import type {SelectOptionType} from "../../services/services.ts";
 import Select from "react-select";
-import {Form} from "react-bootstrap";
+import {Form, Spinner} from "react-bootstrap";
 
 type SelectMultipleProps = {
   options: MultiValue<SelectOptionType> | []
@@ -83,13 +83,13 @@ const MultiSelectField: React.FC<SelectMultipleProps> = (
             },
           }),
           
-          multiValue: (base, state) => ({
+          multiValue: (base) => ({
             ...base,
             color: 'rgb(82, 67, 170)',
             borderColor: '#b1a5ff',
           }),
           
-          multiValueLabel: (base, state) => ({
+          multiValueLabel: (base) => ({
             ...base,
             color: 'rgb(82, 67, 170)',
             borderColor: '#b1a5ff',
