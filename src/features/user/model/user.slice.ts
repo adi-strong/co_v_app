@@ -1,4 +1,3 @@
-// Service user à implémenter
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 
 const userSlice = createSlice({

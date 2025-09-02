@@ -3,14 +3,21 @@ import {BodyContainer} from "../../../../components";
 import {useActivePage, useDocumentTitle} from "../../../../hooks";
 import {ParamLayout} from "../../../../layouts";
 import InfosGenList from "./infosGenList.tsx";
-import {getInfosGenFakeData} from "../model/infosGenService.ts";
+import {useSelector} from "react-redux";
+import type {InfoGenState} from "../model/infosGen.slice.ts";
+import useSetInfosGenDataItem from "../hooks/useSetInfosGenDataItem.ts";
+import type {InfosGen} from "../model/infosGenService.ts";
 
 const InfosGenView = () => {
   
   useDocumentTitle('Paramètres généraux')
   useActivePage('params')
   
-  const [infos /*, setInfos */] = useState(getInfosGenFakeData()[0])
+  const [state, setState] = useState<InfosGen | null>(null)
+  
+  const { infos } = useSelector((state: InfoGenState) => state.infos)
+  
+  useSetInfosGenDataItem(infos, setState)
 
   return (
     <BodyContainer>
@@ -19,7 +26,7 @@ const InfosGenView = () => {
         loader={false}
         onRefresh={() => {}}
         subTitle='Paramètres généraux'
-        children={(<InfosGenList infos={infos} />) as ReactNode}
+        children={state && (<InfosGenList infos={state} />) as ReactNode}
       />
     </BodyContainer>
   )

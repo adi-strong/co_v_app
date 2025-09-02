@@ -1,17 +1,24 @@
 import type {InfosGen} from "../model/infosGenService.ts";
-import {Button, Col, Form, Image, Row} from "react-bootstrap";
+import {Button, Col, Form, Image, Row, Spinner} from "react-bootstrap";
 import {ReactNode, useState} from "react";
-import {initInfosGenErrorState, initInfosGenState} from "../model/infosGenService.ts";
+import {initInfosGenErrorState, initInfosGenState, onInfosGenSubmit} from "../model/infosGenService.ts";
 import avatar from '../../../../assets/images/avatar/avatar.jpg';
 import ImageUploading, {ImageListType, ImageType} from "react-images-uploading";
 import {TextAreaField, TextField} from "../../../../components";
 import {handleChange} from "../../../../services/form.hander.service.ts";
+import useSetInfosGenData from "../hooks/useSetInfosGenData.ts";
+import {useEditInfosGenMutation} from "../model/infosGen.api.slice.ts";
+import {APP_ENTRYPOINT} from "../../../../config/configs.ts";
 
-export default function InfoForm({ data }: { data?: InfosGen }) {
+export default function InfoForm({ data, onRefresh }: { data?: InfosGen, onRefresh: () => void }) {
   
   const maxNumber: number = 1
+  
   const [info, setInfo] = useState(initInfosGenState())
-  const [errors /*, setErrors */] = useState(initInfosGenErrorState())
+  const [errors, setErrors] = useState(initInfosGenErrorState())
+  const [onEditInfoGen, { isLoading: isEditLoading }] = useEditInfosGenMutation()
+  
+  useSetInfosGenData(data, setInfo)
   
   const onImageChange = (imageList: ImageListType): void => setInfo(prev => ({
     ...prev,
@@ -19,7 +26,13 @@ export default function InfoForm({ data }: { data?: InfosGen }) {
   }))
   
   return (
-    <form onSubmit={e => e.preventDefault()}>
+    <form onSubmit={e => onInfosGenSubmit(
+      e,
+      info,
+      setErrors,
+      onEditInfoGen,
+      onRefresh
+    )}>
       <Row className='align-items-center mb-8'>
         <Col md={3} className='mb-3 mb-md-0'>
           <h5 className='mb-0 px-4'>Logo</h5>
@@ -41,16 +54,22 @@ export default function InfoForm({ data }: { data?: InfosGen }) {
                       <div className='me-3'>
                         <Image
                           roundedCircle
-                          src={avatar}
+                          src={data && data?.logo ? APP_ENTRYPOINT+data.logo.contentUrl : avatar}
                           className='avatar avatar-lg'
                           alt='logo'
                         />
                       </div>
                       
                       <div>
-                        <Button type='button' variant='outline-white' className='me-1'
-                                onClick={onImageUpload}>Changer</Button>
-                        <Button type='button' variant='outline-white' onClick={onImageRemoveAll}>Supprimer</Button>
+                        <Button
+                          disabled={isEditLoading}
+                          type='button'
+                          variant='outline-white'
+                          className='me-1'
+                          onClick={onImageUpload}>Changer</Button>
+                        
+                        {data && !data?.logo &&
+                          <Button type='button' variant='outline-white' onClick={onImageRemoveAll}>Supprimer</Button>}
                       </div>
                     </>
                   )}
@@ -68,6 +87,7 @@ export default function InfoForm({ data }: { data?: InfosGen }) {
                       
                       <div>
                         <Button
+                          disabled={isEditLoading}
                           type='button'
                           variant='outline-white'
                           className='me-1'
@@ -92,7 +112,7 @@ export default function InfoForm({ data }: { data?: InfosGen }) {
         <Col md={8} className='mb-3 mb-lg-0'>
           <TextField
             required
-            disabled={false}
+            disabled={isEditLoading}
             name='nom'
             onChange={(e): void => handleChange(e, info, setInfo)}
             value={info.nom}
@@ -108,7 +128,7 @@ export default function InfoForm({ data }: { data?: InfosGen }) {
         <Form.Label className='col-sm-4' htmlFor='slogan'>Slogan</Form.Label>
         <Col md={8} className='mb-3 mb-lg-0'>
           <TextField
-            disabled={false}
+            disabled={isEditLoading}
             name='slogan'
             onChange={(e): void => handleChange(e, info, setInfo)}
             value={info.slogan}
@@ -123,7 +143,7 @@ export default function InfoForm({ data }: { data?: InfosGen }) {
         <Form.Label className='col-sm-4' htmlFor='about'>À propos</Form.Label>
         <Col md={8} className='mb-3 mb-lg-0'>
           <TextAreaField
-            disabled={false}
+            disabled={isEditLoading}
             name='about'
             onChange={(e): void => handleChange(e, info, setInfo)}
             value={info.about}
@@ -139,7 +159,7 @@ export default function InfoForm({ data }: { data?: InfosGen }) {
         <Col md={4} className='mb-3 mb-lg-0'>
           <TextField
             required
-            disabled={false}
+            disabled={isEditLoading}
             name='tel'
             onChange={(e): void => handleChange(e, info, setInfo)}
             value={info.tel}
@@ -152,7 +172,7 @@ export default function InfoForm({ data }: { data?: InfosGen }) {
         
         <Col sm={4} className='mb-3 mb-lg-0'>
           <TextField
-            disabled={false}
+            disabled={isEditLoading}
             name='tel2'
             onChange={(e): void => handleChange(e, info, setInfo)}
             value={info.tel2}
@@ -168,14 +188,13 @@ export default function InfoForm({ data }: { data?: InfosGen }) {
         <Form.Label className='col-sm-4' htmlFor='email'>Adresses e-mails</Form.Label>
         <Col md={4} className='mb-3 mb-lg-0'>
           <TextField
-            required
-            disabled={false}
+            disabled={isEditLoading}
             type='email'
             name='email'
             onChange={(e): void => handleChange(e, info, setInfo)}
             value={info.email}
             text='Champ obligatoire.'
-            placeholder='* E-mail principal'
+            placeholder='E-mail principal'
             maxLength={255}
             error={errors.email}
           />
@@ -183,7 +202,7 @@ export default function InfoForm({ data }: { data?: InfosGen }) {
         
         <Col md={4} className='mb-3 mb-lg-0'>
           <TextField
-            disabled={false}
+            disabled={isEditLoading}
             type='email'
             name='email2'
             onChange={(e): void => handleChange(e, info, setInfo)}
@@ -201,7 +220,7 @@ export default function InfoForm({ data }: { data?: InfosGen }) {
         <Col md={8} className='mb-3 mb-lg-0'>
           <TextAreaField
             required
-            disabled={false}
+            disabled={isEditLoading}
             name='address'
             onChange={(e): void => handleChange(e, info, setInfo)}
             value={info.address}
@@ -211,8 +230,9 @@ export default function InfoForm({ data }: { data?: InfosGen }) {
         </Col>
         
         <Col md={8} className='offset-md-4 mt-4'>
-          <Button type='submit' disabled={false}>
-            Sauvegarder
+          <Button type='submit' disabled={isEditLoading}>
+            {isEditLoading && (<Spinner className='me-1' animation='border' size='sm' />) as ReactNode}
+            {isEditLoading ? 'Veuillez patienter' : 'Sauvegarder'}
           </Button>
         </Col>
       </Row>

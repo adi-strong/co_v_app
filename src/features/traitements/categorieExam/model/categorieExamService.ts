@@ -2,6 +2,7 @@ import type {Dispatch, FormEvent, SetStateAction} from "react";
 import toast from "react-hot-toast";
 import type {JsonLdApiResponseInt} from "../../../../interfaces/JsonLdApiResponseInt.ts";
 import type {NavigateFunction} from "react-router-dom";
+import type {User} from "../../../user/model/userService.ts";
 
 // INTERFACES OR TYPES
 export interface CategorieExam {
@@ -110,10 +111,11 @@ export async function onPostCategorieExamSubmit(
 export async function onCategorieExamSubmit(
   e: FormEvent<HTMLFormElement>,
   state: SaveCategorieExam,
+  setState: Dispatch<SetStateAction<SaveCategorieExam>>,
   setErrors: Dispatch<SetStateAction<CategorieExamError>>,
   onSubmit: (data: SaveCategorieExam) => Promise<any>,
-  navigate: NavigateFunction,
-  onRefresh?: () => void
+  onRefresh?: () => void,
+  onHide?: () => void
 ): Promise<void> {
   
   e.preventDefault()
@@ -131,10 +133,31 @@ export async function onCategorieExamSubmit(
     
     if (data) {
       toast.success(`${id < 1 ? 'Enregistrement' : 'Modification'} bien effectué${id > 0 ? 'e' : ''}.`)
+      setState(initCategorieExamState())
+      
       if (onRefresh) onRefresh()
-      navigate('/app/categories-examens')
+      if (onHide) onHide()
     }
   } catch (e) { toast.error('Problème réseau.') }
+  
+}
+
+export async function onDeleteCategorieExamSubmit(
+  state: CategorieExam,
+  onSubmit: (data: CategorieExam) => Promise<void>,
+  onRefresh: () => void,
+  onHide: () => void,
+  navigate?: NavigateFunction
+): Promise<void> {
+  onHide()
+  
+  const { error }: JsonLdApiResponseInt<User> = await onSubmit(state)
+  if (error && error.data && error.data?.detail) toast.error(error.data.detail)
+  else {
+    toast.success('Suppression bien effectuée.')
+    onRefresh()
+    if (navigate) navigate('/app/categories-examens')
+  }
   
 }
 // END EVENTS & FUNCTIONS

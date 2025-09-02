@@ -155,7 +155,7 @@ const initialState: MenuInterface = {
       subItems: [
         {label: 'Réglages généraux', to: '/app/params'},
         {label: 'Types des fiches', to: '/app/types-des-fiches'},
-        {label: 'Types documents suivi', to: '/app/types-documents-suivis'},
+        // {label: 'Types documents suivi', to: '/app/types-documents-suivis'},
         {label: 'Catégories des examens', to: '/app/categories-examens'},
         {label: 'Catégories des lits', to: '/app/categories-lits'},
       ],

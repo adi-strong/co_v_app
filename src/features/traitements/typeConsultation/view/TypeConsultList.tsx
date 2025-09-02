@@ -1,13 +1,17 @@
-import {useState} from "react";
+import {Dispatch, SetStateAction, useState} from "react";
 import {ActionsComp, SearchComp} from "../../../../components";
 import {getgetCategorieLitActionsOptions} from "../../categorieLit/model/categorieLitService.ts";
 import type {TypeConsultation} from "../model/typeConsultationService.ts";
-import {getTypeConsultationFakeData} from "../model/typeConsultationService.ts";
 import TypeConsultData from "./TypeConsultData.tsx";
 
-export default function TypeConsultList() {
+export default function TypeConsultList({ typesConsults, setTypesConsults, isFetching, loader, onRefresh }: {
+  typesConsults: TypeConsultation[]
+  setTypesConsults: Dispatch<SetStateAction<TypeConsultation[]>>
+  loader: boolean
+  isFetching: boolean
+  onRefresh: () => void
+}) {
   
-  const [typesConsults, setTypesConsults] = useState<TypeConsultation[]>(getTypeConsultationFakeData())
   const [isSelectedAll, setIsSelectedAll] = useState<boolean>(false)
   const [search, setSearch] = useState<{keyword: string}>({keyword: ''})
   const [action, setAction] = useState<string>('')
@@ -42,6 +46,9 @@ export default function TypeConsultList() {
         setIsSelectedAll={setIsSelectedAll}
         typesConsults={typesConsults}
         setTypesConsults={setTypesConsults}
+        loader={loader}
+        isFetching={isFetching}
+        onRefresh={onRefresh}
       />
     </>
   )

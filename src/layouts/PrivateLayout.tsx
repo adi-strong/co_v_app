@@ -7,6 +7,10 @@ import type {UserState} from "../features/auth/model/auth.slice.ts";
 import {useLazyGetUniqueUserQuery} from "../features/user/model/user.api.slice.ts";
 import {RefObject, useEffect, useRef} from "react";
 import {setUser} from "../features/auth/model/auth.slice.ts";
+import {useLazyGetUniqueInfosQuery} from "../features/configs/infosGen/model/infosGen.api.slice.ts";
+import type {InfoGenState} from "../features/configs/infosGen/model/infosGen.slice.ts";
+import type {InfosGen} from "../features/configs/infosGen/model/infosGenService.ts";
+import {setInfosGen} from "../features/configs/infosGen/model/infosGen.slice.ts";
 
 export default function PrivateLayout() {
   
@@ -15,14 +19,44 @@ export default function PrivateLayout() {
   const from = location?.state?.from?.pathname || '/app/profil'
   
   const { token, user } = useSelector((state: UserState) => state.auth)
-  // const { data: devise } = useGetLastDeviseQuery()
+  const { infos } = useSelector((state: InfoGenState) => state.infos)
   
   const [getUniqueUser] = useLazyGetUniqueUserQuery()
+  const [getUniqueInfos] = useLazyGetUniqueInfosQuery()
   
   const hasFetchedUser: RefObject<boolean> = useRef(false)
   
+  const hasFetchedInfos: RefObject<boolean> = useRef(false)
+  
   useEffect((): void => {
-    const fetchUser = async () => {
+    const fetchInfos = async (): Promise<void> => {
+      if (!(hasFetchedInfos.current && infos)) {
+        hasFetchedInfos.current = true
+        
+        try {
+          const infoSession: InfosGen = await getUniqueInfos(1).unwrap()
+          dispatch(setInfosGen({ infos: {
+              id: infoSession.id,
+              nom: infoSession.nom,
+              slogan: infoSession?.slogan ?? undefined,
+              logo: infoSession?.logo ?? undefined,
+              about: infoSession?.about ?? undefined,
+              address: infoSession?.address ?? undefined,
+              tel: infoSession.tel,
+              email: infoSession?.email ?? undefined,
+              tel2: infoSession?.tel2 ?? undefined,
+              email2: infoSession?.email2 ?? undefined,
+              selected: infoSession.selected,
+            }}))
+        } catch (error) { }
+      }
+    }
+    
+    fetchInfos()
+  }, [getUniqueInfos, dispatch, infos])
+  
+  useEffect((): void => {
+    const fetchUser = async (): Promise<void> => {
       if (!hasFetchedUser.current && user && token) {
         hasFetchedUser.current = true;
         

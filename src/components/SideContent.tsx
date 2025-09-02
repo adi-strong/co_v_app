@@ -4,7 +4,6 @@ import {Offcanvas} from "react-bootstrap";
 const SideContent = (props: {
   show: boolean
   onHide: () => void
-  onRefresh?: () => void
   icon?: string
   title: any
   children: ReactNode

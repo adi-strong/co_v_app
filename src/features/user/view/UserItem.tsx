@@ -9,6 +9,8 @@ import type {User} from "../model/userService.ts";
 import {getUserRole, userRoleColor, userRoleLabel} from "../model/userService.ts";
 import EditUserPasswordForm from "./EditUserPasswordForm.tsx";
 import RemoveUserModal from "./RemoveUserModal.tsx";
+import {useSelector} from "react-redux";
+import type {UserState} from "../../auth/model/auth.slice.ts";
 
 export default function UserItem(props: {
   user: User
@@ -19,6 +21,7 @@ export default function UserItem(props: {
   onRefresh: () => void
 }) {
   
+  const { user: session } = useSelector((state: UserState) => state.auth)
   const {
     user,
     index,
@@ -29,7 +32,7 @@ export default function UserItem(props: {
   const [isDel, setIsDel] = useState<boolean>(false)
   const [show, setShow] = useState<boolean>(false)
   
-  return (
+  return session && session.id !== user.id && (
     <>
       <tr>
         <td
@@ -45,9 +48,10 @@ export default function UserItem(props: {
             onChange={(): void => setSelectedDataItem(index, setUsers)}
             className='me-0'
           />
-          <Link to={`/app/users/${user.id}/${user?.slug}/edit`}>
-            {user.username.toLowerCase()}
-          </Link>
+          {(getUserRole(user.roles) !== 'ROLE_SUPER_ADMIN') ?
+            <Link to={`/app/users/${user.id}/${user?.slug}/edit`}>
+              {user.username.toLowerCase()}
+            </Link> : user.username.toLowerCase()}
           
           {(getUserRole(user.roles) !== 'ROLE_SUPER_ADMIN') && (
             <div id={`actions-${index}`} hidden>

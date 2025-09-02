@@ -1,4 +1,5 @@
-import {createSlice, PayloadAction} from "@reduxjs/toolkit";
+import {createSlice} from "@reduxjs/toolkit";
+import type {PayloadAction} from "@reduxjs/toolkit";
 import {jwtDecode} from "jwt-decode";
 import toast from "react-hot-toast";
 import {Agent} from "../../personnel/agent/model/agentService";

@@ -7,25 +7,25 @@ import {
   onMouseLeaveEvent,
   setSelectedDataItem
 } from "../../../../services/services.ts";
-import {CheckField, RemoveModal, SideContent} from "../../../../components";
-import {Link} from "react-router-dom";
+import {CheckField, SideContent} from "../../../../components";
 import {Button} from "react-bootstrap";
 import moment from "moment";
 import type {TypeConsultation} from "../model/typeConsultationService.ts";
 import TypeConsultForm from "./TypeConsultForm.tsx";
-
-function onSubmit(data: any, onHide: () => void, onRefresh: () => void): void { onHide() }
+import RemoveTypeConsultModal from "./RemoveTypeConsultModal.tsx";
 
 export default function TypeConsultItem(props: {
   typeConsult: TypeConsultation
   setTypesConsults: Dispatch<SetStateAction<TypeConsultation[]>>
   index: number
+  onRefresh: () => void
 }) {
   
   const {
     typeConsult,
     index,
     setTypesConsults,
+    onRefresh,
   } = props
   
   const [isEdit, setIsEdit] = useState<boolean>(false)
@@ -48,9 +48,7 @@ export default function TypeConsultItem(props: {
             onChange={(): void => setSelectedDataItem(index, setTypesConsults)}
             className='me-0'
           />
-          <Link to={`/app/types-des-fiches/${typeConsult.id}/${typeConsult?.slug}`}>
-            {typeConsult.nom.toUpperCase()}
-          </Link>
+          {typeConsult.nom.toUpperCase()}
           
           <div id={`actions-${index}`} hidden>
             <Button variant='link' size='sm' className='p-0' onClick={(): void => handleShow(setIsEdit)}>
@@ -68,22 +66,24 @@ export default function TypeConsultItem(props: {
         <td>{typeConsult?.createdAt ? moment(typeConsult.createdAt).format('DD/MM/YY') : '—'}</td>
       </tr>
       
-      <RemoveModal
-        isItIrreversible
-        onSubmit={() => onSubmit(typeConsult, (): void => handleShow(setIsDel), (): void => { })}
+      <RemoveTypeConsultModal
         onHide={(): void => handleShow(setIsDel)}
         data={typeConsult}
         show={isDel}
-        onRefresh={(): void => { }}
-        title={<>Type de fiches : {typeConsult.nom.toUpperCase()}</>}
+        onRefresh={onRefresh}
       />
       
       <SideContent
         show={isEdit}
         onHide={(): void => handleShow(setIsEdit)}
         title='Modifier le type de fiches'
-        onRefresh={() => { }}
-        children={<TypeConsultForm data={typeConsult}/> as ReactNode}
+        children={
+          <TypeConsultForm
+            data={typeConsult}
+            onRefresh={onRefresh}
+            onHide={(): void => handleShow(setIsEdit)}
+          /> as ReactNode
+        }
       />
     </>
   )

@@ -19,11 +19,15 @@ const
   
   CatLits = lazy(() =>
     import('../traitements/categorieLit/view/categorieLitView.tsx')),
+  UCatLit = lazy(() =>
+    import('../traitements/categorieLit/view/showCategorieLit.tsx')),
   Lits = lazy(() =>
     import('../traitements/lit/view/litView.tsx')),
   
   CatExams = lazy(() =>
     import('../traitements/categorieExam/view/categorieExamView.tsx')),
+  UCatExam = lazy(() =>
+    import('../traitements/categorieExam/view/showCategorieExam.tsx')),
 
   TDocSuivi = lazy(() =>
     import('../traitements/typeDocSuivi/view/typeDocSuiviView.tsx')),
@@ -146,6 +150,10 @@ const pages: RouteType[] = [
         element: <CatLits />
       },
       {
+        path: 'categories-lits/:id/:slug',
+        element: <UCatLit />
+      },
+      {
         path: 'lits',
         element: <Lits />
       },
@@ -155,6 +163,10 @@ const pages: RouteType[] = [
       {
         path: 'categories-examens',
         element: <CatExams />
+      },
+      {
+        path: 'categories-examens/:id/:slug',
+        element: <UCatExam />
       },
       // End Examens
       

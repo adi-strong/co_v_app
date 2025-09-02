@@ -1,25 +1,26 @@
 import type {Dispatch, ReactNode, SetStateAction} from "react";
 import {useState} from "react";
 import {handleShow, onMouseEnterEvent, onMouseLeaveEvent, setSelectedDataItem} from "../../../../services/services.ts";
-import {CheckField, RemoveModal, SideContent} from "../../../../components";
+import {CheckField, SideContent} from "../../../../components";
 import {Link} from "react-router-dom";
 import {Button} from "react-bootstrap";
 import moment from "moment/moment";
 import type {CategorieExam} from "../model/categorieExamService.ts";
 import CategorieExamForm from "./CategorieExamForm.tsx";
-
-function onSubmit(data: any, onHide: () => void, onRefresh: () => void): void { onHide() }
+import RemoveCategorieExamModal from "./RemoveCategorieExamModal.tsx";
 
 export default function CategorieExamItem(props: {
   category: CategorieExam
   setCategories: Dispatch<SetStateAction<CategorieExam[]>>
   index: number
+  onRefresh: () => void
 }) {
   
   const {
     category,
     index,
     setCategories,
+    onRefresh,
   } = props
   
   const [isEdit, setIsEdit] = useState<boolean>(false)
@@ -59,25 +60,25 @@ export default function CategorieExamItem(props: {
         <td>{category?.createdAt ? moment(category.createdAt).format('DD/MM/YY') : '—'}</td>
       </tr>
       
-      <RemoveModal
-        isItIrreversible
-        onSubmit={() => onSubmit(category, (): void => handleShow(setIsDel), (): void => {
-        })}
+      <RemoveCategorieExamModal
         onHide={(): void => handleShow(setIsDel)}
         data={category}
         show={isDel}
-        onRefresh={(): void => {
-        }}
-        title={<>catégorie : <br/> {category.nom.toUpperCase()}</>}
+        onRefresh={onRefresh}
       />
       
       <SideContent
         show={isEdit}
         onHide={(): void => handleShow(setIsEdit)}
         title='Modifier la catégorie'
-        onRefresh={() => {
-        }}
-        children={<CategorieExamForm data={category}/> as ReactNode}
+        icon='pencil-square'
+        children={
+          <CategorieExamForm
+            data={category}
+            onRefresh={onRefresh}
+            onHide={(): void => handleShow(setIsEdit)}
+          /> as ReactNode
+        }
       />
     </>
   )

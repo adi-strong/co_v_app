@@ -13,7 +13,7 @@ export interface TypeConsultation {
   prixHt: number
   prixTtc: number
   selected: boolean
-  taxe?: number
+  taxe: number
   createdAt?: string
   updatedAt?: string
   slug?: string
@@ -66,6 +66,7 @@ export const getTypeConsultationFakeData = (): TypeConsultation[] => [
     prixTtc: 15,
     createdAt: new Date().toISOString(),
     selected: false,
+    taxe: 0,
   },
 ]
 
@@ -79,20 +80,25 @@ export const getTypeConsultTheadItems = (): THeadItemType[] => [
 export async function onTypeConsultationSubmit(
   e: FormEvent<HTMLFormElement>,
   state: SaveTypeConsultation,
+  setState: Dispatch<SetStateAction<SaveTypeConsultation>>,
   setErrors: Dispatch<SetStateAction<TypeConsultationError>>,
   onSubmit: (data: SaveTypeConsultation) => Promise<any>,
-  onHide: () => void,
-  onRefresh?: () => void
+  onRefresh?: () => void,
+  onHide?: () => void
 ): Promise<void> {
   
   e.preventDefault()
+  
+  setErrors(initTypeConsultationErrorState())
   const { id } = state
+  
   try {
     const { data, error}: JsonLdApiResponseInt<TypeConsultation> = await onSubmit(state)
     if (data) {
       toast.success(`${id > 0 ? 'Modification ' : 'Enregistrement '} bien effectué${'e'}`)
+      setState(initTypeConsultationState())
       if (onRefresh) onRefresh()
-      onHide()
+      if (onHide) onHide()
     }
     
     if (error && error?.data) {
@@ -105,13 +111,15 @@ export async function onTypeConsultationSubmit(
   
 }
 
-export async function onDeleteTypeConsultation(
+export async function onDeleteTypeConsultationSubmit(
   state: TypeConsultation,
   onSubmit: (data: TypeConsultation) => Promise<void>,
   onRefresh: () => void,
+  onHide: () => void,
   navigate?: NavigateFunction
 ): Promise<void> {
   
+  onHide()
   try {
     const { error }: JsonLdApiResponseInt<TypeConsultation> = await onSubmit(state)
     if (error) {
@@ -119,7 +127,7 @@ export async function onDeleteTypeConsultation(
     } else {
       toast.success('Suppression bien effectuée.')
       onRefresh()
-      if (navigate) navigate('/app/fournisseurs')
+      if (navigate) navigate('/app/types-des-fiches')
     }
   } catch (e) { toast.error('Problème réseau.') }
   

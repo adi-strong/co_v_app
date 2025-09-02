@@ -191,7 +191,7 @@ export const onSetPrixHtChange = (e: ChangeEvent<HTMLInputElement>, tax: number)
 
 export const onSetTaxChange = (e: ChangeEvent<HTMLInputElement>, ht: number): PriceType => {
   
-  const value: string = e.target.value
+  const value: number = Number(e.target.value)
   
   const taxe: number = isNaN(Number(value)) || Number(value) < 0.00 ? 0 : Number(value)
   

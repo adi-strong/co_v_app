@@ -1,13 +1,17 @@
 import type {CategorieLit} from "../model/categorieLitService.ts";
-import {useState} from "react";
+import {Dispatch, SetStateAction, useState} from "react";
 import CategorieLitData from "./CategorieLitData.tsx";
-import {getCategorieLitFakeData, getgetCategorieLitActionsOptions} from "../model/categorieLitService.ts";
-import {Col, Row} from "react-bootstrap";
+import {getgetCategorieLitActionsOptions} from "../model/categorieLitService.ts";
 import {ActionsComp, SearchComp} from "../../../../components";
 
-export default function CategorieLitList() {
+export default function CategorieLitList({ onRefresh, categories, isFetching, loader, setCategories }: {
+  onRefresh: () => void
+  categories: CategorieLit[]
+  setCategories: Dispatch<SetStateAction<CategorieLit[]>>
+  loader: boolean
+  isFetching: boolean
+}) {
   
-  const [categories, setCategories] = useState<CategorieLit[]>(getCategorieLitFakeData())
   const [isSelectedAll, setIsSelectedAll] = useState<boolean>(false)
   const [search, setSearch] = useState<{keyword: string}>({keyword: ''})
   const [action, setAction] = useState<string>('')
@@ -18,14 +22,14 @@ export default function CategorieLitList() {
         state={search}
         value={search.keyword}
         setState={setSearch}
-        btnLabel='Rechercher des catégories'
+        btnLabel='Rechercher'
         onSubmit={(): void => { }}
-        loader={false}
+        loader={loader}
         size='sm'
         md1={5}
         md2={7}
-        md3={6}
-        md4={6}
+        md3={8}
+        md4={4}
       />
       
       <ActionsComp
@@ -33,7 +37,7 @@ export default function CategorieLitList() {
         options={getgetCategorieLitActionsOptions()}
         state={action}
         setState={setAction}
-        loader={false}
+        loader={loader}
         size='sm'
       />
       
@@ -42,6 +46,9 @@ export default function CategorieLitList() {
         setIsSelectedAll={setIsSelectedAll}
         categories={categories}
         setCategories={setCategories}
+        loader={loader}
+        isFetching={isFetching}
+        onRefresh={onRefresh}
       />
     </>
   )

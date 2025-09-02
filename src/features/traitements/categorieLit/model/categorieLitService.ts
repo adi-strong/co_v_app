@@ -2,6 +2,8 @@ import type {Dispatch, FormEvent, SetStateAction} from "react";
 import toast from "react-hot-toast";
 import type {JsonLdApiResponseInt} from "../../../../interfaces/JsonLdApiResponseInt.ts";
 import type {SelectOptionType} from "../../../../services/services.ts";
+import type {NavigateFunction} from "react-router-dom";
+import type {User} from "../../../user/model/userService.ts";
 
 // INTERFACES OR TYPES
 export interface CategorieLit {
@@ -115,15 +117,19 @@ export async function onPostCategorieLitSubmit(
 export async function onCategorieLitSubmit(
   e: FormEvent<HTMLFormElement>,
   state: SaveCategorieLit,
+  setState: Dispatch<SetStateAction<SaveCategorieLit>>,
   setErrors: Dispatch<SetStateAction<CategorieLitError>>,
   onSubmit: (data: SaveCategorieLit) => Promise<any>,
-  onHide: () => void,
-  onRefresh?: () => void
+  onRefresh?: () => void,
+  onHide?: () => void,
+  navigate?: NavigateFunction
 ): Promise<void> {
   
   e.preventDefault()
   const { id } = state
   setErrors(initCategorieLitErrorState())
+  
+  const nameElt = document.getElementById('nom')
   
   try {
     const { data, error }: JsonLdApiResponseInt<CategorieLit> = await onSubmit(state)
@@ -136,10 +142,37 @@ export async function onCategorieLitSubmit(
     
     if (data) {
       toast.success(`${id < 1 ? 'Enregistrement' : 'Modification'} bien effectué${id > 0 ? '(e)' : ''}.`)
+      
+      setTimeout((): void => {
+        nameElt.focus()
+      }, 0)
+      
+      if (id < 1) setState(initCategorieLitState())
+      
       if (onRefresh) onRefresh()
-      onHide()
+      if (onHide) onHide()
+      if (navigate) navigate('categories-lits')
     }
   } catch (e) { toast.error('Problème réseau.') }
+  
+}
+
+export async function onDeleteCategorieLitSubmit(
+  state: CategorieLit,
+  onSubmit: (data: CategorieLit) => Promise<void>,
+  onRefresh: () => void,
+  onHide: () => void,
+  navigate?: NavigateFunction
+): Promise<void> {
+  onHide()
+  
+  const { error }: JsonLdApiResponseInt<User> = await onSubmit(state)
+  if (error && error.data && error.data?.detail) toast.error(error.data.detail)
+  else {
+    toast.success('Suppression bien effectuée.')
+    onRefresh()
+    if (navigate) navigate('/app/categorie_lits')
+  }
   
 }
 // END EVENTS & FUNCTIONS

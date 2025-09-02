@@ -3,6 +3,7 @@ import type {ImageListType} from "react-images-uploading";
 import type {Dispatch, FormEvent, SetStateAction} from "react";
 import type {JsonLdApiResponseInt} from "../../../../interfaces/JsonLdApiResponseInt.ts";
 import toast from "react-hot-toast";
+import {setInfosGen} from "./infosGen.slice.ts";
 
 // INTERFACES OR TYPES
 export interface InfosGen {
@@ -20,7 +21,7 @@ export interface InfosGen {
   selected: boolean
 }
 
-export interface InfosGenSave {
+export interface SaveInfosGen {
   id: number
   nom: string
   slogan: string
@@ -31,6 +32,7 @@ export interface InfosGenSave {
   email: string
   tel2: string
   email2: string
+  infosId: number
 }
 
 export interface InfosGenError {
@@ -51,7 +53,7 @@ export interface InfosGenResponse extends JsonLdApiResponseInt<InfosGen>{}
 /* ------------------------------------------- */
 
 // INIT
-export const initInfosGenState = (): InfosGenSave => ({
+export const initInfosGenState = (): SaveInfosGen => ({
   about: '',
   address: '',
   email: '',
@@ -62,6 +64,7 @@ export const initInfosGenState = (): InfosGenSave => ({
   tel2: '',
   slogan: '',
   tel: '',
+  infosId: 0,
 })
 
 export const initInfosGenErrorState = (): InfosGenError => ({
@@ -101,7 +104,7 @@ export const getInfosGenFakeData = (): InfosGen[] => [
   },
 ]
 
-const postInfosGenDataForSubmitting = (state: InfosGenSave): FormData => {
+const postInfosGenDataForSubmitting = (state: SaveInfosGen): FormData => {
   const formData = new FormData()
   
   const {
@@ -114,6 +117,7 @@ const postInfosGenDataForSubmitting = (state: InfosGenSave): FormData => {
     address,
     about,
     email,
+    infosId,
   } = state
   
   if (tel) formData.append('tel', tel)
@@ -124,22 +128,15 @@ const postInfosGenDataForSubmitting = (state: InfosGenSave): FormData => {
   if (address) formData.append('address', address)
   if (about) formData.append('about', about)
   if (email) formData.append('email', email)
-  if (file && file.length > 0 && file[0]?.file) formData.append('file', file[0].file)
+  if (infosId) formData.append('infosId', infosId.toString())
+  if (file && file.length > 0 && file[0]?.file instanceof File) formData.append('file', file[0].file)
   
   return formData
 }
 
-/**
- *
- * @param e
- * @param state
- * @param setErrors
- * @param onSubmit
- * @param onRefresh
- */
-export async function onPostInfosGenSubmit(
+export async function onInfosGenSubmit(
   e: FormEvent<HTMLFormElement>,
-  state: InfosGenSave,
+  state: SaveInfosGen,
   setErrors: Dispatch<SetStateAction<InfosGenError>>,
   onSubmit: (data: FormData) => Promise<any>,
   onRefresh?: () => void
@@ -148,6 +145,7 @@ export async function onPostInfosGenSubmit(
   e.preventDefault()
   setErrors(initInfosGenErrorState())
   
+  const { id } = state
   const submitData: FormData = postInfosGenDataForSubmitting(state)
   try {
     const { data, error }: InfosGenResponse = await onSubmit(submitData)
@@ -160,7 +158,8 @@ export async function onPostInfosGenSubmit(
     }
     
     if (data) {
-      toast.success('Infos générales bien enregistrées.')
+      toast.success(id > 0 ? 'Mise à jour bien effectuée.' : 'Enregistrement bien effectué.')
+      
       if (onRefresh) onRefresh()
     }
   } catch (e) { toast.error('Problème réseau.') }
@@ -177,9 +176,9 @@ export async function onPostInfosGenSubmit(
  */
 export async function onPatchInfosGenSubmit(
   e: FormEvent<HTMLFormElement>,
-  state: InfosGenSave,
+  state: SaveInfosGen,
   setErrors: Dispatch<SetStateAction<InfosGenError>>,
-  onSubmit: (data: InfosGenSave) => Promise<any>,
+  onSubmit: (data: SaveInfosGen) => Promise<any>,
   onRefresh?: () => void
 ): Promise<void> {
   
