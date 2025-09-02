@@ -107,6 +107,7 @@ export default function ReceptionData({ reception }: { reception: Reception[] })
           <ReceptionItem
             key={index}
             reception={c}
+            index={index}
           />)}
         </tbody>
       </Table>

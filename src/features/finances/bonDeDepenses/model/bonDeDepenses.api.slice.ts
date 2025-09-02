@@ -1,6 +1,6 @@
 // Service bonDeDepenses à implémenter
 import {API, API_PATH, HEADERS, METHODS} from "../../../app/store";
-import {JsonLDResponse} from "../../../interfaces/JsonLDResponse";
+import {JsonLDResponse} from "../../../interfaces/JsonLDResponseInt";
 import {Expense, ExpenseFilters, ExpenseSaver} from "./bonDeDepensesService";
   
 export let totalExpensesItems: number = 0

@@ -1,3 +1,10 @@
+import type {Dispatch, FormEvent, SetStateAction} from "react";
+import toast from "react-hot-toast";
+import type {JsonLdApiResponseInt} from "../../../interfaces/JsonLdApiResponseInt.ts";
+import type {PassType, User} from "../../user/model/userService.ts";
+import {API} from "../../app/store.ts";
+import {logout} from "../../auth/model/auth.slice.ts";
+
 // INTERFACES
 export interface ChangeProfilePassword {
   password: string
@@ -6,22 +13,80 @@ export interface ChangeProfilePassword {
 
 export interface ChangeProfilePasswordError {
   password: string | null
-  repeatPassword: string | null
+  confirmPass: string | null
 }
 // END INTERFACES
 
 // ---
 
 // INIT STATES
-export const initPasswordState = (): ChangeProfilePassword => ({
+export const initPasswordState = (): PassType => ({
   password: '',
-  repeatPassword: '',
+  confirmPass: '',
+  userId: 0,
 })
 
 export const initPasswordErrorState = (): ChangeProfilePasswordError => ({
   password: null,
-  repeatPassword: null,
+  confirmPass: null,
 })
 // END INIT STATES
 
 // ---
+
+// EVENTS OR FUNCTIONS
+export async function onChangePasswordSubmit(
+  e: FormEvent<HTMLFormElement>,
+  state: PassType,
+  setErrors: Dispatch<SetStateAction<ChangeProfilePasswordError>>,
+  dispatch: (params?: any) => void,
+  onSubmit: (data: PassType) => Promise<any>
+): Promise<void> {
+  
+  e.preventDefault()
+  try {
+    const { data, error }: JsonLdApiResponseInt<User> = await onSubmit(state)
+    if (error && error?.data) {
+      toast.error(error.data?.detail ? error.data.detail : 'Un problème est survénu.')
+      const { violations } = error.data
+      if (violations) violations.forEach(({ message, propertyPath }): void => {
+        setErrors(prev => ({ ...prev, [propertyPath]: message }))
+      })
+    }
+    
+    if (data) {
+      toast.success('Mot de passe modifié avec succès.')
+      dispatch(API.util?.resetApiState())
+      dispatch(logout())
+    }
+  } catch (e) { toast.error('Problème réseau.') }
+  
+}
+
+export async function onChangePasswordSubmit2(
+  e: FormEvent<HTMLFormElement>,
+  state: PassType,
+  setErrors: Dispatch<SetStateAction<ChangeProfilePasswordError>>,
+  onSubmit: (data: PassType) => Promise<any>,
+  onHide: () => void
+): Promise<void> {
+  
+  e.preventDefault()
+  try {
+    const { data, error }: JsonLdApiResponseInt<User> = await onSubmit(state)
+    if (error && error?.data) {
+      toast.error(error.data?.detail ? error.data.detail : 'Un problème est survénu.')
+      const { violations } = error.data
+      if (violations) violations.forEach(({ message, propertyPath }): void => {
+        setErrors(prev => ({ ...prev, [propertyPath]: message }))
+      })
+    }
+    
+    if (data) {
+      toast.success('Mot de passe modifié avec succès.')
+      onHide()
+    }
+  } catch (e) { toast.error('Problème réseau.') }
+  
+}
+// END EVENTS OR FUNCTIONS

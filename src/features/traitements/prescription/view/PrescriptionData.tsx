@@ -8,6 +8,7 @@ import {getFournisseurHeadItems} from "../../../stock/fournisseur/model/fourniss
 import type {Prescription} from "../model/prescriptionService.ts";
 import PrescriptionItem from "./PrescriptionItem.tsx";
 import {getPrescHeadItems} from "../model/prescriptionService.ts";
+import {Link} from "react-router-dom";
 
 export default function PrescriptionData(props: {
   prescriptions: Prescription[]
@@ -122,7 +123,7 @@ export default function PrescriptionData(props: {
         </thead>
         
         <tbody style={tableWhiteStyle.tbody}>
-        {prescriptions.length > 0 && prescriptions.map((c, index: number) =>
+        {/* prescriptions.length > 0 && prescriptions.map((c, index: number) =>
           <PrescriptionItem
             key={index}
             prescription={c}
@@ -130,7 +131,13 @@ export default function PrescriptionData(props: {
             index={index}
             isSelectedAll={isSelectedAll}
             setIsSelectedAll={setIsSelectedAll}
-          />)}
+          />) */}
+        <tr>
+          <td><Link to='/app/prescriptions/1'>Voir</Link></td>
+          <td/>
+          <td/>
+          <td/>
+        </tr>
         </tbody>
       </Table>
     </>

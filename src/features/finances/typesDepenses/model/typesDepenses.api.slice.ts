@@ -1,7 +1,7 @@
 // Service typesDepenses à implémenter
 import {API, API_PATH, HEADERS, METHODS} from "../../../app/store";
 import {ExpenseType, ExpenseTypeSaver} from "./typesDepensesService";
-import {JsonLDResponse} from "../../../interfaces/JsonLDResponse";
+import {JsonLDResponse} from "../../../interfaces/JsonLDResponseInt";
 
 export let totalExpenseTypesItems: number = 0
 export let totalPagesExpenseTypes: number = 1

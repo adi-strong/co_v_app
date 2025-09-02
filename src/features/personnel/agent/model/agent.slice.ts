@@ -1,4 +1,3 @@
-// Service agent à implémenter
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 
 const agentSlice = createSlice({

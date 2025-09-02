@@ -1,29 +1,45 @@
 import type {User} from "../model/userService.ts";
 import {useState} from "react";
-import {getUserRolesOptions, initUserErrorState, initUserState} from "../model/userService.ts";
-import {Button, Col, Form, Row} from "react-bootstrap";
+import {getUserRolesOptions, initUserErrorState, initUserState, onUserSubmit} from "../model/userService.ts";
+import {Button, Col, Form, Row, Spinner} from "react-bootstrap";
 import {CheckField, MultiSelectField, SingleSelectField, TextField} from "../../../components";
 import {handleChange} from "../../../services/form.hander.service.ts";
 import {handleShow, onGetRandomPasswordText} from "../../../services/services.ts";
 import useGetAgentsOptions from "../../personnel/agent/hooks/useGetAgentsOptions.ts";
+import useSetUserData from "../hooks/useSetUserData.ts";
+import {useEditUserMutation, useGetUsersQuery, usePostUserMutation} from "../model/user.api.slice.ts";
+import {useNavigate} from "react-router-dom";
 
-export default function UserForm({ data }: { data?: User }) {
+export default function UserForm({ data, loader, onRefresh }: { data?: User, loader: boolean, onRefresh: () => void }) {
+  
+  const navigate = useNavigate()
   
   const [show, setShow] = useState<boolean>(false)
   const [state, setState] = useState(initUserState())
-  const [errors/*, setErrors */] = useState(initUserErrorState())
+  const [errors, setErrors] = useState(initUserErrorState())
+  const [onPostNewUser, { isLoading }] = usePostUserMutation()
+  const [onEditUser, { isLoading: isEditLoading }] = useEditUserMutation()
   
+  useSetUserData(data, setState)
   const agentsOptions = useGetAgentsOptions()
   
   return (
-    <form onSubmit={e => e.preventDefault()}>
+    <form onSubmit={e => onUserSubmit(
+      e,
+      state,
+      setErrors,
+      data ? onEditUser : onPostNewUser,
+      navigate,
+      onRefresh,
+      data
+    )}>
       <Row>
         <Col md={6}>
           <div className='mb-3'>
             <TextField
               required
               autoFocus
-              disabled={false}
+              disabled={isLoading || isEditLoading || loader}
               name='username'
               onChange={(e): void => handleChange(e, state, setState)}
               value={state.username.toLowerCase()}
@@ -38,7 +54,7 @@ export default function UserForm({ data }: { data?: User }) {
           <div className='mb-3'>
             <TextField
               required
-              disabled={false}
+              disabled={isLoading || isEditLoading || loader}
               name='fullName'
               onChange={(e): void => handleChange(e, state, setState)}
               value={state.fullName}
@@ -104,7 +120,7 @@ export default function UserForm({ data }: { data?: User }) {
         <Col md={6}>
           <div className='mb-3'>
             <SingleSelectField
-              disabled={false}
+              disabled={isLoading || isEditLoading || loader}
               onRefresh={(): void => {}}
               options={agentsOptions()}
               value={state?.fkAgent ?? null}
@@ -119,7 +135,7 @@ export default function UserForm({ data }: { data?: User }) {
           <div className='mb-3'>
             <TextField
               required
-              disabled={false}
+              disabled={isLoading || isEditLoading || loader}
               name='tel'
               onChange={(e): void => handleChange(e, state, setState)}
               value={state.tel.toLowerCase()}
@@ -131,7 +147,7 @@ export default function UserForm({ data }: { data?: User }) {
           
           <div className='mb-3'>
             <TextField
-              disabled={false}
+              disabled={isLoading || isEditLoading || loader}
               type='email'
               name='email'
               onChange={(e): void => handleChange(e, state, setState)}
@@ -144,6 +160,7 @@ export default function UserForm({ data }: { data?: User }) {
           
           <div className='mb-3'>
             <CheckField
+              disabled={isLoading || isEditLoading || loader}
               name='active'
               value={state.active}
               checked={state.active}
@@ -156,7 +173,7 @@ export default function UserForm({ data }: { data?: User }) {
           <div className='mb-3'>
             <MultiSelectField
               required
-              disabled={false}
+              disabled={isLoading || isEditLoading || loader}
               options={getUserRolesOptions()}
               value={state.roles}
               onChange={e => setState(s => ({ ...s, roles: e }))}
@@ -167,9 +184,10 @@ export default function UserForm({ data }: { data?: User }) {
             />
           </div>
           
-          <Button type='submit' disabled={false} className='w-100'>
-            {data ? 'Modifier ': 'Créer '}
-            un compte utilisateur
+          <Button type='submit' disabled={isLoading || isEditLoading || loader} className='w-100'>
+            {(isLoading || isEditLoading || loader) && <Spinner className='me-1' animation='border' size='sm' />}
+            {!(isLoading || isEditLoading || loader) && data ? 'Modifier ' : !(isLoading || isEditLoading || loader) && 'Créer '}
+            {(isLoading || isEditLoading || loader) ? 'Veuillez patienter' : 'un compte utilisateur'}
           </Button>
         </Col>
       </Row>

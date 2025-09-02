@@ -1,11 +1,19 @@
 import {Dropdown} from "react-bootstrap";
 import avatar from '../assets/images/avatar/avatar.jpg'
 import {Link, useNavigate} from "react-router-dom";
-import {onLogout} from "../features/auth/model/authService.ts";
+import toast from "react-hot-toast";
+import {API} from "../features/app/store.ts";
+import {useDispatch, useSelector} from "react-redux";
+import type {UserState} from "../features/auth/model/auth.slice.ts";
+import {logout} from "../features/auth/model/auth.slice.ts";
+import {onGoTo} from "../services/services.ts";
 
 const HeaderLastMenuItem = () => {
   
+  const dispatch = useDispatch()
   const navigate = useNavigate()
+  
+  const { user } = useSelector((state: UserState) => state.auth)
 
   return (
     <Dropdown as='li' className='ms-2 cursor-pointer'>
@@ -18,15 +26,15 @@ const HeaderLastMenuItem = () => {
       <Dropdown.Menu className='dropdown-menu-end'>
         <div className='px-4 pb-0 pt-2'>
           <div className='lh-1'>
-            <h5 className='mb-1'> John E. Grainger</h5>
-            <Link to='#!' className='text-inherit fs-6'>View my profile</Link>
+            <h5 className='mb-1 text-capitalize'> {user && user.fullName}</h5>
+            <Link to='/app/profil' className='text-inherit fs-6'>Voir mon profil</Link>
           </div>
           <Dropdown.Divider className='mt-3 mb-2' />
         </div>
         
         <ul className='list-unstyled'>
           <li>
-            <Dropdown.Item as='a' className='dropdown-item cursor-pointer'>
+            <Dropdown.Item as='a' className='cursor-pointer' onClick={(): void => onGoTo('/app/profil', navigate)}>
               <svg xmlns='http://www.w3.org/2000/svg' width={24} height={24} viewBox='0 0 24 24' fill='none'
                    stroke='currentColor' strokeWidth={2} strokeLinecap='round' strokeLinejoin='round'
                    className='feather feather-user me-2 icon-xxs dropdown-item-icon'>
@@ -38,7 +46,7 @@ const HeaderLastMenuItem = () => {
           </li>
           
           <li>
-            <Dropdown.Item as='a' className='dropdown-item cursor-pointer'>
+            <Dropdown.Item as='a' className='cursor-pointer'>
               <svg xmlns='http://www.w3.org/2000/svg' width={24} height={24} viewBox='0 0 24 24' fill='none'
                    stroke='currentColor' strokeWidth={2} strokeLinecap='round' strokeLinejoin='round'
                    className='feather feather-help-circle me-2 icon-xxs dropdown-item-icon'>
@@ -51,14 +59,13 @@ const HeaderLastMenuItem = () => {
           </li>
           
           <li>
-            <Dropdown.Item as='a' className='dropdown-item cursor-pointer' onClick={() => onLogout(navigate)}>
-              <svg xmlns='http://www.w3.org/2000/svg' width={24} height={24} viewBox='0 0 24 24' fill='none'
-                   stroke="currentColor" strokeWidth="2" strokeLinecap='round' strokeLinejoin='round'
-                   className='feather feather-power me-2 icon-xxs dropdown-item-icon'>
-                <path d='M18.36 6.64a9 9 0 1 1-12.73 0'/>
-                <line x1={12} y1={2} x2={12} y2={12}/>
-              </svg>
-              <span className='ml-2'>Déconnexion</span>
+            <Dropdown.Item as='a' className='cursor-pointer' onClick={() => {
+              toast.success('À bientôt !')
+              dispatch(API.util?.resetApiState())
+              dispatch(logout())
+            }}>
+              <i className='bi bi-power me-2'/>
+              Déconnexion
             </Dropdown.Item>
           </li>
         </ul>

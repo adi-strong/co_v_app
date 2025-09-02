@@ -1,6 +1,6 @@
 import {Card, Col, Row, Spinner} from "react-bootstrap";
 import type {ReactNode} from "react";
-import {LogoLoader} from "../loaders";
+import {LogoLoader} from "../loaders/index.js";
 
 const ParamLayout = (props: {
   title: string

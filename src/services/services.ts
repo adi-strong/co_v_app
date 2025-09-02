@@ -1,5 +1,6 @@
 import type {ChangeEvent, Dispatch, SetStateAction} from "react";
 import type {MultiValue} from "react-select";
+import type {NavigateFunction} from "react-router-dom";
 
 const TableCSStyle = {
   table: {
@@ -211,6 +212,11 @@ export const getSexOptions = (): SelectOptionType[] => [
   { label: 'Homme', value: 'H' },
   { label: 'Femme', value: 'F' },
 ]
+
+export const onGoTo = (link: string, navigate: NavigateFunction, replace?: boolean) => {
+  if (!replace) navigate(link)
+  else navigate(link, {replace: true})
+}
 
 // END INIT
 

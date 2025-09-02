@@ -1,7 +1,14 @@
 import Content from "./features/app/Content.tsx";
 import toast, {ToastBar, Toaster} from "react-hot-toast";
+import {useDispatch} from "react-redux";
+import {useEffect} from "react";
+import {setup} from "./features/auth/model/auth.slice.ts";
 
 function App() {
+  
+  const dispatch = useDispatch()
+  
+  useEffect((): void => { dispatch(setup()) }, [dispatch])
 
   return (
     <>

@@ -18,6 +18,7 @@ import ProfileHeaderComponent from "./ProfileHeaderComponent.tsx";
 import ColDataContent from "./ColDataContent.tsx";
 import SearchComp from "./SearchComp.tsx";
 import ActionsComp from "./ActionsComp.tsx";
+import PrintableContent from "./PrintableContent.tsx";
 
 export {
   ActionsComp,

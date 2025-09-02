@@ -2,6 +2,7 @@ import { configureStore } from '@reduxjs/toolkit'
 import { createApi, fetchBaseQuery, setupListeners } from '@reduxjs/toolkit/query/react'
 import menuReducer from "../../reducers/menu.ts";
 import {APP_ENTRYPOINT} from "../../config/configs.ts";
+import authReducer from '../auth/model/auth.slice.ts'
 
 const baseQuery = fetchBaseQuery({
   baseUrl: APP_ENTRYPOINT,
@@ -34,6 +35,7 @@ export const API = createApi({
 const store = configureStore({
   reducer: {
     menu: menuReducer,
+    auth: authReducer,
     [API.reducerPath]: API.reducer,
   },
   middleware: (getDefaultMiddleware) =>

@@ -1,14 +1,14 @@
-import type {Dispatch, SetStateAction} from "react";
+import type {Dispatch, ReactNode, SetStateAction} from "react";
 import {useState} from "react";
 import {handleShow, onMouseEnterEvent, onMouseLeaveEvent, setSelectedDataItem} from "../../../services/services.ts";
-import {CheckField, RemoveModal} from "../../../components";
+import {CheckField, SideContent} from "../../../components";
 import {Link} from "react-router-dom";
 import {Badge, Button} from "react-bootstrap";
 import moment from "moment";
 import type {User} from "../model/userService.ts";
 import {getUserRole, userRoleColor, userRoleLabel} from "../model/userService.ts";
-
-function onSubmit(data: any, onHide: () => void, onRefresh: () => void): void { onHide() }
+import EditUserPasswordForm from "./EditUserPasswordForm.tsx";
+import RemoveUserModal from "./RemoveUserModal.tsx";
 
 export default function UserItem(props: {
   user: User
@@ -16,15 +16,18 @@ export default function UserItem(props: {
   index: number
   isSelectedAll: boolean
   setIsSelectedAll: Dispatch<SetStateAction<boolean>>
+  onRefresh: () => void
 }) {
   
   const {
     user,
     index,
     setUsers,
+    onRefresh
   } = props
   
   const [isDel, setIsDel] = useState<boolean>(false)
+  const [show, setShow] = useState<boolean>(false)
   
   return (
     <>
@@ -42,18 +45,21 @@ export default function UserItem(props: {
             onChange={(): void => setSelectedDataItem(index, setUsers)}
             className='me-0'
           />
-          <Link to={`/app/users/${user.id}/${user?.slug}`}>
+          <Link to={`/app/users/${user.id}/${user?.slug}/edit`}>
             {user.username.toLowerCase()}
           </Link>
           
-          <div id={`actions-${index}`} hidden>
-            <Link to={`/app/users/${user.id}/${user?.slug}/edit`} className='p-0 btn btn-sm btn-link'>
-              Modifier
-            </Link>{' | '}
-            <Button variant='link' size='sm' className='p-0 text-danger' onClick={(): void => handleShow(setIsDel)}>
-              Supprimer
-            </Button>
-          </div>
+          {(getUserRole(user.roles) !== 'ROLE_SUPER_ADMIN') && (
+            <div id={`actions-${index}`} hidden>
+              <Button variant='link' size='sm' className='p-0' onClick={(): void => handleShow(setShow)}>
+                Mot de passe
+              </Button>
+              {' | '}
+              <Button variant='link' size='sm' className='p-0 text-danger' onClick={(): void => handleShow(setIsDel)}>
+                Supprimer
+              </Button>
+            </div>
+          )}
         </td>
         
         <td>{user?.fullName.toUpperCase()}</td>
@@ -61,18 +67,22 @@ export default function UserItem(props: {
           <Badge bg={userRoleColor[getUserRole(user.roles)]}>{userRoleLabel[getUserRole(user.roles)]}</Badge>
         </td>
         <td>{user.tel}</td>
-        <td>{user?.email?.toLowerCase() ?? '—'}</td>
         <td>{user?.createdAt ? moment(user.createdAt).format('DD/MM/YY') : '—'}</td>
       </tr>
       
-      <RemoveModal
-        isItIrreversible
-        onSubmit={() => onSubmit(user, (): void => handleShow(setIsDel), (): void => { })}
+      <RemoveUserModal
         onHide={(): void => handleShow(setIsDel)}
         data={user}
         show={isDel}
-        onRefresh={(): void => { }}
-        title={<><br/> compte utilisateur : {user.username.toLowerCase()}</>}
+        onRefresh={onRefresh}
+      />
+      
+      <SideContent
+        show={show}
+        onHide={(): void => handleShow(setShow)}
+        title='Modifier le mot de passe'
+        icon='pencil-square'
+        children={(<EditUserPasswordForm data={user} onHide={(): void => handleShow(setShow)}/>) as ReactNode}
       />
     </>
   )

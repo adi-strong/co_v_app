@@ -1,29 +1,44 @@
-import type {User} from "../../user/model/userService.ts";
+import type {PassType, User} from "../../user/model/userService.ts";
 import {useState} from "react";
-import type {ChangeProfilePassword, ChangeProfilePasswordError} from "../model/profilService.ts";
-import {initPasswordErrorState, initPasswordState} from "../model/profilService.ts";
-import {Button, Card, Col, Form, Row} from "react-bootstrap";
+import type {ChangeProfilePasswordError} from "../model/profilService.ts";
+import {initPasswordErrorState, initPasswordState, onChangePasswordSubmit} from "../model/profilService.ts";
+import {Button, Card, Col, Form, Row, Spinner} from "react-bootstrap";
 import {handleShow, onGetRandomPasswordText} from "../../../services/services.ts";
 import {handleChange} from "../../../services/form.hander.service.ts";
 import {TextField} from "../../../components";
+import {useResetUserPasswordMutation} from "../../user/model/user.api.slice.ts";
+import {useDispatch} from "react-redux";
+import useSetUserPassID from "../../user/hooks/useSetUserPassID.ts";
 
-export default function ChangePasswordTab({ data }: { data: User }) {
+export default function ChangePasswordTab({ data }: { data?: User }) {
+  
+  const dispatch = useDispatch()
   
   const [show, setShow] = useState<boolean>(false)
-  const [state, setState] = useState<ChangeProfilePassword>(initPasswordState())
+  const [state, setState] = useState<PassType>(initPasswordState())
   const [errors, setErrors] = useState<ChangeProfilePasswordError>(initPasswordErrorState())
+  
+  const [onResetPassword, { isLoading }] = useResetUserPasswordMutation()
+  
+  useSetUserPassID(data, setState)
   
   return (
     <>
       <Card.Title as='h4' className='text-dark mt-3'>Changer de mot de passe</Card.Title> <hr/>
       
-      <form onSubmit={e => e.preventDefault()}>
+      <form onSubmit={e => onChangePasswordSubmit(
+        e,
+        state,
+        setErrors,
+        dispatch,
+        onResetPassword
+      )}>
         <Row className='mb-5'>
           <Form.Label htmlFor='password' className='col-md-5'><code>*</code> Nouveau mot de passe</Form.Label>
           <Col md={7}>
             <Button
               type='button'
-              disabled={false}
+              disabled={isLoading}
               className='mb-2'
               variant='outline-primary'
               size='sm'
@@ -35,7 +50,7 @@ export default function ChangePasswordTab({ data }: { data: User }) {
             <TextField
               required
               autoFocus
-              disabled={false}
+              disabled={isLoading}
               type={show ? 'text' : 'password'}
               name='password'
               onChange={e => handleChange(e, state, setState)}
@@ -50,18 +65,18 @@ export default function ChangePasswordTab({ data }: { data: User }) {
           <Form.Label htmlFor='repeatPassword' className='col-md-5'><code>*</code> Confirmer le mot de passe</Form.Label>
           <Col md={7}>
             <TextField
-              disabled={false}
+              disabled={isLoading}
               type={show ? 'text' : 'password'}
-              name='repeatPassword'
+              name='confirmPass'
               onChange={e => handleChange(e, state, setState)}
-              value={state.repeatPassword}
-              error={errors.repeatPassword}
+              value={state.confirmPass}
+              error={errors.confirmPass}
               placeholder='*************************'
             />
             
             <Button
               type='button'
-              disabled={false}
+              disabled={isLoading}
               className='mt-2'
               variant='outline-primary'
               size='sm'
@@ -78,10 +93,11 @@ export default function ChangePasswordTab({ data }: { data: User }) {
           <Col md={7}>
             <Button
               type='submit'
-              disabled={false}
+              disabled={isLoading}
               className='w-100'
             >
-              Changer le mot de passe
+              {isLoading && <Spinner className='me-1' animation='border' size='sm' />}
+              {isLoading ? 'Veuillez patienter' : 'Changer le mot de passe'}
             </Button>
           </Col>
         </Row>

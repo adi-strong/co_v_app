@@ -13,7 +13,7 @@ export default function UserOverviewTab({ data }: { data: User }) {
         <ColDataContent mb={5} md={6} title='N°' content={data.id} />
         <ColDataContent mb={5} md={6} title='Identifiant' content={data.username.toLowerCase()} />
         <ColDataContent mb={5} md={6} title='E-mail' content={data?.email?.toLowerCase() ?? '—'} />
-        <ColDataContent mb={5} md={6} title='Nom complet' content={data?.fullName ?? '—'} />
+        <ColDataContent mb={5} md={6} title='Nom complet' content={data?.fullName?.toUpperCase() ?? '—'} />
         <ColDataContent mb={5} md={6} title='Rôle' content={userRoleLabel[data.roles[0]]} />
         <ColDataContent mb={5} md={6} title='Enregistrer par' content={
           data?.fkUser && data.fkUser?.fullName

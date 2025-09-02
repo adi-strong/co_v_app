@@ -2,7 +2,7 @@ import type {MultiValue, SingleValue} from "react-select";
 import type {SelectOptionType} from "../../services/services.ts";
 import type {ReactNode} from "react";
 import Select from "react-select";
-import {Form} from "react-bootstrap";
+import {Form, Spinner} from "react-bootstrap";
 
 type SingleSelectProps = {
   options: MultiValue<SelectOptionType>

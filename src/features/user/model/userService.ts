@@ -3,6 +3,8 @@ import type {SelectOptionType, TabInt, THeadItemType} from "../../../services/se
 import type {Dispatch, FormEvent, SetStateAction} from "react";
 import type {JsonLdApiResponseInt} from "../../../interfaces/JsonLdApiResponseInt.ts";
 import toast from "react-hot-toast";
+import type {NavigateFunction} from "react-router-dom";
+import type {Agent} from "../../personnel/agent/model/agentService.ts";
   
 // INTERFACES OR TYPES
 export interface User {
@@ -20,6 +22,12 @@ export interface User {
   slug?: string
   createdAt?: string
   updatedAt?: string
+}
+
+export type PassType = {
+  userId: number
+  password: string
+  confirmPass: string
 }
 
 export interface SaveUser {
@@ -156,42 +164,44 @@ export const getUserHeadItems = ():THeadItemType[] => [
   { th: 'Nom complet' },
   { th: 'Rôles' },
   { th: 'N° Tél.' },
-  { th: 'E-mail' },
   { th: 'Date' },
 ]
 
 export const getUserRolesOptions = (): MultiValue<SelectOptionType> => {
   return [
-    { label: 'Pharmacien', value: 'Pharmacien', data: 'ROLE_RECEPTIONNISTE' },
+    { label: 'Réceptionniste', value: 'Réceptionniste', data: 'ROLE_RECEPTIONNISTE' },
     { label: 'Pharmacien', value: 'Pharmacien', data: 'ROLE_PHAR' },
     { label: 'Laborantin', value: 'Laborantin', data: 'ROLE_LAB' },
     { label: 'Infirmier', value: 'Infirmier', data: 'ROLE_INFIRMIER' },
     { label: 'Médecin', value: 'Médecin', data: 'ROLE_MEDECIN' },
     { label: 'Médecin directeur', value: 'Médecin directeur', data: 'ROLE_MEDECIN_DIRECTEUR' },
     { label: 'Administrateur', value: 'Administrateur', data: 'ROLE_ADMIN' },
+    { label: 'Super Administrateur', value: 'Super Administrateur', data: 'ROLE_SUPER_ADMIN' },
   ]
 }
 
 export const getUserRole = (roles: string[]): string => {
-  let role: string
+  const rolePriority = [
+    'ROLE_SUPER_ADMIN',
+    'ROLE_ADMIN',
+    'ROLE_PROMOTEUR',
+    'ROLE_MEDECIN_DIRECTEUR',
+    'ROLE_MEDECIN',
+    'ROLE_LAB',
+    'ROLE_PHAR',
+    'ROLE_RECEPTIONNISTE',
+    'ROLE_USER'
+  ]
   
-  if (roles.length > 0) {
-    roles.forEach((r: string): void => {
-      if (initUserRoles().includes(r) && r === 'ROLE_SUPER_ADMIN') role = 'ROLE_SUPER_ADMIN'
-      else if (initUserRoles().includes(r) && r === 'ROLE_ADMIN') role = 'ROLE_ADMIN'
-      else if (initUserRoles().includes(r) && r === 'ROLE_ADMIN') role = 'ROLE_ADMIN'
-      else if (initUserRoles().includes(r) && r === 'ROLE_PROMOTEUR') role = 'ROLE_PROMOTEUR'
-      else if (initUserRoles().includes(r) && r === 'ROLE_MEDECIN_DIRECTEUR') role = 'ROLE_MEDECIN_DIRECTEUR'
-      else if (initUserRoles().includes(r) && r === 'ROLE_MEDECIN') role = 'ROLE_MEDECIN'
-      else if (initUserRoles().includes(r) && r === 'ROLE_LAB') role = 'ROLE_LAB'
-      else if (initUserRoles().includes(r) && r === 'ROLE_PHAR') role = 'ROLE_PHAR'
-      else if (initUserRoles().includes(r) && r === 'ROLE_RECEPTIONNISTE') role = 'ROLE_RECEPTIONNISTE'
-      else role = 'ROLE_USER'
-    })
+  const allowedRoles: string[] = initUserRoles()
+  
+  for (const priorityRole: string of rolePriority) {
+    if (roles.includes(priorityRole) && allowedRoles.includes(priorityRole)) {
+      return priorityRole
+    }
   }
-  else role = 'ROLE_USER'
   
-  return role
+  return 'ROLE_USER' // Par défaut
 }
 
 export async function onUserSubmit(
@@ -199,18 +209,23 @@ export async function onUserSubmit(
   state: SaveUser,
   setErrors: Dispatch<SetStateAction<UserError>>,
   onSubmit: (data: SaveUser) => Promise<any>,
-  onHide: () => void,
-  onRefresh?: () => void
+  navigate: NavigateFunction,
+  onRefresh?: () => void,
+  user?: User
 ): Promise<void> {
   
   e.preventDefault()
+  let slug: string
+  
   const { id } = state
+  if (id > 0 && user && user?.slug) slug = user.slug
+  
   try {
     const { data, error}: JsonLdApiResponseInt<User> = await onSubmit(state)
     if (data) {
       toast.success(`${id > 0 ? 'Modification ' : 'Enregistrement '} bien effectué${'e'}`)
       if (onRefresh) onRefresh()
-      onHide()
+      if (id < 1) navigate('/app/users')
     }
     
     if (error && error?.data) {
@@ -220,6 +235,25 @@ export async function onUserSubmit(
       })
     }
   } catch (e) { toast.error('Problème réseau.') }
+  
+}
+
+export async function onDeleteUserSubmit(
+  state: User,
+  onSubmit: (data: User) => Promise<void>,
+  onRefresh: () => void,
+  onHide: () => void,
+  navigate?: NavigateFunction
+): Promise<void> {
+  onHide()
+  
+  const { error }: JsonLdApiResponseInt<User> = await onSubmit(state)
+  if (error && error.data && error.data?.detail) toast.error(error.data.detail)
+  else {
+    toast.success('Suppression bien effectuée.')
+    onRefresh()
+    if (navigate) navigate('/app/users')
+  }
   
 }
 // END EVENTS & FUNCTIONS
