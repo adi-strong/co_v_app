@@ -1,10 +1,11 @@
-import logo from '../assets/images/logo.png';
+import logo from '../assets/images/logo-md.png';
+import {Image} from "react-bootstrap";
 
 export default function LogoLoader() {
   
   return (
-    <div className='text-center'>
-      <img src={logo} className='loader-image' alt=''/>
+    <div className='text-center pt-3 pb-3'>
+      <Image fluid roundedCircle src={logo} className='loader-image' alt=''/>
     </div>
   )
   

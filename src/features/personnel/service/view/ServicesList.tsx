@@ -1,13 +1,19 @@
-import {useState} from "react";
+import {Dispatch, SetStateAction, useState} from "react";
 import {ActionsComp, SearchComp} from "../../../../components";
 import {getgetCategorieLitActionsOptions} from "../../../traitements/categorieLit/model/categorieLitService.ts";
 import type {Service} from "../model/serviceService.ts";
 import {getServiceFakeData} from "../model/serviceService.ts";
 import ServiceData from "./ServiceData.tsx";
+import type {Fonction} from "../../fonction/model/fonctionService.ts";
 
-export default function ServicesList() {
+export default function ServicesList({ services, setServices, onRefresh, isFetching, loader }: {
+  services: Service[]
+  setServices: Dispatch<SetStateAction<Service[]>>
+  onRefresh: () => void
+  loader: boolean
+  isFetching: boolean
+}) {
   
-  const [services, setServices] = useState<Service[]>(getServiceFakeData())
   const [isSelectedAll, setIsSelectedAll] = useState<boolean>(false)
   const [search, setSearch] = useState<{keyword: string}>({keyword: ''})
   const [action, setAction] = useState<string>('')
@@ -20,7 +26,7 @@ export default function ServicesList() {
         setState={setSearch}
         btnLabel='Rechercher des services'
         onSubmit={(): void => { }}
-        loader={false}
+        loader={loader}
         size='sm'
         md1={5}
         md2={7}
@@ -33,7 +39,7 @@ export default function ServicesList() {
         options={getgetCategorieLitActionsOptions()}
         state={action}
         setState={setAction}
-        loader={false}
+        loader={loader}
         size='sm'
       />
       
@@ -42,6 +48,9 @@ export default function ServicesList() {
         setIsSelectedAll={setIsSelectedAll}
         services={services}
         setServices={setServices}
+        loader={loader}
+        isFetching={isFetching}
+        onRefresh={onRefresh}
       />
     </>
   )

@@ -19,14 +19,14 @@ export default function AgentItem(props: {
   agent: Agent
   setAgents: Dispatch<SetStateAction<Agent[]>>
   index: number
-  isSelectedAll: boolean
-  setIsSelectedAll: Dispatch<SetStateAction<boolean>>
+  onRefresh: () => void
 }) {
   
   const {
     agent,
     index,
     setAgents,
+    onRefresh,
   } = props
   
   const [isDel, setIsDel] = useState<boolean>(false)
@@ -48,7 +48,7 @@ export default function AgentItem(props: {
             onChange={(): void => setSelectedDataItem(index, setAgents)}
             className='me-0'
           />
-          <Link to={`/app/agents/${agent.id}/${agent?.slug}`}>
+          <Link to={`/app/agents/${agent.id}/${agent?.slug}`} className='text-uppercase'>
             {agent?.fullName ?? agent.nom}
           </Link>
           

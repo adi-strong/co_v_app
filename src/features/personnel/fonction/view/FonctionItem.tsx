@@ -1,25 +1,26 @@
 import type {Dispatch, ReactNode, SetStateAction} from "react";
 import {useState} from "react";
 import {handleShow, onMouseEnterEvent, onMouseLeaveEvent, setSelectedDataItem} from "../../../../services/services.ts";
-import {CheckField, RemoveModal, SideContent} from "../../../../components";
+import {CheckField, SideContent} from "../../../../components";
 import {Link} from "react-router-dom";
 import {Button} from "react-bootstrap";
 import moment from "moment";
 import type {Fonction} from "../model/fonctionService.ts";
 import FonctionForm from "./FonctionForm.tsx";
-
-function onSubmit(data: any, onHide: () => void, onRefresh: () => void): void { onHide() }
+import RemoveFonctionModal from "./RemoveFonctionModal.tsx";
 
 export default function FonctionItem(props: {
   fonction: Fonction
   setFonctions: Dispatch<SetStateAction<Fonction[]>>
   index: number
+  onRefresh: () => void
 }) {
   
   const {
     fonction,
     index,
     setFonctions,
+    onRefresh,
   } = props
   
   const [isEdit, setIsEdit] = useState<boolean>(false)
@@ -59,22 +60,25 @@ export default function FonctionItem(props: {
         <td>{fonction?.createdAt ? moment(fonction.createdAt).format('DD/MM/YY') : '—'}</td>
       </tr>
       
-      <RemoveModal
-        isItIrreversible
-        onSubmit={() => onSubmit(fonction, (): void => handleShow(setIsDel), (): void => { })}
+      <RemoveFonctionModal
         onHide={(): void => handleShow(setIsDel)}
         data={fonction}
         show={isDel}
-        onRefresh={(): void => { }}
-        title={<>fonction : {fonction.nom.toUpperCase()}</>}
+        onRefresh={onRefresh}
       />
       
       <SideContent
         show={isEdit}
         onHide={(): void => handleShow(setIsEdit)}
         title='Modifier la fonction'
-        onRefresh={() => { }}
-        children={<FonctionForm data={fonction}/> as ReactNode}
+        icon='pencil-square'
+        children={
+          <FonctionForm
+            data={fonction}
+            onRefresh={onRefresh}
+            onHide={(): void => handleShow(setIsEdit)}
+          /> as ReactNode
+        }
       />
     </>
   )

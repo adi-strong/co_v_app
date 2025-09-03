@@ -1,25 +1,26 @@
 import type {Dispatch, ReactNode, SetStateAction} from "react";
 import {useState} from "react";
 import {handleShow, onMouseEnterEvent, onMouseLeaveEvent, setSelectedDataItem} from "../../../../services/services.ts";
-import {CheckField, RemoveModal, SideContent} from "../../../../components";
+import {CheckField, SideContent} from "../../../../components";
 import {Link} from "react-router-dom";
 import {Button} from "react-bootstrap";
 import moment from "moment";
 import type {Departement} from "../model/departementService.ts";
 import DepartementForm from "./DepartementForm.tsx";
-
-function onSubmit(data: any, onHide: () => void, onRefresh: () => void): void { onHide() }
+import RemoveDepartmentModal from "./RemoveDepartmentModal.tsx";
 
 export default function DepartementItem(props: {
   departement: Departement
   setDepartements: Dispatch<SetStateAction<Departement[]>>
   index: number
+  onRefresh: () => void
 }) {
   
   const {
     departement,
     index,
     setDepartements,
+    onRefresh,
   } = props
   
   const [isEdit, setIsEdit] = useState<boolean>(false)
@@ -59,22 +60,25 @@ export default function DepartementItem(props: {
         <td>{departement?.createdAt ? moment(departement.createdAt).format('DD/MM/YY') : '—'}</td>
       </tr>
       
-      <RemoveModal
-        isItIrreversible
-        onSubmit={() => onSubmit(departement, (): void => handleShow(setIsDel), (): void => { })}
+      <RemoveDepartmentModal
         onHide={(): void => handleShow(setIsDel)}
         data={departement}
         show={isDel}
-        onRefresh={(): void => { }}
-        title={<>département : {departement.nom.toUpperCase()}</>}
+        onRefresh={onRefresh}
       />
       
       <SideContent
         show={isEdit}
         onHide={(): void => handleShow(setIsEdit)}
         title='Modifier le département'
-        onRefresh={() => { }}
-        children={<DepartementForm data={departement}/> as ReactNode}
+        icon='pencil-square'
+        children={
+          <DepartementForm
+            data={departement}
+            onRefresh={onRefresh}
+            onHide={(): void => handleShow(setIsEdit)}
+          /> as ReactNode
+        }
       />
     </>
   )

@@ -1,6 +1,6 @@
-import type {Dispatch, SetStateAction} from "react";
+import type {Dispatch, ReactNode, SetStateAction} from "react";
 import {useState} from "react";
-import {Button, Card, Col, Row, Table} from "react-bootstrap";
+import {Button, Card, Col, Row, Spinner, Table} from "react-bootstrap";
 import {selectAllStateItems, tableWhiteStyle} from "../../../../services/services.ts";
 import {CheckField, TextField} from "../../../../components";
 import {handleChange} from "../../../../services/form.hander.service.ts";
@@ -8,13 +8,23 @@ import type {Agent} from "../model/agentService.ts";
 import {Link} from "react-router-dom";
 import AgentItem from "./AgentItem.tsx";
 import {getAgentHeadItems} from "../model/agentService.ts";
+import {RepeatableTableRows} from "../../../../loaders";
 
 export default function AgentData(props: {
   agents: Agent[]
   setAgents: Dispatch<SetStateAction<Agent[]>>
+  onRefresh: () => void
+  loader: boolean
+  isFetching: boolean
 }) {
   
-  const { agents, setAgents } = props
+  const {
+    agents,
+    setAgents,
+    onRefresh,
+    loader,
+    isFetching,
+  } = props
   
   const [search, setSearch] = useState<{ keyword: string }>({ keyword: '' })
   const [isSelectedAll, setIsSelectedAll] = useState<boolean>(false)
@@ -24,9 +34,11 @@ export default function AgentData(props: {
       <Row>
         <Col md={6}>
           <Card.Title as='h5' className='mx-4 mt-5 me-4'>
-            <Button variant='link' size='sm' className='me-2'>
-              <i className='bi bi-arrow-clockwise'/>
+            <Button disabled={isFetching} variant='link' className='me-2' size='sm' onClick={onRefresh} title='Actualiser'>
+              {!isFetching && (<i className='bi bi-arrow-clockwise' />) as ReactNode}
+              {isFetching && (<Spinner animation='grow' size='sm' />) as ReactNode}
             </Button>
+            
             Liste des agents
             
             <Link to='/app/agents/new' className='mx-5 btn btn-sm btn-link' title='Nouvel agent'>
@@ -85,6 +97,7 @@ export default function AgentData(props: {
               onChange={(): void => selectAllStateItems(isSelectedAll, setIsSelectedAll, setAgents)}
               className='me-0'
             />
+            
             Nom complet
           </th>
           
@@ -100,11 +113,12 @@ export default function AgentData(props: {
             agent={c}
             setAgents={setAgents}
             index={index}
-            isSelectedAll={isSelectedAll}
-            setIsSelectedAll={setIsSelectedAll}
+            onRefresh={onRefresh}
           />)}
         </tbody>
       </Table>
+      
+      {loader && <RepeatableTableRows/>}
     </>
   )
   

@@ -21,7 +21,7 @@ export interface Agent {
   nom: string
   postNom?: string
   prenom?: string
-  sexe: string
+  sexe?: string
   tel: string
   email?: string
   fkDepartement?: Departement
@@ -136,6 +136,7 @@ const castAgentFormData = (state: SaveAgent): FormData => {
   
   if (tel) formData.append('tel', tel)
   if (nom) formData.append('nom', nom)
+  if (email) formData.append('email', email)
   if (sexe) formData.append('sexe', sexe)
   if (prenom) formData.append('prenom', prenom)
   if (postNom) formData.append('postNom', postNom)
@@ -239,11 +240,13 @@ export async function onDeleteAgent(
   state: Agent,
   onSubmit: (data: Agent) => Promise<void>,
   onRefresh: () => void,
+  onHide: () => void,
   navigate?: NavigateFunction
 ): Promise<void> {
+  onHide()
 
   try {
-    const { error }: JsonLdApiResponseInt<Agent> = await onSubmit(state)
+    const { error }: JsonLdApiResponseInt<void> = await onSubmit(state)
     if (error) {
       if (error?.data) toast.error(error.data.detail)
     } else {
@@ -253,6 +256,22 @@ export async function onDeleteAgent(
     }
   } catch (e) { toast.error('Problème réseau.') }
 
+}
+
+export const onAgentDepartmentChange = (
+  e: SingleValue<SelectOptionType>,
+  setAgent: Dispatch<SetStateAction<SaveAgent>>,
+  setServicesOptions: Dispatch<SetStateAction<SelectOptionType[]>>
+): void => {
+  setAgent(agent => {
+    const department = e ?? null
+    
+    agent.fkService = null
+    agent.fkDepartement = department
+    setServicesOptions(department && department?.subData ? department.subData : [])
+    
+    return agent
+  })
 }
 // END EVENTS & FUNCTIONS
 

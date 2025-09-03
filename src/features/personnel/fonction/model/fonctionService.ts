@@ -1,6 +1,7 @@
 import type {Dispatch, FormEvent, SetStateAction} from "react";
 import toast from "react-hot-toast";
 import type {JsonLdApiResponseInt} from "../../../../interfaces/JsonLdApiResponseInt.ts";
+import type {NavigateFunction} from "react-router-dom";
 
 // INTERFACES OR TYPES
 export interface Fonction {
@@ -63,8 +64,8 @@ export async function onPostFonctionSubmit(
   state: NewFonction[],
   setState: Dispatch<SetStateAction<NewFonction[]>>,
   onSubmit: (data: NewFonction) => Promise<any>,
-  onHide: () => void,
-  onRefresh?: () => void
+  onRefresh?: () => void,
+  onHide?: () => void,
 ): Promise<void> {
   
   e.preventDefault()
@@ -99,24 +100,27 @@ export async function onPostFonctionSubmit(
   
   if (remainingCategories.length === 0) {
     setState(initNewFonctions())
-    onHide()
   }
   
   if (onRefresh) onRefresh()
+  if (onHide) onHide()
   
 }
 
-export async function onPatchFonctionSubmit(
+export async function onFonctionSubmit(
   e: FormEvent<HTMLFormElement>,
   state: SaveFonction,
+  setState: Dispatch<SetStateAction<SaveFonction>>,
   setErrors: Dispatch<SetStateAction<FonctionError>>,
   onSubmit: (data: SaveFonction) => Promise<any>,
-  onHide: () => void,
-  onRefresh?: () => void
+  onRefresh?: () => void,
+  onHide?: () => void
 ): Promise<void> {
   
   e.preventDefault()
   setErrors(initFonctionErrorState())
+  
+  const { id } = state
   
   try {
     const { data, error }: JsonLdApiResponseInt<Fonction> = await onSubmit(state)
@@ -128,11 +132,32 @@ export async function onPatchFonctionSubmit(
     }
     
     if (data) {
-      toast.success('Modification bien effectuée.')
+      toast.success(id < 1 ? 'Enregistrement bien effectué.' : 'Modification bien effectuée.')
+      setState(initFonctionState())
+      
       if (onRefresh) onRefresh()
-      onHide()
+      if (onHide) onHide()
     }
   } catch (e) { toast.error('Problème réseau.') }
+  
+}
+
+export async function onDeleteFonctionSubmit(
+  state: Fonction,
+  onSubmit: (data: Fonction) => Promise<void>,
+  onRefresh: () => void,
+  onHide: () => void,
+  navigate?: NavigateFunction
+): Promise<void> {
+  onHide()
+  
+  const { error }: JsonLdApiResponseInt<void> = await onSubmit(state)
+  if (error && error.data && error.data?.detail) toast.error(error.data.detail)
+  else {
+    toast.success('Suppression bien effectuée.')
+    onRefresh()
+    if (navigate) navigate('/app/fonctions')
+  }
   
 }
 // END EVENTS & FUNCTIONS

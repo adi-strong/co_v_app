@@ -2,7 +2,6 @@ import type {Dispatch, FormEvent, SetStateAction} from "react";
 import toast from "react-hot-toast";
 import type {JsonLdApiResponseInt} from "../../../../interfaces/JsonLdApiResponseInt.ts";
 import type {NavigateFunction} from "react-router-dom";
-import type {User} from "../../../user/model/userService.ts";
 
 // INTERFACES OR TYPES
 export interface CategorieExam {
@@ -151,7 +150,7 @@ export async function onDeleteCategorieExamSubmit(
 ): Promise<void> {
   onHide()
   
-  const { error }: JsonLdApiResponseInt<User> = await onSubmit(state)
+  const { error }: JsonLdApiResponseInt<CategorieExam> = await onSubmit(state)
   if (error && error.data && error.data?.detail) toast.error(error.data.detail)
   else {
     toast.success('Suppression bien effectuée.')

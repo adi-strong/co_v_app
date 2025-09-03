@@ -1,13 +1,17 @@
-import {useState} from "react";
+import {Dispatch, SetStateAction, useState} from "react";
 import {ActionsComp, SearchComp} from "../../../../components";
 import {getgetCategorieLitActionsOptions} from "../../../traitements/categorieLit/model/categorieLitService.ts";
 import type {Fonction} from "../model/fonctionService.ts";
-import {getFonctionFakeData} from "../model/fonctionService.ts";
 import FonctionData from "./FonctionData.tsx";
 
-export default function FonctionsList() {
+export default function FonctionsList({ fonctions, setFonctions, onRefresh, isFetching, loader }: {
+  fonctions: Fonction[]
+  setFonctions: Dispatch<SetStateAction<Fonction[]>>
+  onRefresh: () => void
+  loader: boolean
+  isFetching: boolean
+}) {
   
-  const [fonctions, setFonctions] = useState<Fonction[]>(getFonctionFakeData())
   const [isSelectedAll, setIsSelectedAll] = useState<boolean>(false)
   const [search, setSearch] = useState<{keyword: string}>({keyword: ''})
   const [action, setAction] = useState<string>('')
@@ -20,7 +24,7 @@ export default function FonctionsList() {
         setState={setSearch}
         btnLabel='Rechercher des fonctions'
         onSubmit={(): void => { }}
-        loader={false}
+        loader={loader}
         size='sm'
         md1={5}
         md2={7}
@@ -33,7 +37,7 @@ export default function FonctionsList() {
         options={getgetCategorieLitActionsOptions()}
         state={action}
         setState={setAction}
-        loader={false}
+        loader={loader}
         size='sm'
       />
       
@@ -42,6 +46,9 @@ export default function FonctionsList() {
         setIsSelectedAll={setIsSelectedAll}
         fonctions={fonctions}
         setFonctions={setFonctions}
+        loader={loader}
+        isFetching={isFetching}
+        onRefresh={onRefresh}
       />
     </>
   )

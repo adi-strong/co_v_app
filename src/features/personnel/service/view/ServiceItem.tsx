@@ -1,25 +1,26 @@
 import type {Dispatch, ReactNode, SetStateAction} from "react";
 import {useState} from "react";
 import {handleShow, onMouseEnterEvent, onMouseLeaveEvent, setSelectedDataItem} from "../../../../services/services.ts";
-import {CheckField, RemoveModal, SideContent} from "../../../../components";
+import {CheckField, SideContent} from "../../../../components";
 import {Link} from "react-router-dom";
 import {Button} from "react-bootstrap";
 import moment from "moment/moment";
 import type {Service} from "../model/serviceService.ts";
 import ServiceForm from "./ServiceForm.tsx";
-
-function onSubmit(data: any, onHide: () => void, onRefresh: () => void): void { onHide() }
+import RemoveServiceModal from "./RemoveServiceModal.tsx";
 
 export default function ServiceItem(props: {
   service: Service
   setServices: Dispatch<SetStateAction<Service[]>>
   index: number
+  onRefresh: () => void
 }) {
   
   const {
     service,
     index,
     setServices,
+    onRefresh,
   } = props
   
   const [isEdit, setIsEdit] = useState<boolean>(false)
@@ -59,22 +60,25 @@ export default function ServiceItem(props: {
         <td>{service?.createdAt ? moment(service.createdAt).format('DD/MM/YY') : '—'}</td>
       </tr>
       
-      <RemoveModal
-        isItIrreversible
-        onSubmit={() => onSubmit(service, (): void => handleShow(setIsDel), (): void => { })}
+      <RemoveServiceModal
         onHide={(): void => handleShow(setIsDel)}
         data={service}
         show={isDel}
-        onRefresh={(): void => { }}
-        title={<>service : {service.nom.toUpperCase()}</>}
+        onRefresh={onRefresh}
       />
       
       <SideContent
         show={isEdit}
         onHide={(): void => handleShow(setIsEdit)}
         title='Modifier le service'
-        onRefresh={() => { }}
-        children={<ServiceForm data={service}/> as ReactNode}
+        icon='pencil-square'
+        children={
+          <ServiceForm
+            data={service}
+            onRefresh={onRefresh}
+            onHide={(): void => handleShow(setIsEdit)}
+          /> as ReactNode
+        }
       />
     </>
   )

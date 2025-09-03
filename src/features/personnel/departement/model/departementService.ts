@@ -1,6 +1,8 @@
 import type {Dispatch, FormEvent, SetStateAction} from "react";
 import toast from "react-hot-toast";
 import type {JsonLdApiResponseInt} from "../../../../interfaces/JsonLdApiResponseInt.ts";
+import type {NavigateFunction} from "react-router-dom";
+import type {Service} from "../../service/model/serviceService.ts";
 
 // INTERFACES OR TYPES
 export interface Departement {
@@ -11,6 +13,7 @@ export interface Departement {
   updatedAt?: string
   slug?: string
   selected: boolean
+  services: Service[]
 }
 
 export interface SaveDepartement {
@@ -47,6 +50,7 @@ export const getDepartementFakeData = (): Departement[] => [
     createdAt: new Date().toISOString(),
     "@id": '/api/categorie_exams/1',
     selected: false,
+    services: [],
   },
   {
     id: 2,
@@ -55,6 +59,7 @@ export const getDepartementFakeData = (): Departement[] => [
     createdAt: new Date().toISOString(),
     "@id": '/api/categorie_exams/2',
     selected: false,
+    services: [],
   },
 ]
 
@@ -106,13 +111,14 @@ export async function onPostDepartementSubmit(
   
 }
 
-export async function onPatchDepartementSubmit(
+export async function onDepartementSubmit(
   e: FormEvent<HTMLFormElement>,
   state: SaveDepartement,
+  setState: Dispatch<SetStateAction<SaveDepartement>>,
   setErrors: Dispatch<SetStateAction<DepartementError>>,
   onSubmit: (data: SaveDepartement) => Promise<any>,
-  onHide: () => void,
-  onRefresh?: () => void
+  onRefresh?: () => void,
+  onHide?: () => void
 ): Promise<void> {
   
   e.preventDefault()
@@ -129,10 +135,31 @@ export async function onPatchDepartementSubmit(
     
     if (data) {
       toast.success('Modification bien effectuée.')
+      setState(initDepartementState())
+      
       if (onRefresh) onRefresh()
-      onHide()
+      if (onHide) onHide()
     }
   } catch (e) { toast.error('Problème réseau.') }
+  
+}
+
+export async function onDeleteDepartementSubmit(
+  state: Departement,
+  onSubmit: (data: Departement) => Promise<void>,
+  onRefresh: () => void,
+  onHide: () => void,
+  navigate?: NavigateFunction
+): Promise<void> {
+  onHide()
+  
+  const { error }: JsonLdApiResponseInt<void> = await onSubmit(state)
+  if (error && error.data && error.data?.detail) toast.error(error.data.detail)
+  else {
+    toast.success('Suppression bien effectuée.')
+    onRefresh()
+    if (navigate) navigate('/app/departements')
+  }
   
 }
 // END EVENTS & FUNCTIONS

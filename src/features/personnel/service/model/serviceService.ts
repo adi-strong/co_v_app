@@ -4,6 +4,7 @@ import type {JsonLdApiResponseInt} from "../../../../interfaces/JsonLdApiRespons
 import type {SingleValue} from "react-select";
 import type {SelectOptionType} from "../../../../services/services.ts";
 import type {Departement} from "../../departement/model/departementService.ts";
+import type {NavigateFunction} from "react-router-dom";
 
 // INTERFACES OR TYPES
 export interface Service {
@@ -116,17 +117,20 @@ export async function onPostServiceSubmit(
   
 }
 
-export async function onPatchServiceSubmit(
+export async function onServiceSubmit(
   e: FormEvent<HTMLFormElement>,
   state: SaveService,
+  setState: Dispatch<SetStateAction<SaveService>>,
   setErrors: Dispatch<SetStateAction<ServiceError>>,
   onSubmit: (data: SaveService) => Promise<any>,
-  onHide: () => void,
-  onRefresh?: () => void
+  onRefresh?: () => void,
+  onHide?: () => void
 ): Promise<void> {
   
   e.preventDefault()
   setErrors(initServiceErrorState())
+  
+  const { id } = state
   
   try {
     const { data, error }: JsonLdApiResponseInt<Service> = await onSubmit(state)
@@ -138,11 +142,32 @@ export async function onPatchServiceSubmit(
     }
     
     if (data) {
-      toast.success('Modification bien effectuée.')
+      toast.success(id < 1 ? 'Enregistrement bien effectué.' : 'Modification bien effectuée.')
+      setState(initServiceState())
+      
       if (onRefresh) onRefresh()
-      onHide()
+      if (onHide) onHide()
     }
   } catch (e) { toast.error('Problème réseau.') }
+  
+}
+
+export async function onDeleteServiceSubmit(
+  state: Service,
+  onSubmit: (data: Service) => Promise<void>,
+  onRefresh: () => void,
+  onHide: () => void,
+  navigate?: NavigateFunction
+): Promise<void> {
+  onHide()
+  
+  const { error }: JsonLdApiResponseInt<void> = await onSubmit(state)
+  if (error && error.data && error.data?.detail) toast.error(error.data.detail)
+  else {
+    toast.success('Suppression bien effectuée.')
+    onRefresh()
+    if (navigate) navigate('/app/services')
+  }
   
 }
 // END EVENTS & FUNCTIONS

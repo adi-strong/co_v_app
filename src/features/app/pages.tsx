@@ -118,7 +118,8 @@ const
   
   Agents = lazy(() => import('../personnel/agent/view/agentView.tsx')),
   NAgent = lazy(() => import('../personnel/agent/view/newAgent.tsx')),
-  EAgent = lazy(() => import('../personnel/agent/view/editAgent.tsx'))
+  EAgent = lazy(() => import('../personnel/agent/view/editAgent.tsx')),
+  UAgent = lazy(() => import('../personnel/agent/view/showAgent.tsx'))
 
 const pages: RouteType[] = [
   {
@@ -385,6 +386,10 @@ const pages: RouteType[] = [
       {
         path: 'agents/:id/:slug/edit',
         element: <EAgent />
+      },
+      {
+        path: 'agents/:id/:slug',
+        element: <UAgent />
       },
       // End agents
     ]

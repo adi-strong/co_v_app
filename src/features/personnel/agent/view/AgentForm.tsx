@@ -1,20 +1,53 @@
 import type {Agent} from "../model/agentService.ts";
 import {ReactNode, useState} from "react";
-import {initAgentErrorState, initAgentState} from "../model/agentService.ts";
+import {
+  initAgentErrorState,
+  initAgentState,
+  onAgentDepartmentChange,
+  onPatchAgentSubmit,
+  onPostAgentSubmit
+} from "../model/agentService.ts";
 import {FormRequiredFieldsNoticeText, SingleSelectField, TextField} from "../../../../components";
-import {Button, Col, Image, Row} from "react-bootstrap";
+import {Button, Col, Image, Row, Spinner} from "react-bootstrap";
 import ImageUploading, {ImageListType, ImageType} from "react-images-uploading";
 import avatar from '../../../../assets/images/default-avatar.png';
 import {handleChange} from "../../../../services/form.hander.service.ts";
 import SelectField from "../../../../components/forms/SelectField.tsx";
+import {useEditAgentMutation, useGetAgentsQuery, usePostAgentMutation} from "../model/agent.api.slice.ts";
+import useSetAgentData from "../hooks/useSetAgentData.ts";
+import {useNavigate} from "react-router-dom";
+import {useGetDepartementsQuery} from "../../departement/model/departement.api.slice.ts";
+import {useGetFonctionsQuery} from "../../fonction/model/fonction.api.slice.ts";
+import useGetDepartmentsOptions from "../../departement/hooks/useGetDepartmentsOptions.ts";
+import useGetFonctionsOptions from "../../fonction/hooks/useGetFonctionsOptions.ts";
+import type {SelectOptionType} from "../../../../services/services.ts";
 import {sexOptions} from "../../../../services/services.ts";
 
-export default function AgentForm({ data }: { data?: Agent }) {
+export default function AgentForm({ data, uRefresh, loader = false }: {
+  data?: Agent, 
+  loader?: boolean, 
+  uRefresh?: () => void 
+}) {
   
   const maxNumber: number = 1
+  const navigate = useNavigate()
   
+  const { refetch } = useGetAgentsQuery('LIST')
+  const { refetch: functionsRefresh, isFetching: isFunctionFetching } = useGetFonctionsQuery('LIST')
+  const { refetch: departmentsRefresh, isFetching: isDepartmentFetching } = useGetDepartementsQuery('LIST')
+  
+  const [servicesOptions, setServicesOptions] = useState<SelectOptionType[]>([])
   const [agent, setAgent] = useState(initAgentState())
-  const [errors/*, setErrors */] = useState(initAgentErrorState())
+  const [errors, setErrors] = useState(initAgentErrorState())
+  const [onPostAgent, { isLoading }] = usePostAgentMutation()
+  const [onEditAgent, { isLoading: isEditLoading }] = useEditAgentMutation()
+  
+  const functionsOptions = useGetFonctionsOptions()
+  const departmentsOptions = useGetDepartmentsOptions(setServicesOptions)
+  
+  useSetAgentData(data, setAgent, setServicesOptions)
+  
+  const onRefresh = async (): Promise<void> => { await refetch() }
   
   const onImageChange = (imageList: ImageListType): void => setAgent(a => ({
     ...a,
@@ -23,7 +56,9 @@ export default function AgentForm({ data }: { data?: Agent }) {
   
   return (
     <>
-      <form onSubmit={e => e.preventDefault()}>
+      <form onSubmit={e => data 
+        ? onPatchAgentSubmit(e, agent, setErrors, onEditAgent, navigate, uRefresh)
+        : onPostAgentSubmit(e, agent, setErrors, onPostAgent, navigate, onRefresh)}>
         <FormRequiredFieldsNoticeText/>
         <Row>
           {!data && (
@@ -48,7 +83,7 @@ export default function AgentForm({ data }: { data?: Agent }) {
                         
                         <div className='text-center mt-3'>
                           <Button
-                            disabled={false}
+                            disabled={isLoading || isEditLoading || loader}
                             type='button'
                             onClick={onImageUpload}
                             size='sm'
@@ -59,7 +94,7 @@ export default function AgentForm({ data }: { data?: Agent }) {
                           </Button>
                           
                           <Button
-                            disabled={false}
+                            disabled={isLoading || isEditLoading || loader}
                             type='button'
                             size='sm'
                             title='Supprimer une image'
@@ -83,7 +118,7 @@ export default function AgentForm({ data }: { data?: Agent }) {
                         
                         <div className='text-center mt-3'>
                           <Button
-                            disabled={false}
+                            disabled={isLoading || isEditLoading || loader}
                             type='button'
                             onClick={() => onImageUpdate(index)}
                             size='sm'
@@ -94,7 +129,7 @@ export default function AgentForm({ data }: { data?: Agent }) {
                           </Button>
                           
                           <Button
-                            disabled={false}
+                            disabled={isLoading || isEditLoading || loader}
                             type='button'
                             size='sm'
                             title='Supprimer une image'
@@ -117,7 +152,7 @@ export default function AgentForm({ data }: { data?: Agent }) {
               <TextField
                 required
                 autoFocus
-                disabled={false}
+                disabled={isLoading || isEditLoading || loader}
                 name='nom'
                 onChange={(e): void => handleChange(e, agent, setAgent)}
                 value={agent.nom}
@@ -131,7 +166,7 @@ export default function AgentForm({ data }: { data?: Agent }) {
             
             <div className='mb-3'>
               <TextField
-                disabled={false}
+                disabled={isLoading || isEditLoading || loader}
                 name='postNom'
                 onChange={(e): void => handleChange(e, agent, setAgent)}
                 value={agent.postNom}
@@ -143,7 +178,7 @@ export default function AgentForm({ data }: { data?: Agent }) {
             
             <div className='mb-3'>
               <TextField
-                disabled={false}
+                disabled={isLoading || isEditLoading || loader}
                 name='prenom'
                 onChange={(e): void => handleChange(e, agent, setAgent)}
                 value={agent.prenom}
@@ -156,7 +191,7 @@ export default function AgentForm({ data }: { data?: Agent }) {
             <div className='mb-3'>
               <SelectField
                 required
-                disabled={false}
+                disabled={isLoading || isEditLoading || loader}
                 name='sexe'
                 value={agent.sexe}
                 onChange={e => handleChange(e, agent, setAgent)}
@@ -171,7 +206,7 @@ export default function AgentForm({ data }: { data?: Agent }) {
             <div className='mb-3'>
               <TextField
                 required
-                disabled={false}
+                disabled={isLoading || isEditLoading || loader}
                 name='tel'
                 onChange={(e): void => handleChange(e, agent, setAgent)}
                 value={agent.tel}
@@ -183,7 +218,7 @@ export default function AgentForm({ data }: { data?: Agent }) {
             
             <div className='mb-3'>
               <TextField
-                disabled={false}
+                disabled={isLoading || isEditLoading || loader}
                 type='email'
                 name='email'
                 onChange={(e): void => handleChange(e, agent, setAgent)}
@@ -196,10 +231,11 @@ export default function AgentForm({ data }: { data?: Agent }) {
             
             <div className='mb-3'>
               <SingleSelectField
-                disabled={false}
-                options={[]}
+                disabled={isLoading || isEditLoading || isDepartmentFetching || loader}
+                onRefresh={async (): Promise<void> => { await departmentsRefresh() }}
+                options={departmentsOptions}
                 value={agent?.fkDepartement ?? null}
-                onChange={(): void => {}}
+                onChange={e => onAgentDepartmentChange(e, setAgent, setServicesOptions)}
                 name='fkDepartement'
                 error={errors.fkDepartement}
                 label='Département'
@@ -209,10 +245,10 @@ export default function AgentForm({ data }: { data?: Agent }) {
             
             <div className='mb-3'>
               <SingleSelectField
-                disabled={false}
-                options={[]}
+                disabled={isLoading || loader || isEditLoading || isDepartmentFetching || (!agent?.fkDepartement)}
+                options={servicesOptions}
                 value={agent?.fkService ?? null}
-                onChange={(): void => {}}
+                onChange={e => setAgent(a => ({ ...a, fkService: e }))}
                 name='fkService'
                 error={errors.fkService}
                 label='Service'
@@ -222,10 +258,11 @@ export default function AgentForm({ data }: { data?: Agent }) {
             
             <div className='mb-3'>
               <SingleSelectField
-                disabled={false}
-                options={[]}
-                value={agent?.fkService ?? null}
-                onChange={(): void => {}}
+                disabled={isLoading || isEditLoading || isFunctionFetching || loader}
+                onRefresh={async (): Promise<void> => { await functionsRefresh() }}
+                options={functionsOptions()}
+                value={agent?.fkFonction ?? null}
+                onChange={e => setAgent(a => ({ ...a, fkFonction: e }))}
                 name='fkFonction'
                 error={errors.fkFonction}
                 label='Fonction'
@@ -233,9 +270,11 @@ export default function AgentForm({ data }: { data?: Agent }) {
               />
             </div>
             
-            <Button type='submit' disabled={false} className='w-100'>
-              {!data ? 'Enregistrer ' : 'Modifier '}
-              un agent
+            <Button type='submit' disabled={isLoading || isEditLoading || loader} className='w-100'>
+              {(isLoading || isEditLoading || loader) && <Spinner className='me-1' animation='border' size='sm' />}
+              {!(isLoading || isEditLoading || loader) && data ? 'Modifier ' : !(isLoading || isEditLoading || loader)
+                && 'Enregistrer '}
+              {(isLoading || isEditLoading || loader) ? 'Veuillez patienter' : 'un agent'}
             </Button>
           </Col>
         </Row>
