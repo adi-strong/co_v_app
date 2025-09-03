@@ -33,10 +33,15 @@ const infosGenSlice = createSlice({
       if (payload.infos) state.infos = payload.infos
     },
     
+    setResetInfos: (state: InfoState): void => {
+      state.infos = null
+    }
+    
   },
 });
 
 export const {
+  setResetInfos,
   setInfosGen,
 } = infosGenSlice.actions
 

@@ -25,8 +25,8 @@ export interface CompteCaisse {
 
 export interface SaveCompteCaisse {
   id: number,
-  first: CurrencyInt
-  last: CurrencyInt
+  first: string
+  last: string
   nom: string
   taux: number
   estCeParDefaut: boolean
@@ -48,22 +48,8 @@ export const initCompteCaisseState = (): SaveCompteCaisse => ({
   nom: '',
   id: 0,
   estCeParDefaut: false,
-  first: {
-    code: '',
-    flag: '',
-    image: '',
-    label: '',
-    symbol: '',
-    value: '',
-  },
-  last: {
-    code: '',
-    flag: '',
-    image: '',
-    label: '',
-    symbol: '',
-    value: '',
-  },
+  first: 'CDF',
+  last: 'USD',
   taux: 0,
 })
 
@@ -120,8 +106,8 @@ export async function onCompteCaisseSubmit(
   state: SaveCompteCaisse,
   setErrors: Dispatch<SetStateAction<CompteCaisseError>>,
   onSubmit: (data: SaveCompteCaisse) => Promise<any>,
-  onHide: () => void,
   onRefresh?: () => void,
+  onHide?: () => void,
 ): Promise<void> {
   
   e.preventDefault()
@@ -141,7 +127,7 @@ export async function onCompteCaisseSubmit(
     if (data) {
       toast.success(`Compte ${id > 0 ? 'mis à jour.' : 'bien enregistré.'}`)
       if (onRefresh) onRefresh()
-      onHide()
+      if (onHide) onHide()
     }
   } catch (e) { toast.error('Problème réseau.') }
   

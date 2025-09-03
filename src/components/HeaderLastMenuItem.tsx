@@ -7,6 +7,8 @@ import {useDispatch, useSelector} from "react-redux";
 import type {UserState} from "../features/auth/model/auth.slice.ts";
 import {logout} from "../features/auth/model/auth.slice.ts";
 import {onGoTo} from "../services/services.ts";
+import {setResetInfos} from "../features/configs/infosGen/model/infosGen.slice.ts";
+import {setResetCompte} from "../features/finances/compteCaisse/model/compteCaisse.slice.ts";
 
 const HeaderLastMenuItem = () => {
   
@@ -62,6 +64,8 @@ const HeaderLastMenuItem = () => {
             <Dropdown.Item as='a' className='cursor-pointer' onClick={() => {
               toast.success('À bientôt !')
               dispatch(API.util?.resetApiState())
+              dispatch(setResetInfos())
+              dispatch(setResetCompte())
               dispatch(logout())
             }}>
               <i className='bi bi-power me-2'/>

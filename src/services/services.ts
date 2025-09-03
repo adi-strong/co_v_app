@@ -72,6 +72,13 @@ export const martialStatusOptions = (): SelectOptionType[] => [
   { label: 'Veuf(ve)', value: 'VEUF(VE)' },
 ]
 
+export type DeviseKeys = 'CDF' | 'USD'
+
+export const deviseLabel: Record<DeviseKeys, string> = {
+  CDF: 'DR Congo (CDF)',
+  USD: 'United States (USD)',
+}
+
 
 // ******************************************* ******************************************** //
 // ******************************************* ******************************************** //

@@ -4,6 +4,8 @@ import type {JsonLdApiResponseInt} from "../../../interfaces/JsonLdApiResponseIn
 import type {PassType, User} from "../../user/model/userService.ts";
 import {API} from "../../app/store.ts";
 import {logout} from "../../auth/model/auth.slice.ts";
+import {setResetCompte} from "../../finances/compteCaisse/model/compteCaisse.slice.ts";
+import {setResetInfos} from "../../configs/infosGen/model/infosGen.slice.ts";
 
 // INTERFACES
 export interface ChangeProfilePassword {
@@ -57,6 +59,8 @@ export async function onChangePasswordSubmit(
     if (data) {
       toast.success('Mot de passe modifié avec succès.')
       dispatch(API.util?.resetApiState())
+      dispatch(setResetCompte())
+      dispatch(setResetInfos())
       dispatch(logout())
     }
   } catch (e) { toast.error('Problème réseau.') }

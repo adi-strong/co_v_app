@@ -4,6 +4,7 @@ import menuReducer from "../../reducers/menu.ts";
 import {APP_ENTRYPOINT} from "../../config/configs.ts";
 import authReducer from '../auth/model/auth.slice.ts'
 import infosReducer from '../configs/infosGen/model/infosGen.slice.ts'
+import compteReducer from '../finances/compteCaisse/model/compteCaisse.slice.ts'
 
 const baseQuery = fetchBaseQuery({
   baseUrl: APP_ENTRYPOINT,
@@ -38,6 +39,7 @@ const store = configureStore({
     menu: menuReducer,
     auth: authReducer,
     infos: infosReducer,
+    compte: compteReducer,
     [API.reducerPath]: API.reducer,
   },
   middleware: (getDefaultMiddleware) =>
