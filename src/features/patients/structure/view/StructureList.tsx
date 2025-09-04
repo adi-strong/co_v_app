@@ -1,13 +1,17 @@
-import {useState} from "react";
+import {Dispatch, SetStateAction, useState} from "react";
 import {ActionsComp, SearchComp} from "../../../../components";
 import {getgetCategorieLitActionsOptions} from "../../../traitements/categorieLit/model/categorieLitService.ts";
 import type {Structure} from "../model/structureService.ts";
-import {getStructureFakeData} from "../model/structureService.ts";
 import StructureData from "./StructureData.tsx";
 
-export default function StructureList() {
+export default function StructureList({ structures, setStructures, onRefresh, isFetching, loader }: {
+  structures: Structure[]
+  setStructures: Dispatch<SetStateAction<Structure[]>>
+  onRefresh: () => void
+  loader: boolean
+  isFetching: boolean
+}) {
   
-  const [structures, setStructures] = useState<Structure[]>(getStructureFakeData())
   const [isSelectedAll, setIsSelectedAll] = useState<boolean>(false)
   const [search, setSearch] = useState<{keyword: string}>({keyword: ''})
   const [action, setAction] = useState<string>('')
@@ -42,6 +46,9 @@ export default function StructureList() {
         setIsSelectedAll={setIsSelectedAll}
         structure={structures}
         setStructures={setStructures}
+        onRefresh={onRefresh}
+        loader={loader}
+        isFetching={isFetching}
       />
     </>
   )

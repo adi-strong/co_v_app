@@ -1,6 +1,6 @@
-import type {Dispatch, SetStateAction} from "react";
+import type {Dispatch, ReactNode, SetStateAction} from "react";
 import {useState} from "react";
-import {Button, Card, Col, Row, Table} from "react-bootstrap";
+import {Button, Card, Col, Row, Spinner, Table} from "react-bootstrap";
 import {Link} from "react-router-dom";
 import {CheckField, TextField} from "../../../../components";
 import {handleChange} from "../../../../services/form.hander.service.ts";
@@ -8,13 +8,17 @@ import {selectAllStateItems, tableWhiteStyle} from "../../../../services/service
 import type {Patient} from "../model/patientService.ts";
 import PatientItem from "./PatientItem.tsx";
 import {getPatientHeadItems} from "../model/patientService.ts";
+import {RepeatableTableRows} from "../../../../loaders";
 
 export default function PatientData(props: {
   patients: Patient[]
   setPatients: Dispatch<SetStateAction<Patient[]>>
+  onRefresh: () => void
+  loader: boolean
+  isFetching: boolean
 }) {
   
-  const { patients, setPatients } = props
+  const { patients, setPatients, onRefresh, loader, isFetching} = props
   
   const [search, setSearch] = useState<{ keyword: string }>({ keyword: '' })
   const [isSelectedAll, setIsSelectedAll] = useState<boolean>(false)
@@ -24,8 +28,9 @@ export default function PatientData(props: {
       <Row>
         <Col md={6}>
           <Card.Title as='h5' className='mx-4 mt-5 me-4'>
-            <Button variant='link' size='sm' className='me-2'>
-              <i className='bi bi-arrow-clockwise'/>
+            <Button disabled={isFetching} variant='link' className='me-2' size='sm' onClick={onRefresh} title='Actualiser'>
+              {!isFetching && (<i className='bi bi-arrow-clockwise' />) as ReactNode}
+              {isFetching && (<Spinner animation='grow' size='sm' />) as ReactNode}
             </Button>
             Liste des patients
             
@@ -100,11 +105,12 @@ export default function PatientData(props: {
             patient={c}
             setPatients={setPatients}
             index={index}
-            isSelectedAll={isSelectedAll}
-            setIsSelectedAll={setIsSelectedAll}
+            onRefresh={onRefresh}
           />)}
         </tbody>
       </Table>
+      
+      {loader && <RepeatableTableRows/>}
     </>
   )
   

@@ -2,9 +2,7 @@ import {Dispatch, SetStateAction, useState} from "react";
 import {ActionsComp, SearchComp} from "../../../../components";
 import {getgetCategorieLitActionsOptions} from "../../../traitements/categorieLit/model/categorieLitService.ts";
 import type {Service} from "../model/serviceService.ts";
-import {getServiceFakeData} from "../model/serviceService.ts";
 import ServiceData from "./ServiceData.tsx";
-import type {Fonction} from "../../fonction/model/fonctionService.ts";
 
 export default function ServicesList({ services, setServices, onRefresh, isFetching, loader }: {
   services: Service[]

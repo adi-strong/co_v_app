@@ -1,9 +1,10 @@
 import {Button, Modal} from "react-bootstrap";
-import {useDeleteServiceMutation} from "../model/service.api.slice.ts";
-import {onDeleteServiceSubmit, Service} from "../model/serviceService.ts";
+import type {Structure} from "../model/structureService.ts";
+import {useDeleteStructureMutation} from "../model/structure.api.slice.ts";
+import {onDeleteStructureSubmit} from "../model/structureService.ts";
 
-export default function RemoveServiceModal(props: {
-  data: Service,
+export default function RemoveStructureModal(props: {
+  data: Structure,
   show: boolean,
   onHide: () => void,
   onRefresh: () => void
@@ -11,7 +12,7 @@ export default function RemoveServiceModal(props: {
   
   const { show, data, onHide, onRefresh } = props
   
-  const [onDeleteService] = useDeleteServiceMutation()
+  const [onDeleteStructure] = useDeleteStructureMutation()
   
   return (
     <Modal show={show} onHide={onHide}>
@@ -38,9 +39,9 @@ export default function RemoveServiceModal(props: {
         <Button
           autoFocus
           variant='danger'
-          onClick={async (): Promise<void> => onDeleteServiceSubmit(
+          onClick={async (): Promise<void> => onDeleteStructureSubmit(
             data,
-            onDeleteService,
+            onDeleteStructure,
             onRefresh,
             onHide
           )}

@@ -81,20 +81,26 @@ export const getStructureHeadItems = (): THeadItemType[] => [
 export async function onStructureSubmit(
   e: FormEvent<HTMLFormElement>,
   state: SaveStructure,
+  setState: Dispatch<SetStateAction<SaveStructure>>,
   setErrors: Dispatch<SetStateAction<StructureError>>,
   onSubmit: (data: SaveStructure) => Promise<any>,
-  onHide: () => void,
-  onRefresh?: () => void
+  onRefresh?: () => void,
+  onHide?: () => void,
 ): Promise<void> {
   
   e.preventDefault()
   const { id } = state
+  
+  setErrors(initStructureErrorState())
+  
   try {
     const { data, error}: JsonLdApiResponseInt<Structure> = await onSubmit(state)
     if (data) {
       toast.success(`${id > 0 ? 'Modification ' : 'Enregistrement '} bien effectué${'e'}`)
+      setState(initStructureState())
+      
       if (onRefresh) onRefresh()
-      onHide()
+      if (onHide) onHide()
     }
     
     if (error && error?.data) {
@@ -107,12 +113,14 @@ export async function onStructureSubmit(
   
 }
 
-export async function onDeleteStructure(
+export async function onDeleteStructureSubmit(
   state: Structure,
   onSubmit: (data: Structure) => Promise<void>,
   onRefresh: () => void,
+  onHide: () => void,
   navigate?: NavigateFunction
 ): Promise<void> {
+  onHide()
   
   try {
     const { error }: JsonLdApiResponseInt<Structure> = await onSubmit(state)

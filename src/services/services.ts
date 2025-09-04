@@ -127,9 +127,9 @@ export const handleShow = (setShow: Dispatch<SetStateAction<boolean>>): void => 
 export const selectAllStateItems = (
   isSelectedAll: boolean,
   setIsSelectedAll: Dispatch<SetStateAction<boolean>>,
-  setState: Dispatch<SetStateAction<object[]>>
+  setState: Dispatch<SetStateAction<any>>
 ): void => {
-  const select = !isSelectedAll
+  const select: boolean = !isSelectedAll
   setIsSelectedAll(select)
   setState(prev => prev.map(data => ({
     ...data,

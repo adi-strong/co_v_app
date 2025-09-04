@@ -1,32 +1,32 @@
 import type {Dispatch, SetStateAction} from "react";
 import {useState} from "react";
 import {
+  formatNumberWithSpaces,
   handleShow,
   onMouseEnterEvent,
   onMouseLeaveEvent,
   setSelectedDataItem,
   sexLabel
 } from "../../../../services/services.ts";
-import {CheckField, RemoveModal} from "../../../../components";
+import {CheckField} from "../../../../components";
 import {Link} from "react-router-dom";
 import {Button} from "react-bootstrap";
 import moment from "moment/moment";
 import type {Patient} from "../model/patientService.ts";
-
-function onSubmit(data: any, onHide: () => void, onRefresh: () => void): void { onHide() }
+import RemovePatientModal from "./RemovePatientModal.tsx";
 
 export default function PatientItem(props: {
   patient: Patient
   setPatients: Dispatch<SetStateAction<Patient[]>>
   index: number
-  isSelectedAll: boolean
-  setIsSelectedAll: Dispatch<SetStateAction<boolean>>
+  onRefresh: () => void
 }) {
   
   const {
     patient,
     index,
     setPatients,
+    onRefresh,
   } = props
   
   const [isDel, setIsDel] = useState<boolean>(false)
@@ -64,21 +64,18 @@ export default function PatientItem(props: {
         
         <td>{patient?.fkStructure?.nom?.toUpperCase() ?? '—'}</td>
         <td>{sexLabel[patient.sexe]}</td>
-        <td>—</td>
+        <td>{patient?.age ? `${formatNumberWithSpaces(patient.age)} ans` : '—'}</td>
         <td>{patient.tel}</td>
         <td>{patient?.createdAt
           ? `enregistré le ${moment(patient.createdAt).format('DD/MM/YY à HH:mm') }`
           : '—'}</td>
       </tr>
       
-      <RemoveModal
-        isItIrreversible
-        onSubmit={() => onSubmit(patient, (): void => handleShow(setIsDel), (): void => { })}
+      <RemovePatientModal
         onHide={(): void => handleShow(setIsDel)}
         data={patient}
         show={isDel}
-        onRefresh={(): void => { }}
-        title={<><br/> patient(e) : {patient?.fullName?.toUpperCase() ?? patient.nom.toUpperCase()}</>}
+        onRefresh={onRefresh}
       />
     </>
   )

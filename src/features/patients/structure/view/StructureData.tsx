@@ -1,16 +1,20 @@
-import type {Dispatch, SetStateAction} from "react";
-import {Table} from "react-bootstrap";
+import type {Dispatch, ReactNode, SetStateAction} from "react";
+import {Button, Spinner, Table} from "react-bootstrap";
 import {CheckField} from "../../../../components";
 import {selectAllStateItems, tableWhiteStyle} from "../../../../services/services.ts";
 import type {Structure} from "../model/structureService.ts";
 import StructureItem from "./StructureItem.tsx";
 import {getStructureHeadItems} from "../model/structureService.ts";
+import {RepeatableTableRows} from "../../../../loaders";
 
 export default function StructureData(props: {
   isSelectedAll: boolean
   setIsSelectedAll: Dispatch<SetStateAction<boolean>>
   structure: Structure[]
   setStructures: Dispatch<SetStateAction<Structure[]>>
+  onRefresh: () => void
+  loader: boolean
+  isFetching: boolean
 }) {
   
   const {
@@ -18,6 +22,9 @@ export default function StructureData(props: {
     setIsSelectedAll,
     structure,
     setStructures,
+    onRefresh,
+    loader,
+    isFetching,
   } = props
   
   return (
@@ -34,6 +41,12 @@ export default function StructureData(props: {
               checked={isSelectedAll}
               className='me-0'
             />
+            
+            <Button disabled={isFetching} variant='link' className='me-1' size='sm' onClick={onRefresh} title='Actualiser'>
+              {!isFetching && (<i className='bi bi-arrow-clockwise' />) as ReactNode}
+              {isFetching && (<Spinner animation='grow' size='sm' />) as ReactNode}
+            </Button>
+            
             Nom
           </th>
           {getStructureHeadItems().length > 0 && getStructureHeadItems().map(t =>
@@ -48,9 +61,12 @@ export default function StructureData(props: {
             structure={c}
             setStructures={setStructures}
             index={index}
+            onRefresh={onRefresh}
           />)}
         </tbody>
       </Table>
+      
+      {loader && <RepeatableTableRows/>}
     </>
   )
   

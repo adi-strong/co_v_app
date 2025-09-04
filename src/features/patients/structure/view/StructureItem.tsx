@@ -1,25 +1,26 @@
 import type {Dispatch, ReactNode, SetStateAction} from "react";
 import {useState} from "react";
 import {handleShow, onMouseEnterEvent, onMouseLeaveEvent, setSelectedDataItem} from "../../../../services/services.ts";
-import {CheckField, RemoveModal, SideContent} from "../../../../components";
+import {CheckField, SideContent} from "../../../../components";
 import {Link} from "react-router-dom";
 import {Button} from "react-bootstrap";
 import moment from "moment";
 import type {Structure} from "../model/structureService.ts";
 import StructureForm from "./StructureForm.tsx";
-
-function onSubmit(data: any, onHide: () => void, onRefresh: () => void): void { onHide() }
+import RemoveStructureModal from "./RemoveStructureModal.tsx";
 
 export default function StructureItem(props: {
   structure: Structure
   setStructures: Dispatch<SetStateAction<Structure[]>>
   index: number
+  onRefresh: () => void
 }) {
   
   const {
     structure,
     index,
     setStructures,
+    onRefresh,
   } = props
   
   const [isEdit, setIsEdit] = useState<boolean>(false)
@@ -62,22 +63,25 @@ export default function StructureItem(props: {
         <td>{structure?.createdAt ? moment(structure.createdAt).format('DD/MM/YY') : '—'}</td>
       </tr>
       
-      <RemoveModal
-        isItIrreversible
-        onSubmit={() => onSubmit(structure, (): void => handleShow(setIsDel), (): void => { })}
+      <RemoveStructureModal
         onHide={(): void => handleShow(setIsDel)}
         data={structure}
         show={isDel}
-        onRefresh={(): void => { }}
-        title={<><br/> structure : {structure.nom.toUpperCase()}</>}
+        onRefresh={onRefresh}
       />
       
       <SideContent
         show={isEdit}
         onHide={(): void => handleShow(setIsEdit)}
         title='Modifier une structure'
-        onRefresh={() => { }}
-        children={<StructureForm data={structure}/> as ReactNode}
+        icon='pencil-square'
+        children={
+          <StructureForm
+            onRefresh={onRefresh}
+            data={structure}
+            onHide={(): void => handleShow(setIsEdit)}
+          /> as ReactNode
+        }
       />
     </>
   )

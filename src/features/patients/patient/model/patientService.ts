@@ -36,6 +36,7 @@ export interface Patient {
   createdAt?: string
   updatedAt?: string
   selected: boolean
+  age?: number
 }
 
 export interface SavePatient {
@@ -280,12 +281,14 @@ export async function onPatchPatientSubmit(
   
 }
 
-export async function onDeletePatient(
+export async function onDeletePatientSubmit(
   state: Patient,
   onSubmit: (data: Patient) => Promise<void>,
   onRefresh: () => void,
+  onHide: () => void,
   navigate?: NavigateFunction
 ): Promise<void> {
+  onHide()
   
   try {
     const { error }: JsonLdApiResponseInt<Patient> = await onSubmit(state)

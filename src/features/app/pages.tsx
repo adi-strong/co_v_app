@@ -92,6 +92,8 @@ const
     import('../patients/patient/view/newPatient.tsx')),
   EPat = lazy(() =>
     import('../patients/patient/view/editPatient.tsx')),
+  UPat = lazy(() =>
+    import('../patients/patient/view/showPatient.tsx')),
   
   CCaisses = lazy(() =>
     import('../finances/compteCaisse/view/compteCaisseView.tsx')),
@@ -304,6 +306,10 @@ const pages: RouteType[] = [
       {
         path: 'patients/:id/:slug/edit',
         element: <EPat />
+      },
+      {
+        path: 'patients/:id/:slug',
+        element: <UPat />
       },
       // End patients
       

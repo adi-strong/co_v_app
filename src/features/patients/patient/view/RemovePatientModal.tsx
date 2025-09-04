@@ -1,9 +1,10 @@
 import {Button, Modal} from "react-bootstrap";
-import {useDeleteServiceMutation} from "../model/service.api.slice.ts";
-import {onDeleteServiceSubmit, Service} from "../model/serviceService.ts";
+import type {Patient} from "../model/patientService.ts";
+import {useDeletePatientMutation} from "../model/patient.api.slice.ts";
+import {onDeletePatientSubmit} from "../model/patientService.ts";
 
-export default function RemoveServiceModal(props: {
-  data: Service,
+export default function RemovePatientModal(props: {
+  data: Patient,
   show: boolean,
   onHide: () => void,
   onRefresh: () => void
@@ -11,7 +12,7 @@ export default function RemoveServiceModal(props: {
   
   const { show, data, onHide, onRefresh } = props
   
-  const [onDeleteService] = useDeleteServiceMutation()
+  const [onDeletePatient] = useDeletePatientMutation()
   
   return (
     <Modal show={show} onHide={onHide}>
@@ -27,8 +28,8 @@ export default function RemoveServiceModal(props: {
         </p>
         
         <code className='text-dark'>
-          Êtes-vous certain(e) de vouloir supprimer ce
-          <b className='mx-1'>Service</b>
+          Êtes-vous certain(e) de vouloir supprimer cet(te)
+          <b className='mx-1'>Patient(e)</b>
           <i className='bi bi-question-circle text-danger mx-1'/>
         </code>
       </Modal.Body>
@@ -38,9 +39,9 @@ export default function RemoveServiceModal(props: {
         <Button
           autoFocus
           variant='danger'
-          onClick={async (): Promise<void> => onDeleteServiceSubmit(
+          onClick={async (): Promise<void> => onDeletePatientSubmit(
             data,
-            onDeleteService,
+            onDeletePatient,
             onRefresh,
             onHide
           )}

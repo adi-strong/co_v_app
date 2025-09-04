@@ -7,20 +7,41 @@ import {
   TextAreaField,
   TextField
 } from "../../../../components";
-import {Button, Col, Form, Image, Row} from "react-bootstrap";
+import {Button, Col, Form, Image, Row, Spinner} from "react-bootstrap";
 import avatar from "../../../../assets/images/default-avatar.png";
 import {handleChange} from "../../../../services/form.hander.service.ts";
 import SelectField from "../../../../components/forms/SelectField.tsx";
 import {martialStatusOptions, sexOptions} from "../../../../services/services.ts";
 import type {Patient} from "../model/patientService.ts";
-import {initPatientErrorState, initPatientState} from "../model/patientService.ts";
+import {
+  initPatientErrorState,
+  initPatientState, onIsStructureChange,
+  onPatchPatientSubmit, onPostPatientSubmit,
+} from "../model/patientService.ts";
+import useSetPatientData from "../hooks/useSetPatientData.ts";
+import {useEditPatientMutation, usePostPatientMutation} from "../model/patient.api.slice.ts";
+import {useNavigate} from "react-router-dom";
+import {useGetStructuresQuery} from "../../structure/model/structure.api.slice.ts";
+import useGetStructuresOptions from "../../structure/hooks/useGetStructuresOptions.ts";
 
-export default function PatientForm({ data }: { data?: Patient }) {
+export default function PatientForm({ data, onRefresh, loader = false }: {
+  data?: Patient,
+  loader?: boolean,
+  onRefresh: () => void
+}) {
   
   const maxNumber: number = 1
+  const navigate = useNavigate()
+  
+  const { isFetching: isStructuresFetching, refetch: structuresRefresh } = useGetStructuresQuery('LIST')
   
   const [patient, setPatient] = useState(initPatientState())
-  const [errors/*, setErrors */] = useState(initPatientErrorState())
+  const [errors, setErrors] = useState(initPatientErrorState())
+  const [onPostPatient, { isLoading }] = usePostPatientMutation()
+  const [onEditPatient, { isLoading: isEditLoading }] = useEditPatientMutation()
+  
+  useSetPatientData(data, setPatient)
+  const structuresOptions = useGetStructuresOptions()
   
   const onImageChange = (imageList: ImageListType): void => setPatient(a => ({
     ...a,
@@ -29,7 +50,9 @@ export default function PatientForm({ data }: { data?: Patient }) {
   
   return (
     <>
-      <form onSubmit={e => e.preventDefault()}>
+      <form onSubmit={e => data
+        ? onPatchPatientSubmit(e, patient, setErrors, onEditPatient, navigate, onRefresh)
+        : onPostPatientSubmit(e, patient, setErrors, onPostPatient, navigate, onRefresh)}>
         <FormRequiredFieldsNoticeText/>
         <Row>
           {!data && (
@@ -54,7 +77,7 @@ export default function PatientForm({ data }: { data?: Patient }) {
                         
                         <div className='text-center mt-3'>
                           <Button
-                            disabled={false}
+                            disabled={isLoading || isEditLoading || loader}
                             type='button'
                             onClick={onImageUpload}
                             size='sm'
@@ -65,7 +88,7 @@ export default function PatientForm({ data }: { data?: Patient }) {
                           </Button>
                           
                           <Button
-                            disabled={false}
+                            disabled={isLoading || isEditLoading || loader}
                             type='button'
                             size='sm'
                             title='Supprimer une image'
@@ -89,7 +112,7 @@ export default function PatientForm({ data }: { data?: Patient }) {
                         
                         <div className='text-center mt-3'>
                           <Button
-                            disabled={false}
+                            disabled={isLoading || isEditLoading || loader}
                             type='button'
                             onClick={() => onImageUpdate(index)}
                             size='sm'
@@ -100,7 +123,7 @@ export default function PatientForm({ data }: { data?: Patient }) {
                           </Button>
                           
                           <Button
-                            disabled={false}
+                            disabled={isLoading || isEditLoading || loader}
                             type='button'
                             size='sm'
                             title='Supprimer une image'
@@ -123,7 +146,7 @@ export default function PatientForm({ data }: { data?: Patient }) {
               <TextField
                 required
                 autoFocus
-                disabled={false}
+                disabled={isLoading || isEditLoading || loader}
                 name='nom'
                 onChange={(e): void => handleChange(e, patient, setPatient)}
                 value={patient.nom}
@@ -137,7 +160,7 @@ export default function PatientForm({ data }: { data?: Patient }) {
             
             <div className='mb-3'>
               <TextField
-                disabled={false}
+                disabled={isLoading || isEditLoading || loader}
                 name='postNom'
                 onChange={(e): void => handleChange(e, patient, setPatient)}
                 value={patient.postNom}
@@ -149,7 +172,7 @@ export default function PatientForm({ data }: { data?: Patient }) {
             
             <div className='mb-3'>
               <TextField
-                disabled={false}
+                disabled={isLoading || isEditLoading || loader}
                 name='prenom'
                 onChange={(e): void => handleChange(e, patient, setPatient)}
                 value={patient.prenom}
@@ -162,7 +185,7 @@ export default function PatientForm({ data }: { data?: Patient }) {
             <div className='mb-3'>
               <SelectField
                 required
-                disabled={false}
+                disabled={isLoading || isEditLoading || loader}
                 name='sexe'
                 value={patient.sexe}
                 onChange={e => handleChange(e, patient, setPatient)}
@@ -174,7 +197,8 @@ export default function PatientForm({ data }: { data?: Patient }) {
             
             <div className='mb-3'>
               <SelectField
-                disabled={false}
+                required
+                disabled={isLoading || isEditLoading || loader}
                 name='etatCivil'
                 value={patient.etatCivil}
                 onChange={e => handleChange(e, patient, setPatient)}
@@ -188,7 +212,7 @@ export default function PatientForm({ data }: { data?: Patient }) {
               <Form.Label htmlFor='lieuDeNaissance'>Lieu & date de naissance</Form.Label>
               <Col className='mb-3'>
                 <TextField
-                  disabled={false}
+                  disabled={isLoading || isEditLoading || loader}
                   name='lieuDeNaissance'
                   onChange={(e): void => handleChange(e, patient, setPatient)}
                   value={patient.lieuDeNaissance}
@@ -200,7 +224,7 @@ export default function PatientForm({ data }: { data?: Patient }) {
               
               <Col className='mb-3'>
                 <TextField
-                  disabled={false}
+                  disabled={isLoading || isEditLoading || loader}
                   type='date'
                   name='dateDeNaissance'
                   onChange={(e): void => handleChange(e, patient, setPatient)}
@@ -214,7 +238,7 @@ export default function PatientForm({ data }: { data?: Patient }) {
             
             <div className='mb-3'>
               <TextField
-                disabled={false}
+                disabled={isLoading || isEditLoading || loader}
                 name='nationalite'
                 onChange={(e): void => handleChange(e, patient, setPatient)}
                 value={patient.nationalite}
@@ -230,7 +254,7 @@ export default function PatientForm({ data }: { data?: Patient }) {
               <Form.Label htmlFor='pere'>Parent(s)</Form.Label>
               <Col className='mb-3'>
                 <TextField
-                  disabled={false}
+                  disabled={isLoading || isEditLoading || loader}
                   name='pere'
                   onChange={(e): void => handleChange(e, patient, setPatient)}
                   value={patient.pere}
@@ -243,7 +267,7 @@ export default function PatientForm({ data }: { data?: Patient }) {
               
               <Col className='mb-3'>
                 <TextField
-                  disabled={false}
+                  disabled={isLoading || isEditLoading || loader}
                   name='mere'
                   onChange={(e): void => handleChange(e, patient, setPatient)}
                   value={patient.mere}
@@ -258,7 +282,7 @@ export default function PatientForm({ data }: { data?: Patient }) {
             <div className='mb-3'>
               <TextField
                 required
-                disabled={false}
+                disabled={isLoading || isEditLoading || loader}
                 name='tel'
                 onChange={(e): void => handleChange(e, patient, setPatient)}
                 value={patient.tel}
@@ -270,7 +294,7 @@ export default function PatientForm({ data }: { data?: Patient }) {
             
             <div className='mb-3'>
               <TextField
-                disabled={false}
+                disabled={isLoading || isEditLoading || loader}
                 type='email'
                 name='email'
                 onChange={(e): void => handleChange(e, patient, setPatient)}
@@ -283,7 +307,7 @@ export default function PatientForm({ data }: { data?: Patient }) {
             
             <div className='mb-3'>
               <TextAreaField
-                disabled={false}
+                disabled={isLoading || isEditLoading || loader}
                 name='adresse'
                 onChange={(e): void => handleChange(e, patient, setPatient)}
                 value={patient.adresse}
@@ -296,13 +320,13 @@ export default function PatientForm({ data }: { data?: Patient }) {
             <div className='mb-3'>
               <CheckField
                 inline
-                disabled={false}
+                disabled={isLoading || isEditLoading || loader}
                 name='estCeConventionne'
                 value={patient.estCeConventionne}
                 checked={patient.estCeConventionne}
                 error={errors.estCeConventionne}
                 label={<>Est-ce un(e) patient(e) conventionné(e) <i className='bi bi-question-circle' /></>}
-                onChange={e => handleChange(e, patient, setPatient)}
+                onChange={(): void => onIsStructureChange(setPatient)}
               />
             </div>
             
@@ -310,11 +334,10 @@ export default function PatientForm({ data }: { data?: Patient }) {
               <div className='mb-3'>
                 <SingleSelectField
                   required
-                  disabled={false}
-                  options={[]}
+                  disabled={isLoading || isEditLoading || isStructuresFetching || loader}
+                  options={structuresOptions()}
                   value={patient?.fkStructure ?? null}
-                  onChange={(): void => {
-                  }}
+                  onChange={e => setPatient(p => ({ ...p, fkStructure: e }))}
                   name='fkStructure'
                   error={errors.fkStructure}
                   label='Structure'
@@ -323,9 +346,11 @@ export default function PatientForm({ data }: { data?: Patient }) {
               </div>
             ) as ReactNode}
             
-            <Button type='submit' disabled={false} className='w-100'>
-              {!data ? 'Enregistrer ' : 'Modifier '}
-              un(e) patient(e)
+            <Button type='submit' disabled={isLoading || isEditLoading || loader} className='w-100'>
+              {(isLoading || isEditLoading || loader) && <Spinner className='me-1' animation='border' size='sm' />}
+              {!(isLoading || isEditLoading || loader) && data ? 'Modifier ' : !(isLoading || isEditLoading || loader)
+                && 'Enregistrer '}
+              {(isLoading || isEditLoading) ? 'Veuillez patienter' : 'un(e) patient(e)'}
             </Button>
           </Col>
         </Row>
