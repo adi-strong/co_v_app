@@ -26,6 +26,23 @@ const agentApiSlice = API.injectEndpoints({
       }
     }),
     
+    getAllAgents: build.query<Agent[], string>({
+      query: () => `${API_PATH}/all_agents`,
+      transformResponse: (response: JsonLDResponseInt<Agent>) => {
+        totalAgentsItems = response.totalItems
+        return response.member;
+      },
+      providesTags: (result) => {
+        if (result && Array.isArray(result)) {
+          return [
+            ...result.map(({ id }) => ({ type: 'UNIQUE' as const, id })),
+            { type: 'LIST' as const, id: 'LIST' }
+          ]
+        }
+        return [{ type: 'LIST' as const, id: 'LIST' }];
+      }
+    }),
+    
     getUniqueAgent: build.query<Agent, string | number | undefined>({
       query: id => `${API_PATH}/agents/${id}`,
       providesTags: (result, error, arg) => [{
@@ -78,6 +95,7 @@ const agentApiSlice = API.injectEndpoints({
 
 export const {
   useGetAgentsQuery,
+  useGetAllAgentsQuery,
   useGetUniqueAgentQuery,
   usePostAgentMutation,
   useEditAgentMutation,

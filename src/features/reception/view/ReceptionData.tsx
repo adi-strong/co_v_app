@@ -1,5 +1,5 @@
-import {useState} from "react";
-import {Button, Card, Col, Row, Table} from "react-bootstrap";
+import {ReactNode, useState} from "react";
+import {Button, Card, Col, Row, Spinner, Table} from "react-bootstrap";
 import {tableWhiteStyle} from "../../../services/services.ts";
 import {TextField} from "../../../components";
 import {handleChange} from "../../../services/form.hander.service.ts";
@@ -7,8 +7,14 @@ import ReceptionItem from "./ReceptionItem.tsx";
 import type {Reception} from "../model/receptionService.ts";
 import {Link} from "react-router-dom";
 import {getReceptionHeadItems} from "../model/receptionService.ts";
+import {RepeatableTableRows} from "../../../loaders";
 
-export default function ReceptionData({ reception }: { reception: Reception[] }) {
+export default function ReceptionData({ receptions, loader, isFetching, onRefresh }: {
+  receptions: Reception[]
+  onRefresh: () => void
+  loader: boolean
+  isFetching: boolean
+}) {
   
   const [search, setSearch] = useState<{ start: string, end: '', nomComplet: string }>({
     end: '',
@@ -21,9 +27,12 @@ export default function ReceptionData({ reception }: { reception: Reception[] })
       <Row>
         <Col md={4}>
           <Card.Title as='h5' className='mx-4 mt-5 me-4'>
-            <Button variant='link' size='sm' className='me-2'>
-              <i className='bi bi-arrow-clockwise'/>
+            
+            <Button disabled={isFetching} variant='link' className='me-1' size='sm' onClick={onRefresh} title='Actualiser'>
+              {!isFetching && (<i className='bi bi-arrow-clockwise' />) as ReactNode}
+              {isFetching && (<Spinner animation='grow' size='sm' />) as ReactNode}
             </Button>
+            
             Liste de présences / Fiche de réception
             
             <Link to='/app/receptions/new' className='mx-5 btn btn-sm btn-link' title='Nouvel enregistrement'>
@@ -103,7 +112,7 @@ export default function ReceptionData({ reception }: { reception: Reception[] })
         </thead>
         
         <tbody style={tableWhiteStyle.tbody}>
-        {reception.length > 0 && reception.map((c, index: number) =>
+        {receptions.length > 0 && receptions.map((c, index: number) =>
           <ReceptionItem
             key={index}
             reception={c}
@@ -111,6 +120,8 @@ export default function ReceptionData({ reception }: { reception: Reception[] })
           />)}
         </tbody>
       </Table>
+      
+      {loader && <RepeatableTableRows/>}
     </>
   )
   

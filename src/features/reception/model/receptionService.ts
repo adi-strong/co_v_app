@@ -5,6 +5,7 @@ import toast from "react-hot-toast";
 import type {SingleValue} from "react-select";
 import type {SelectOptionType, THeadItemType} from "../../../services/services.ts";
 import {getUserFakeData} from "../../user/model/userService.ts";
+import type {NavigateFunction} from "react-router-dom";
   
 // INTERFACES OR TYPES
 export interface Reception {
@@ -122,22 +123,20 @@ export const getReceiptReasonOptions = (): SelectOptionType[] => [
 ]
 
 export async function onReceptionSubmit(
-  e: FormEvent<HTMLFormElement>,
   state: SaveReception,
   setErrors: Dispatch<SetStateAction<ReceptionError>>,
   onSubmit: (data: SaveReception) => Promise<any>,
   onHide: () => void,
-  onRefresh?: () => void
+  navigate?: NavigateFunction
 ): Promise<void> {
+  onHide()
   
-  e.preventDefault()
   const { id } = state
   try {
     const { data, error}: JsonLdApiResponseInt<Reception> = await onSubmit(state)
     if (data) {
       toast.success(`${id > 0 ? 'Modification ' : 'Enregistrement '} bien effectué${'e'}`)
-      if (onRefresh) onRefresh()
-      onHide()
+      if (navigate) navigate('/app/receptions')
     }
     
     if (error && error?.data) {

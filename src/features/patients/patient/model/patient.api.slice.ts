@@ -34,6 +34,23 @@ const patientApiSlice = API.injectEndpoints({
       }
     }),
     
+    getSearchPatients: build.query<Patient[], string>({
+      query: (keywords: string) => `${API_PATH}/patients?fullName=${keywords}`,
+      transformResponse: (response: JsonLDResponseInt<Patient>) => {
+        totalPatientsItems = response.totalItems
+        return response.member;
+      },
+      /* providesTags: (result) => {
+        if (result && Array.isArray(result)) {
+          return [
+            ...result.map(({ id }) => ({ type: 'UNIQUE' as const, id })),
+            { type: 'LIST' as const, id: 'LIST' }
+          ]
+        }
+        return [{ type: 'LIST' as const, id: 'LIST' }];
+      } */
+    }),
+    
     editPatient: build.mutation<Patient, SavePatient>({
       query: (data: SavePatient) => ({
         url: `${API_PATH}/patients/${data?.id}`,
@@ -85,6 +102,7 @@ const patientApiSlice = API.injectEndpoints({
 
 export const {
   useGetPatientsQuery,
+  useLazyGetSearchPatientsQuery,
   useGetUniquePatientQuery,
   usePostPatientMutation,
   useEditPatientMutation,

@@ -1,29 +1,35 @@
 import {ReactNode, useState} from "react";
-import {Button, Col, Form, Modal, Row} from "react-bootstrap";
+import {Button, Col, Form, Modal, Row, Spinner} from "react-bootstrap";
 import {
   CheckField,
   FormRequiredFieldsNoticeText,
-  SingleSelectField,
   TextAreaField,
   TextField
 } from "../../../components";
-import type {Reception} from "../model/receptionService.ts";
 import {
   getReceiptReasonOptions,
   initReceptionErrorState,
-  initReceptionState,
+  initReceptionState, onReceptionSubmit,
   setReceptionEstCePatient,
   setReceptionPatientName
 } from "../model/receptionService.ts";
 import {handleChange} from "../../../services/form.hander.service.ts";
 import useGetPatientsOptions from "../../patients/patient/hooks/useGetPatientsOptions.ts";
 import SelectField from "../../../components/forms/SelectField.tsx";
+import {usePostReceptionMutation} from "../model/reception.api.slice.ts";
+import {useGetPatientsQuery, useLazyGetSearchPatientsQuery} from "../../patients/patient/model/patient.api.slice.ts";
+import SingleAsyncSelectField from "../../../components/forms/SingleAsyncSelectField.tsx";
+import type {JsonLdApiResponseInt} from "../../../interfaces/JsonLdApiResponseInt.ts";
+import type {Patient} from "../../patients/patient/model/patientService.ts";
+import toast from "react-hot-toast";
+import type {SelectOptionType} from "../../../services/services.ts";
 import {getSexOptions, handleShow} from "../../../services/services.ts";
+import {useNavigate} from "react-router-dom";
 
 const ConfirmModal = ({ show, onHide, onSubmit }: {
   show: boolean
   onHide: () => void
-  onSubmit: () => void
+  onSubmit: (onHide: () => void) => void
 }) => {
   
   return (
@@ -39,7 +45,7 @@ const ConfirmModal = ({ show, onHide, onSubmit }: {
       
       <Modal.Footer>
         <Button type='button' variant='outline-dark' onClick={onHide}><i className='bi bi-x'/> Annuler</Button>
-        <Button autoFocus type='button' variant='outline-warning' onClick={onHide}>
+        <Button autoFocus type='button' variant='outline-warning' onClick={(): void => onSubmit(onHide)}>
           <i className='bi bi-check'/> Valider
         </Button>
       </Modal.Footer>
@@ -48,13 +54,67 @@ const ConfirmModal = ({ show, onHide, onSubmit }: {
   
 }
 
-export default function ReceptionForm({ data }: { data?: Reception }) {
+export default function ReceptionForm() {
+  
+  const navigate = useNavigate()
   
   const [isConfirmed, setIsConfirmed] = useState<boolean>(false)
   const [reception, setReception] = useState(initReceptionState())
-  const [errors/*, setErrors */] = useState(initReceptionErrorState())
+  const [errors, setErrors] = useState(initReceptionErrorState())
+  const [onPostReception, { isLoading }] = usePostReceptionMutation()
+  
+  const { refetch: patientsRefresh, isFetching: isPatientsFetching } = useGetPatientsQuery('LIST')
+  const [getSearchPatients] = useLazyGetSearchPatientsQuery()
   
   const patientsOptions = useGetPatientsOptions()
+  
+  
+  /* ----------------------------------------------------------------------------- */
+  // Get Searched Patients Items
+  
+  const onSearchPatients = async (keywords: string): Promise<any> => {
+    let options: SelectOptionType[] = []
+    
+    try {
+      const { data: patients, error }: JsonLdApiResponseInt<Patient[]> = await getSearchPatients(keywords)
+      if (errors && error?.data && error.data?.detail) toast.error(error.data.detail)
+      if (patients) patients.forEach(({ id, nom, fullName }: Patient): void => {
+        const label: string = fullName?.toUpperCase() ?? nom.toUpperCase()
+        const data: string = `/api/patients/${id}`
+        const value: string = label
+        
+        options.push({
+          label,
+          value,
+          data,
+        })
+      })
+    } catch (error: { message?: string }) {
+      toast.error(error?.message ?? 'Une erreur est survénue.')
+    }
+    
+    return options
+  }
+  
+  // END Get Searched Patients Items
+  /* ----------------------------------------------------------------------------- */
+  
+  
+  /* ----------------------------------------------------------------------------- */
+  // Get On Validate
+  
+  const onSubmit = (onHide: () => void): void => {
+    onReceptionSubmit(
+      reception,
+      setErrors,
+      onPostReception,
+      onHide,
+      navigate
+    )
+  }
+  
+  // END On Validate
+  /* ----------------------------------------------------------------------------- */
   
   return (
     <>
@@ -67,7 +127,7 @@ export default function ReceptionForm({ data }: { data?: Reception }) {
           <Col md={6} className='mb-3 pt-7'>
             <CheckField
               inline
-              disabled={false}
+              disabled={isLoading}
               type='switch'
               name='estCePatient'
               value={reception.estCePatient}
@@ -80,15 +140,17 @@ export default function ReceptionForm({ data }: { data?: Reception }) {
           
           {reception?.estCePatient && (
             <Col md={6} className='mb-3'>
-              <SingleSelectField
+              <SingleAsyncSelectField
                 required
-                disabled={false}
+                disabled={isLoading || isPatientsFetching}
+                onRefresh={async (): Promise<void> => { await patientsRefresh() }}
                 options={patientsOptions()}
                 value={reception?.patient ?? null}
                 onChange={(e): void => setReceptionPatientName(e, setReception)}
                 name='patient'
                 label='Patient(e)'
                 placeholder='-- Aucun(e) patient(e) sélectionné(e) --'
+                loadOptions={onSearchPatients}
               />
             </Col>
           ) as ReactNode}
@@ -128,7 +190,7 @@ export default function ReceptionForm({ data }: { data?: Reception }) {
           
           <div className='mb-3'>
             <TextField
-              disabled={false}
+              disabled={isLoading}
               name='tel'
               onChange={(e): void => handleChange(e, reception, setReception)}
               value={reception.tel}
@@ -141,7 +203,7 @@ export default function ReceptionForm({ data }: { data?: Reception }) {
           
           <div className='mb-3'>
             <TextField
-              disabled={false}
+              disabled={isLoading}
               type='email'
               name='email'
               onChange={(e): void => handleChange(e, reception, setReception)}
@@ -159,7 +221,7 @@ export default function ReceptionForm({ data }: { data?: Reception }) {
           <Row>
             <Col md={6} className='mb-3'>
               <TextField
-                disabled={false}
+                disabled={isLoading}
                 name='lieuNaissance'
                 onChange={(e): void => handleChange(e, reception, setReception)}
                 value={reception.lieuNaissance}
@@ -172,7 +234,7 @@ export default function ReceptionForm({ data }: { data?: Reception }) {
             
             <Col md={6} className='mb-3'>
               <TextField
-                disabled={false}
+                disabled={isLoading}
                 type='date'
                 name='dateNaissance'
                 onChange={(e): void => handleChange(e, reception, setReception)}
@@ -199,7 +261,7 @@ export default function ReceptionForm({ data }: { data?: Reception }) {
           
           <div className='mb-3'>
             <TextAreaField
-              disabled={false}
+              disabled={isLoading}
               name='commentaire'
               onChange={(e): void => handleChange(e, reception, setReception)}
               value={reception.commentaire}
@@ -210,8 +272,9 @@ export default function ReceptionForm({ data }: { data?: Reception }) {
             />
           </div>
           
-          <Button type='submit' disabled={false} size='sm' className='w-100'>
-            Valider
+          <Button type='submit' disabled={isLoading} size='sm' className='w-100'>
+            {isLoading && <Spinner className='me-1' animation='border' size='sm' />}
+            {isLoading ? 'Veuillez patienter' : 'Valider'}
           </Button>
         </Col>
       </form>
@@ -219,7 +282,7 @@ export default function ReceptionForm({ data }: { data?: Reception }) {
       <ConfirmModal
         show={isConfirmed}
         onHide={(): void => handleShow(setIsConfirmed)}
-        onSubmit={(): void => {}}
+        onSubmit={(): void => onSubmit((): void => handleShow(setIsConfirmed))}
       />
     </>
   )

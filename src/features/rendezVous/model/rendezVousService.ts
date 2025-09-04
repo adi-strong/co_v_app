@@ -5,6 +5,7 @@ import type {SelectOptionType, THeadItemType} from "../../../services/services.t
 import type {Dispatch, FormEvent, SetStateAction} from "react";
 import type {JsonLdApiResponseInt} from "../../../interfaces/JsonLdApiResponseInt.ts";
 import toast from "react-hot-toast";
+import type {NavigateFunction} from "react-router-dom";
   
 // INTERFACES OR TYPES
 export interface RendezVous {
@@ -85,20 +86,26 @@ export const getRdvHeadItems = (): THeadItemType[] => [
 export async function onRendezVousSubmit(
   e: FormEvent<HTMLFormElement>,
   state: SaveRendezVous,
+  setState: Dispatch<SetStateAction<SaveRendezVous>>,
   setErrors: Dispatch<SetStateAction<RendezVousError>>,
   onSubmit: (data: SaveRendezVous) => Promise<any>,
-  onHide: () => void,
-  onRefresh?: () => void
+  onRefresh?: () => void,
+  onHide?: () => void
 ): Promise<void> {
   
   e.preventDefault()
   const { id } = state
+  
+  setErrors(initRendezVousErrorState())
+  
   try {
     const { data, error}: JsonLdApiResponseInt<RendezVous> = await onSubmit(state)
     if (data) {
       toast.success(`${id > 0 ? 'Modification ' : 'Enregistrement '} bien effectué${'e'}`)
+      setState(initRendezVousState())
+      
       if (onRefresh) onRefresh()
-      onHide()
+      if (onHide) onHide()
     }
     
     if (error && error?.data) {
@@ -108,6 +115,25 @@ export async function onRendezVousSubmit(
       })
     }
   } catch (e) { toast.error('Problème réseau.') }
+  
+}
+
+export async function onDeleteRdvSubmit(
+  state: RendezVous,
+  onSubmit: (data: RendezVous) => Promise<void>,
+  onRefresh: () => void,
+  onHide: () => void,
+  navigate?: NavigateFunction
+): Promise<void> {
+  onHide()
+  
+  const { error }: JsonLdApiResponseInt<void> = await onSubmit(state)
+  if (error && error.data && error.data?.detail) toast.error(error.data.detail)
+  else {
+    toast.success('Suppression bien effectuée.')
+    onRefresh()
+    if (navigate) navigate('/app/rendez-vous')
+  }
   
 }
 // END EVENTS & FUNCTIONS

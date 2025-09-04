@@ -1,14 +1,19 @@
-import {useState} from "react";
-import {ActionsComp, SearchComp, TextField} from "../../../components";
+import {Dispatch, SetStateAction, useState} from "react";
+import {ActionsComp, TextField} from "../../../components";
 import {getgetCategorieLitActionsOptions} from "../../traitements/categorieLit/model/categorieLitService.ts";
 import type {RendezVous} from "../model/rendezVousService.ts";
 import RdvData from "./RdvData.tsx";
 import {Button, Col} from "react-bootstrap";
 import {handleChange} from "../../../services/form.hander.service.ts";
 
-export default function RdvList() {
+export default function RdvList({ rdvs, setRdvs, onRefresh, isFetching, loader }: {
+  rdvs: RendezVous[]
+  setRdvs: Dispatch<SetStateAction<RendezVous[]>>
+  onRefresh: () => void
+  loader: boolean
+  isFetching: boolean
+}) {
   
-  const [rdvs, setRdvs] = useState<RendezVous[]>([])
   const [isSelectedAll, setIsSelectedAll] = useState<boolean>(false)
   const [action, setAction] = useState<string>('')
   const [search, setSearch] = useState<{ start: string, end: '', nom: string }>({
@@ -23,7 +28,7 @@ export default function RdvList() {
         <form className='row' onSubmit={e => e.preventDefault()}>
           <Col md={3} className='mb-1'>
             <TextField
-              disabled={false}
+              disabled={loader}
               size='sm'
               name='nom'
               value={search.nom}
@@ -34,7 +39,7 @@ export default function RdvList() {
           
           <Col md={3} className='mb-1'>
             <TextField
-              disabled={false}
+              disabled={loader}
               type='date'
               size='sm'
               name='start'
@@ -46,7 +51,7 @@ export default function RdvList() {
           
           <Col md={3} className='mb-1'>
             <TextField
-              disabled={false}
+              disabled={loader}
               type='date'
               size='sm'
               name='end'
@@ -57,7 +62,7 @@ export default function RdvList() {
           </Col>
           
           <Col md={3} className='mb-1'>
-            <Button type='submit' disabled={false} variant='outline-primary' className='w-100' size='sm'>
+            <Button type='submit' disabled={loader} variant='outline-primary' className='w-100' size='sm'>
               Rechercher
             </Button>
           </Col>
@@ -78,6 +83,9 @@ export default function RdvList() {
         setIsSelectedAll={setIsSelectedAll}
         rdvs={rdvs}
         setRdvs={setRdvs}
+        onRefresh={onRefresh}
+        loader={loader}
+        isFetching={isFetching}
       />
     </>
   )

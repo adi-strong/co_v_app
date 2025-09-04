@@ -1,25 +1,26 @@
 import type {Dispatch, ReactNode, SetStateAction} from "react";
 import {useState} from "react";
 import {handleShow, onMouseEnterEvent, onMouseLeaveEvent, setSelectedDataItem} from "../../../services/services.ts";
-import {CheckField, RemoveModal, SideContent} from "../../../components";
+import {CheckField, SideContent} from "../../../components";
 import {Link} from "react-router-dom";
 import {Button} from "react-bootstrap";
 import moment from "moment";
 import type {RendezVous} from "../model/rendezVousService.ts";
 import RdvForm from "./RdvForm.tsx";
-
-function onSubmit(data: any, onHide: () => void, onRefresh: () => void): void { onHide() }
+import RemoveRdvModal from "./RemoveRdvModal.tsx";
 
 export default function RdvItem(props: {
   rdv: RendezVous
   setRdvs: Dispatch<SetStateAction<RendezVous[]>>
   index: number
+  onRefresh: () => void
 }) {
   
   const {
     rdv,
     index,
     setRdvs,
+    onRefresh
   } = props
   
   const [isEdit, setIsEdit] = useState<boolean>(false)
@@ -56,25 +57,24 @@ export default function RdvItem(props: {
           </div>
         </td>
         
-        <td>{rdv?.releasedAt ? moment(rdv.releasedAt).format('DD/MM/YY') : '—'}</td>
+        <td className='text-uppercase'>{rdv.objet}</td>
+        <td>{rdv.tel}</td>
+        <td>{rdv?.date ? moment(rdv.date).format('DD/MM/YY') : '—'}</td>
       </tr>
       
-      <RemoveModal
-        isItIrreversible
-        onSubmit={() => onSubmit(rdv, (): void => handleShow(setIsDel), (): void => { })}
+      <RemoveRdvModal
         onHide={(): void => handleShow(setIsDel)}
         data={rdv}
         show={isDel}
-        onRefresh={(): void => { }}
-        title={<>rendez-vous : {rdv.nom.toUpperCase()}</>}
+        onRefresh={onRefresh}
       />
       
       <SideContent
         show={isEdit}
         onHide={(): void => handleShow(setIsEdit)}
         title='Modifier un rendez-vous'
-        onRefresh={() => { }}
-        children={<RdvForm data={rdv}/> as ReactNode}
+        icon='pencil-square'
+        children={<RdvForm data={rdv} onRefresh={onRefresh} onHide={(): void => handleShow(setIsEdit)}/> as ReactNode}
       />
     </>
   )

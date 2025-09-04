@@ -1,14 +1,21 @@
-import {useState} from "react";
 import ReceptionData from "./ReceptionData.tsx";
-import {getReceptionsFakeData} from "../model/receptionService.ts";
+import type {Reception} from "../model/receptionService.ts";
 
-export default function ReceptionList() {
-  
-  const [receptions/*, setReceptions*/] = useState(getReceptionsFakeData())
+export default function ReceptionList({ receptions, onRefresh, loader, isFetching }: {
+  receptions: Reception[]
+  onRefresh: () => void
+  loader: boolean
+  isFetching: boolean
+}) {
   
   return (
     <>
-      <ReceptionData reception={receptions} />
+      <ReceptionData
+        receptions={receptions}
+        onRefresh={onRefresh}
+        loader={loader}
+        isFetching={isFetching}
+      />
     </>
   )
   
