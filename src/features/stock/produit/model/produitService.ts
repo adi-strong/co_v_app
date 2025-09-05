@@ -11,6 +11,7 @@ import type {JsonLdApiResponseInt} from "../../../../interfaces/JsonLdApiRespons
 import toast from "react-hot-toast";
 import type {UniteConsommation} from "../../uniteConsommation/model/uniteConsommationService.ts";
 import {getUniteConsommationFakeData} from "../../uniteConsommation/model/uniteConsommationService.ts";
+import type {LotProduit} from "../../lotProduit/model/lotProduitService.ts";
 
 // INTERFACES OR TYPES
 export interface Produit {
@@ -29,6 +30,7 @@ export interface Produit {
   createdAt?: string
   updatedAt?: string
   selected: boolean
+  lotProduits: LotProduit[]
 }
 
 export interface SaveProduit {
@@ -96,6 +98,7 @@ export const getProduitFakeData = (): Produit[] => [
     fkCategorie: getCategorieProduitFakeData()[0],
     selected: false,
     fkUnite: getUniteConsommationFakeData()[0],
+    lotProduits: [],
   },
   {
     id: 2,
@@ -107,6 +110,7 @@ export const getProduitFakeData = (): Produit[] => [
     fkCategorie: getCategorieProduitFakeData()[0],
     selected: false,
     fkUnite: getUniteConsommationFakeData()[0],
+    lotProduits: [],
   },
 ]
 
@@ -120,6 +124,7 @@ const castProduitToForomData = (state: SaveProduit): FormData => {
     codeQr,
     description,
     fkCategorie,
+    fkUnite,
     file,
   } = state
   
@@ -129,6 +134,7 @@ const castProduitToForomData = (state: SaveProduit): FormData => {
   if (codeQr) formData.append('codeQr', codeQr)
   if (description) formData.append('description', description)
   if (fkCategorie && fkCategorie?.data) formData.append('fkCategorie', fkCategorie.data)
+  if (fkUnite && fkCategorie?.data) formData.append('fkUnite', fkUnite.data)
   if (file && file[0]?.file) formData.append('file', file[0].file)
   
   return formData
@@ -144,23 +150,27 @@ export const getProduitHeadItems = (): THeadItemType[] => [
 
 /**
  *
- * @param e
  * @param state
+ * @param setState
  * @param setErrors
  * @param onSubmit
  * @param navigate
+ * @param onHide
  * @param onRefresh
  */
 export async function onPostProduitSubmit(
-  e: FormEvent<HTMLFormElement>,
   state: SaveProduit,
+  setState: Dispatch<SetStateAction<SaveProduit>>,
   setErrors: Dispatch<SetStateAction<ProduitError>>,
   onSubmit: (data: FormData) => Promise<any>,
-  navigate: NavigateFunction,
-  onRefresh?: () => void
+  onHide: () => void,
+  onRefresh?: () => void,
+  navigate?: NavigateFunction,
 ): Promise<void> {
+  onHide()
   
-  e.preventDefault()
+  const nameElt = document.getElementById('#nom')
+  
   setErrors(initProduitErrorState())
   const submitData: FormData = castProduitToForomData(state)
   
@@ -168,8 +178,11 @@ export async function onPostProduitSubmit(
     const { data, error }: JsonLdApiResponseInt<Produit> = await onSubmit(submitData)
     if (data) {
       toast.success('Enregistrement bien effectué.')
+      setState(initProduitState())
+      if (nameElt) nameElt.focus()
+      
       if (onRefresh) onRefresh()
-      navigate('/app/produits')
+      if (navigate) navigate('/app/produits')
     }
     
     if (error && error?.data) {
@@ -184,31 +197,32 @@ export async function onPostProduitSubmit(
 
 /**
  *
- * @param e
  * @param state
  * @param setErrors
  * @param onSubmit
  * @param navigate
  * @param onRefresh
+ * @param onHide
  */
 export async function onPatchProduitSubmit(
-  e: FormEvent<HTMLFormElement>,
   state: SaveProduit,
   setErrors: Dispatch<SetStateAction<ProduitError>>,
+  onHide: () => void,
   onSubmit: (data: SaveProduit) => Promise<any>,
-  navigate: NavigateFunction,
-  onRefresh?: () => void
+  onRefresh?: () => void,
+  navigate?: NavigateFunction
 ): Promise<void> {
   
-  e.preventDefault()
   const { id } = state
   
   try {
     const { data, error }: JsonLdApiResponseInt<Produit> = await onSubmit(state)
     if (data) {
       toast.success('Modification bien effectuée.')
+      onHide()
+      
       if (onRefresh) onRefresh()
-      navigate(`/app/produits/${id}/${data?.slug}`)
+      if (navigate) navigate(`/app/produits/${id}/${data?.slug}`)
     }
     
     if (error && error?.data) {
@@ -235,7 +249,7 @@ export async function onDeleteProduit(
     } else {
       toast.success('Suppression bien effectuée.')
       onRefresh()
-      if (navigate) navigate('/app/agents')
+      if (navigate) navigate('/app/produits')
     }
   } catch (e) { toast.error('Problème réseau.') }
   

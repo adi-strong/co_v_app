@@ -1,13 +1,17 @@
-import {useState} from "react";
+import {Dispatch, SetStateAction, useState} from "react";
 import {ActionsComp, SearchComp} from "../../../../components";
 import {getgetCategorieLitActionsOptions} from "../../../traitements/categorieLit/model/categorieLitService.ts";
 import type {CategorieProduit} from "../model/categorieProduitService.ts";
-import {getCategorieProduitFakeData} from "../model/categorieProduitService.ts";
 import CategorieProduitData from "./CategorieProduitData.tsx";
 
-export default function CategorieProduitList() {
+export default function CategorieProduitList({ categories, setCategories, onRefresh, isFetching, loader }: {
+  categories: CategorieProduit[]
+  setCategories: Dispatch<SetStateAction<CategorieProduit[]>>
+  onRefresh: () => void
+  loader: boolean
+  isFetching: boolean
+}) {
   
-  const [categories, setCategories] = useState<CategorieProduit[]>(getCategorieProduitFakeData())
   const [isSelectedAll, setIsSelectedAll] = useState<boolean>(false)
   const [search, setSearch] = useState<{keyword: string}>({keyword: ''})
   const [action, setAction] = useState<string>('')
@@ -20,7 +24,7 @@ export default function CategorieProduitList() {
         setState={setSearch}
         btnLabel='Rechercher des catégories'
         onSubmit={(): void => { }}
-        loader={false}
+        loader={loader}
         size='sm'
         md1={5}
         md2={7}
@@ -33,7 +37,7 @@ export default function CategorieProduitList() {
         options={getgetCategorieLitActionsOptions()}
         state={action}
         setState={setAction}
-        loader={false}
+        loader={loader}
         size='sm'
       />
       
@@ -42,6 +46,9 @@ export default function CategorieProduitList() {
         setIsSelectedAll={setIsSelectedAll}
         categories={categories}
         setCategories={setCategories}
+        loader={loader}
+        isFetching={isFetching}
+        onRefresh={onRefresh}
       />
     </>
   )

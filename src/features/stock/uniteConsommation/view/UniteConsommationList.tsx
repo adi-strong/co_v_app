@@ -1,13 +1,17 @@
-import {useState} from "react";
-import type {Service} from "../../../personnel/service/model/serviceService.ts";
+import {Dispatch, SetStateAction, useState} from "react";
 import {ActionsComp, SearchComp} from "../../../../components";
 import {getgetCategorieLitActionsOptions} from "../../../traitements/categorieLit/model/categorieLitService.ts";
-import {getUniteConsommationFakeData} from "../model/uniteConsommationService.ts";
 import UniteConsommationData from "./UniteConsommationData.tsx";
+import type {UniteConsommation} from "../model/uniteConsommationService.ts";
 
-export default function UniteConsommationList() {
+export default function UniteConsommationList({ unites, setUnites, onRefresh, isFetching, loader }: {
+  unites: UniteConsommation[]
+  setUnites: Dispatch<SetStateAction<UniteConsommation[]>>
+  onRefresh: () => void
+  loader: boolean
+  isFetching: boolean
+}) {
   
-  const [unites, setUnites] = useState<Service[]>(getUniteConsommationFakeData())
   const [isSelectedAll, setIsSelectedAll] = useState<boolean>(false)
   const [search, setSearch] = useState<{keyword: string}>({keyword: ''})
   const [action, setAction] = useState<string>('')
@@ -20,7 +24,7 @@ export default function UniteConsommationList() {
         setState={setSearch}
         btnLabel='Rechercher des unités'
         onSubmit={(): void => { }}
-        loader={false}
+        loader={loader}
         size='sm'
         md1={5}
         md2={7}
@@ -33,7 +37,7 @@ export default function UniteConsommationList() {
         options={getgetCategorieLitActionsOptions()}
         state={action}
         setState={setAction}
-        loader={false}
+        loader={loader}
         size='sm'
       />
       
@@ -42,6 +46,9 @@ export default function UniteConsommationList() {
         setIsSelectedAll={setIsSelectedAll}
         unites={unites}
         setUnites={setUnites}
+        loader={loader}
+        isFetching={isFetching}
+        onRefresh={onRefresh}
       />
     </>
   )

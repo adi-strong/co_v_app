@@ -4,24 +4,23 @@ import {handleShow, onMouseEnterEvent, onMouseLeaveEvent, setSelectedDataItem} f
 import {Link} from "react-router-dom";
 import {Button} from "react-bootstrap";
 import moment from "moment/moment";
-import {CheckField, RemoveModal, SideContent} from "../../../../components";
+import {CheckField, SideContent} from "../../../../components";
 import type {Fournisseur} from "../model/fournisseurService.ts";
 import FournisseurForm from "./FournisseurForm.tsx";
-
-function onSubmit(data: any, onHide: () => void, onRefresh: () => void): void { onHide() }
+import RemoveFournisseurModal from "./RemoveFournisseurModal.tsx";
 
 export default function FournisseurItem(props: {
   fournisseur: Fournisseur
   setFournisseurs: Dispatch<SetStateAction<Fournisseur[]>>
   index: number
-  isSelectedAll: boolean
-  setIsSelectedAll: Dispatch<SetStateAction<boolean>>
+  onRefresh: () => void
 }) {
   
   const {
     fournisseur,
     index,
     setFournisseurs,
+    onRefresh,
   } = props
   
   const [isEdit, setIsEdit] = useState<boolean>(false)
@@ -64,14 +63,11 @@ export default function FournisseurItem(props: {
         <td>{fournisseur?.createdAt ? moment(fournisseur.createdAt).format('DD/MM/YY') : '—'}</td>
       </tr>
       
-      <RemoveModal
-        isItIrreversible
-        onSubmit={() => onSubmit(fournisseur, (): void => handleShow(setIsDel), (): void => { })}
+      <RemoveFournisseurModal
         onHide={(): void => handleShow(setIsDel)}
         data={fournisseur}
         show={isDel}
-        onRefresh={(): void => { }}
-        title={<><br/> fournisseur : {fournisseur.nomCommercial.toUpperCase()}</>}
+        onRefresh={onRefresh}
       />
       
       <SideContent
@@ -79,8 +75,13 @@ export default function FournisseurItem(props: {
         onHide={(): void => handleShow(setIsEdit)}
         title='Modifier un fournisseur'
         icon='pencil-square'
-        onRefresh={() => { }}
-        children={<FournisseurForm data={fournisseur} /> as ReactNode}
+        children={
+          <FournisseurForm
+            data={fournisseur}
+            onHide={(): void => handleShow(setIsEdit)}
+            onRefresh={onRefresh}
+          /> as ReactNode
+        }
       />
     </>
   )

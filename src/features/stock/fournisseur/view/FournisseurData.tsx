@@ -1,6 +1,6 @@
 import type {Dispatch, ReactNode, SetStateAction} from "react";
 import {useState} from "react";
-import {Button, Card, Col, Row, Table} from "react-bootstrap";
+import {Button, Card, Col, Row, Spinner, Table} from "react-bootstrap";
 import {CheckField, SideContent, TextField} from "../../../../components";
 import {handleChange} from "../../../../services/form.hander.service.ts";
 import {handleShow, selectAllStateItems, tableWhiteStyle} from "../../../../services/services.ts";
@@ -8,13 +8,23 @@ import type {Fournisseur} from "../model/fournisseurService.ts";
 import FournisseurItem from "./FournisseurItem.tsx";
 import {getFournisseurHeadItems} from "../model/fournisseurService.ts";
 import FournisseurForm from "./FournisseurForm.tsx";
+import {RepeatableTableRows} from "../../../../loaders";
 
 export default function FournisseurData(props: {
   fournisseur: Fournisseur[]
   setFournisseurs: Dispatch<SetStateAction<Fournisseur[]>>
+  onRefresh: () => void
+  loader: boolean
+  isFetching: boolean
 }) {
   
-  const { fournisseur, setFournisseurs } = props
+  const {
+    fournisseur,
+    setFournisseurs,
+    onRefresh,
+    loader,
+    isFetching,
+  } = props
   
   const [search, setSearch] = useState<{ keyword: string }>({ keyword: '' })
   const [show, setShow] = useState<boolean>(false)
@@ -25,8 +35,9 @@ export default function FournisseurData(props: {
       <Row>
         <Col md={6}>
           <Card.Title as='h5' className='mx-4 mt-5 me-4'>
-            <Button variant='link' size='sm' className='me-2'>
-              <i className='bi bi-arrow-clockwise'/>
+            <Button disabled={isFetching} variant='link' className='me-1' size='sm' onClick={onRefresh} title='Actualiser'>
+              {!isFetching && (<i className='bi bi-arrow-clockwise' />) as ReactNode}
+              {isFetching && (<Spinner animation='grow' size='sm' />) as ReactNode}
             </Button>
             Liste des fournisseurs
             
@@ -101,8 +112,7 @@ export default function FournisseurData(props: {
             fournisseur={c}
             setFournisseurs={setFournisseurs}
             index={index}
-            isSelectedAll={isSelectedAll}
-            setIsSelectedAll={setIsSelectedAll}
+            onRefresh={onRefresh}
           />)}
         </tbody>
       </Table>
@@ -113,8 +123,15 @@ export default function FournisseurData(props: {
         title='Nouveau fournisseur'
         icon='plus'
         onRefresh={(): void => { }}
-        children={(<FournisseurForm/>) as ReactNode}
+        children={(
+          <FournisseurForm
+            onRefresh={onRefresh}
+            onHide={(): void => handleShow(setShow)}
+          />
+        ) as ReactNode}
       />
+      
+      {loader && <RepeatableTableRows/>}
     </>
   )
   

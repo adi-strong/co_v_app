@@ -113,17 +113,20 @@ export async function onFournisseurSubmit(
   state: SaveFournisseur,
   setErrors: Dispatch<SetStateAction<FournisseurError>>,
   onSubmit: (data: SaveFournisseur) => Promise<any>,
-  onHide: () => void,
-  onRefresh?: () => void
+  onRefresh: () => void,
+  onHide: () => void
 ): Promise<void> {
   
   e.preventDefault()
   const { id } = state
+  
+  setErrors(initFournisseurErrorState())
+  
   try {
     const { data, error}: JsonLdApiResponseInt<Fournisseur> = await onSubmit(state)
     if (data) {
       toast.success(`${id > 0 ? 'Modification ' : 'Enregistrement '} bien effectué${'e'}`)
-      if (onRefresh) onRefresh()
+      onRefresh()
       onHide()
     }
     
@@ -137,7 +140,7 @@ export async function onFournisseurSubmit(
   
 }
 
-export async function onDeleteFournisseur(
+export async function onDeleteFournisseurSubmit(
   state: Fournisseur,
   onSubmit: (data: Fournisseur) => Promise<void>,
   onRefresh: () => void,

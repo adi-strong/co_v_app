@@ -1,19 +1,15 @@
-import type {ProduitError, SaveProduit} from "../model/produitService.ts";
-import type {Dispatch, SetStateAction} from "react";
 import {Button, Modal} from "react-bootstrap";
 
 export default function ConfirmProduitModal(props: {
-  produit: SaveProduit
-  setErrors: Dispatch<SetStateAction<ProduitError>>
   show: boolean
   onHide: () => void
+  onSubmit: (onHide: () => void) => void
 }) {
   
   const {
     show,
     onHide,
-    // produit,
-    // setErrors,
+    onSubmit,
   } = props
   
   return (
@@ -31,7 +27,7 @@ export default function ConfirmProduitModal(props: {
           <i className='bi bi-x'/> Annuler
         </Button>
         
-        <Button autoFocus type='button' variant='outline-warning' onClick={onHide}>
+        <Button autoFocus type='button' variant='outline-warning' onClick={(): void => onSubmit(onHide)}>
           <i className='bi bi-check'/> Valider
         </Button>
       </Modal.Footer>

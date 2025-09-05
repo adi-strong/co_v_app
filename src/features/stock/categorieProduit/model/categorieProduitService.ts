@@ -1,6 +1,7 @@
 import type {Dispatch, FormEvent, SetStateAction} from "react";
 import toast from "react-hot-toast";
 import type {JsonLdApiResponseInt} from "../../../../interfaces/JsonLdApiResponseInt.ts";
+import type {NavigateFunction} from "react-router-dom";
 
 // INTERFACES OR TYPES
 export interface CategorieProduit {
@@ -106,13 +107,14 @@ export async function onPostCategorieProduitSubmit(
   
 }
 
-export async function onPatchCategorieProduitSubmit(
+export async function onCategorieProduitSubmit(
   e: FormEvent<HTMLFormElement>,
   state: SaveCategorieProduit,
+  setState: Dispatch<SetStateAction<SaveCategorieProduit>>,
   setErrors: Dispatch<SetStateAction<CategorieLitError>>,
   onSubmit: (data: SaveCategorieProduit) => Promise<any>,
-  onHide: () => void,
-  onRefresh?: () => void
+  onRefresh: () => void,
+  onHide?: () => void
 ): Promise<void> {
   
   e.preventDefault()
@@ -129,10 +131,31 @@ export async function onPatchCategorieProduitSubmit(
     
     if (data) {
       toast.success('Modification bien effectuée.')
-      if (onRefresh) onRefresh()
-      onHide()
+      setState(initCategorieProduitState())
+      
+      onRefresh()
+      if (onHide) onHide()
     }
   } catch (e) { toast.error('Problème réseau.') }
+  
+}
+
+export async function onDeleteCategorieProduitSubmit(
+  state: CategorieProduit,
+  onSubmit: (data: CategorieProduit) => Promise<void>,
+  onRefresh: () => void,
+  onHide: () => void,
+  navigate?: NavigateFunction
+): Promise<void> {
+  onHide()
+  
+  const { error }: JsonLdApiResponseInt<void> = await onSubmit(state)
+  if (error && error.data && error.data?.detail) toast.error(error.data.detail)
+  else {
+    toast.success('Suppression bien effectuée.')
+    onRefresh()
+    if (navigate) navigate('/app/fonctions')
+  }
   
 }
 // END EVENTS & FUNCTIONS

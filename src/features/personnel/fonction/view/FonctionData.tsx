@@ -35,6 +35,7 @@ export default function FonctionData(props: {
           <th style={{ fontSize: '1rem' }}>
             <CheckField
               inline
+              disabled={loader}
               name='isSelectedAll'
               onChange={(): void => selectAllStateItems(isSelectedAll, setIsSelectedAll, setFonctions)}
               value={isSelectedAll}

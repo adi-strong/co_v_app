@@ -1,25 +1,26 @@
 import type {Dispatch, ReactNode, SetStateAction} from "react";
 import {useState} from "react";
 import {handleShow, onMouseEnterEvent, onMouseLeaveEvent, setSelectedDataItem} from "../../../../services/services.ts";
-import {CheckField, RemoveModal, SideContent} from "../../../../components";
+import {CheckField, SideContent} from "../../../../components";
 import {Link} from "react-router-dom";
 import {Button} from "react-bootstrap";
 import moment from "moment";
 import type {CategorieProduit} from "../model/categorieProduitService.ts";
 import CategorieProduitForm from "./CategorieProduitForm.tsx";
-
-function onSubmit(data: any, onHide: () => void, onRefresh: () => void): void { onHide() }
+import RemoveCatProdModal from "./RemoveCatProdModal.tsx";
 
 export default function CategorieProduitItem(props: {
   category: CategorieProduit
   setCategories: Dispatch<SetStateAction<CategorieProduit[]>>
   index: number
+  onRefresh: () => void
 }) {
   
   const {
     category,
     index,
     setCategories,
+    onRefresh,
   } = props
   
   const [isEdit, setIsEdit] = useState<boolean>(false)
@@ -59,22 +60,25 @@ export default function CategorieProduitItem(props: {
         <td>{category?.createdAt ? moment(category.createdAt).format('DD/MM/YY') : '—'}</td>
       </tr>
       
-      <RemoveModal
-        isItIrreversible
-        onSubmit={() => onSubmit(category, (): void => handleShow(setIsDel), (): void => { })}
+      <RemoveCatProdModal
         onHide={(): void => handleShow(setIsDel)}
         data={category}
         show={isDel}
-        onRefresh={(): void => { }}
-        title={<>catégorie : {category.nom.toUpperCase()}</>}
+        onRefresh={onRefresh}
       />
       
       <SideContent
         show={isEdit}
         onHide={(): void => handleShow(setIsEdit)}
         title='Modifier une catégorie'
-        onRefresh={() => { }}
-        children={<CategorieProduitForm data={category}/> as ReactNode}
+        icon='pencil-square'
+        children={
+          <CategorieProduitForm
+            data={category}
+            onRefresh={onRefresh}
+            onHide={(): void => handleShow(setIsEdit)}
+          /> as ReactNode
+        }
       />
     </>
   )

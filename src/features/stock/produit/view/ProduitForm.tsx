@@ -1,25 +1,74 @@
 import {ReactNode, useState} from "react";
-import {initProduitErrorState, initProduitState} from "../model/produitService.ts";
 import avatar from '../../../../assets/images/placeholder/placeholder-4by3.svg';
 import ImageUploading, {ImageListType, ImageType} from "react-images-uploading";
-import {Button, Col, Image, Row} from "react-bootstrap";
+import {Button, Col, Image, Row, Spinner} from "react-bootstrap";
 import {FormRequiredFieldsNoticeText, SingleSelectField, TextAreaField, TextField} from "../../../../components";
 import {handleChange} from "../../../../services/form.hander.service.ts";
 import {handleShow} from "../../../../services/services.ts";
 import ConfirmProduitModal from "./ConfirmProduitModal.tsx";
+import useSetProduitData from "../hooks/useSetProduitData.ts";
+import {useEditProduitMutation, usePostProduitMutation} from "../model/produit.api.slice.ts";
+import useGetUnitesOptions from "../../uniteConsommation/hooks/useGetUnitesOptions.ts";
+import useGetCategorieProdOptions from "../../categorieProduit/hooks/useGetCategorieProdOptions.ts";
+import {useGetCategorieProduitsQuery} from "../../categorieProduit/model/categorieProduit.api.slice.ts";
+import {useGetUniteConsommationsQuery} from "../../uniteConsommation/model/uniteConsommation.api.slice.ts";
+import type {Produit} from "../model/produitService.ts";
+import {
+  initProduitErrorState,
+  initProduitState,
+  onPatchProduitSubmit,
+  onPostProduitSubmit
+} from "../model/produitService.ts";
 
-export default function ProduitForm() {
+export default function ProduitForm({ data, onRefresh }: { data?: Produit, onRefresh?: () => void }) {
   
   const maxNumber: number = 1
   
   const [show, setShow] = useState<boolean>(false)
   const [produit, setProduit] = useState(initProduitState())
   const [errors, setErrors] = useState(initProduitErrorState())
+  const [onPostProduit, { isLoading }] = usePostProduitMutation()
+  const [onEditProduit, { isLoading: isEditLoading }] = useEditProduitMutation()
+  
+  const { refetch: unityRefresh, isFetching: isUnityFetching } = useGetUniteConsommationsQuery('LIST')
+  const { refetch: categoryRefresh, isFetching: isCategoryFetching } = useGetCategorieProduitsQuery('LIST')
+  
+  useSetProduitData(data, setProduit)
+  const unitiesOptions = useGetUnitesOptions()
+  const categoriesOptions = useGetCategorieProdOptions()
   
   const onImageChange = (imageList: ImageListType): void => setProduit(p => ({
     ...p,
     file: imageList,
   }))
+  
+  /* ------------------------------------------------------------------------------- */
+  // Handle Submit
+  
+  const onSubmit = (handleHide: () => void): void => {
+    if (data) {
+      onPatchProduitSubmit(
+        produit,
+        setErrors,
+        handleHide,
+        onEditProduit,
+        onRefresh
+      )
+    }
+    else {
+      onPostProduitSubmit(
+        produit,
+        setProduit,
+        setErrors,
+        onPostProduit,
+        handleHide,
+        onRefresh
+      )
+    }
+  }
+  
+  // END Handle Submit
+  /* ------------------------------------------------------------------------------- */
   
   return (
     <>
@@ -46,6 +95,7 @@ export default function ProduitForm() {
                     
                     <div className='mt-3'>
                       <Button
+                        disabled={isLoading || isEditLoading}
                         type='button'
                         variant='outline-white'
                         className='me-1'
@@ -53,6 +103,7 @@ export default function ProduitForm() {
                       ><i className='bi bi-upload'/> Charger une image</Button>
                       
                       <Button
+                        disabled={isLoading || isEditLoading}
                         type='button'
                         variant='outline-white'
                       ><i className='bi bi-trash'/> Supprimer l'image</Button>
@@ -95,7 +146,7 @@ export default function ProduitForm() {
             <TextField
               required
               autoFocus
-              disabled={false}
+              disabled={isLoading || isEditLoading}
               name='nom'
               onChange={(e): void => handleChange(e, produit, setProduit)}
               value={produit.nom}
@@ -110,7 +161,7 @@ export default function ProduitForm() {
           <div className='mb-3'>
             <TextField
               required
-              disabled={false}
+              disabled={isLoading || isEditLoading}
               name='code'
               onChange={(e): void => handleChange(e, produit, setProduit)}
               value={produit.code}
@@ -123,8 +174,48 @@ export default function ProduitForm() {
           </div>
           
           <div className='mb-3'>
+            <SingleSelectField
+              disabled={isLoading || isEditLoading || isCategoryFetching}
+              onRefresh={async (): Promise<void> => { await categoryRefresh() }}
+              options={categoriesOptions()}
+              value={produit?.fkCategorie ?? null}
+              onChange={e => setProduit(p => ({...p, fkCategorie: e}))}
+              name='fkCategorie'
+              label='Catégorie de produit'
+              placeholder='-- Aucune catégorie sélectionnée --'
+            />
+          </div>
+          
+          <div className='mb-3'>
+            <SingleSelectField
+              disabled={isLoading || isEditLoading || isUnityFetching}
+              onRefresh={async (): Promise<void> => { await unityRefresh() }}
+              options={unitiesOptions()}
+              value={produit?.fkUnite ?? null}
+              onChange={e => setProduit(p => ({...p, fkUnite: e}))}
+              name='fkUnite'
+              label='Unité de consommation'
+              placeholder='-- Aucune unité sélectionnée --'
+            />
+          </div>
+          
+          <div className='mb-3'>
+            <TextAreaField
+              disabled={isLoading || isEditLoading}
+              name='description'
+              onChange={(e): void => handleChange(e, produit, setProduit)}
+              value={produit.description}
+              label='Description du produit'
+              placeholder='Détails du produit...'
+              error={errors.codeQr}
+              rows={5}
+            />
+          </div>
+          
+          {/*
+          <div className='mb-3'>
             <TextField
-              disabled={false}
+              disabled={isLoading || isEditLoading}
               name='codeBar'
               onChange={(e): void => handleChange(e, produit, setProduit)}
               value={produit.codeBar}
@@ -137,7 +228,7 @@ export default function ProduitForm() {
           
           <div className='mb-3'>
             <TextField
-              disabled={false}
+              disabled={isLoading || isEditLoading}
               name='codeQr'
               onChange={(e): void => handleChange(e, produit, setProduit)}
               value={produit.codeQr}
@@ -147,50 +238,12 @@ export default function ProduitForm() {
               error={errors.codeQr}
             />
           </div>
+          */}
           
-          <div className='mb-3'>
-            <SingleSelectField
-              disabled={false}
-              onRefresh={(): void => {
-              }}
-              options={[]}
-              value={produit?.fkCategorie ?? null}
-              onChange={e => setProduit(p => ({...p, fkCategorie: e}))}
-              name='fkCategorie'
-              label='Catégorie de produit'
-              placeholder='-- Aucune catégorie sélectionnée --'
-            />
-          </div>
-          
-          <div className='mb-3'>
-            <SingleSelectField
-              disabled={false}
-              onRefresh={(): void => {
-              }}
-              options={[]}
-              value={produit?.fkUnite ?? null}
-              onChange={e => setProduit(p => ({...p, fkUnite: e}))}
-              name='fkUnite'
-              label='Unité de consommation'
-              placeholder='-- Aucune unité sélectionnée --'
-            />
-          </div>
-          
-          <div className='mb-3'>
-            <TextAreaField
-              disabled={false}
-              name='description'
-              onChange={(e): void => handleChange(e, produit, setProduit)}
-              value={produit.description}
-              label='Description du produit'
-              placeholder='Détails du produit...'
-              error={errors.codeQr}
-              rows={5}
-            />
-          </div>
-          
-          <Button disabled={false} type='submit' onClick={(): void => handleShow(setShow)}>
-            Enregistrer ce produit
+          <Button disabled={isLoading || isEditLoading} type='submit' onClick={(): void => handleShow(setShow)}>
+            {(isLoading || isEditLoading) && <Spinner className='me-1' animation='border' size='sm' />}
+            {!(isLoading || isEditLoading) && data ? 'Modifier ' : !(isLoading || isEditLoading) && 'Enregistrer '}
+            {(isLoading || isEditLoading) ? 'Veuillez patienter' : 'ce produit'}
           </Button>
         </Col>
       </Row>
@@ -200,6 +253,7 @@ export default function ProduitForm() {
         setErrors={setErrors}
         show={show}
         onHide={(): void => handleShow(setShow)}
+        onSubmit={(): void => onSubmit((): void => handleShow(setShow))}
       />
     </>
   )
