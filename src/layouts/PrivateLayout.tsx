@@ -7,6 +7,7 @@ import type {UserState} from "../features/auth/model/auth.slice.ts";
 import useSetInfos from "./hooks/useSetInfos.ts";
 import useSetUserSession from "./hooks/useSetUserSession.ts";
 import useSetCaisse from "./hooks/useSetCaisse.ts";
+import useGetDevises from "./hooks/useGetDevises.ts";
 
 export default function PrivateLayout() {
   
@@ -19,6 +20,7 @@ export default function PrivateLayout() {
   useSetUserSession(dispatch)
   useSetCaisse(dispatch)
   useSetInfos(dispatch)
+  useGetDevises(dispatch)
   
   return token || localStorage.getItem('authToken') ?  (
     <div id='db-wrapper'>

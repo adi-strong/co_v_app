@@ -1,15 +1,25 @@
 import {ReactNode, useState} from "react";
 import {initApproProdutErrorState, initApproProdutState, onApproCurrencyChange} from "../model/approService.ts";
 import {Button, Card, Col, Row} from "react-bootstrap";
-import {FormRequiredFieldsNoticeText, SideContent, SingleSelectField, TextField} from "../../../../components";
+import {FormRequiredFieldsNoticeText, SideContent, TextField} from "../../../../components";
 import ApproTab from "./ApproTab.tsx";
 import useGetFournisseurOptions from "../../fournisseur/hooks/getFournisseurOptions.ts";
 import {handleChange} from "../../../../services/form.hander.service.ts";
 import useGetCurrencyOptions from "../../../configs/infosGen/hooks/useGetCurrencyOptions.ts";
-import {handleShow} from "../../../../services/services.ts";
 import ApproCartForm from "./ApproCartForm.tsx";
 import SelectField from "../../../../components/forms/SelectField.tsx";
 import type {BaseTaxeInt} from "../../../../interfaces/BaseTaxeInt.ts";
+import {
+  useGetFournisseursQuery,
+  useLazyGetSearchFournisseursQuery
+} from "../../fournisseur/model/fournisseur.api.slice.ts";
+import toast from "react-hot-toast";
+import type {JsonLdApiResponseInt} from "../../../../interfaces/JsonLdApiResponseInt.ts";
+import type {Fournisseur} from "../../fournisseur/model/fournisseurService.ts";
+import SingleAsyncSelectField from "../../../../components/forms/SingleAsyncSelectField.tsx";
+import type {SelectOptionType} from "../../../../services/services.ts";
+import {handleShow} from "../../../../services/services.ts";
+import {usePostApproMutation} from "../model/appro.api.slice.ts";
 
 export default function ApproForm() {
   
@@ -17,9 +27,30 @@ export default function ApproForm() {
   const [state, setState] = useState(initApproProdutState())
   const [errors, setErrors] = useState(initApproProdutErrorState())
   const [taxes, setTaxes] = useState<BaseTaxeInt[]>([])
+  const [getSearchFournisseurs] = useLazyGetSearchFournisseursQuery()
+  const [onPostAppro, { isLoading }] = usePostApproMutation()
+  
+  const { refetch: providerRefresh, isFetching: isProviderFetching } = useGetFournisseursQuery('LIST')
   
   const providerOptions = useGetFournisseurOptions()
   const currencyOptions = useGetCurrencyOptions()
+  
+  const onSearchFournisseurs = async (keywords: string): Promise<any> => {
+    const fournisseurs: SelectOptionType[] = []
+    try {
+      const { data, error }: JsonLdApiResponseInt<Fournisseur[]> = await getSearchFournisseurs(keywords)
+      if (error && error?.data && error.data?.detail) toast.error(error.data.detail)
+      if (data && data.length > 0) data.forEach(({ id, nomCommercial }: Fournisseur): void => {
+        fournisseurs.push({
+          label: nomCommercial.toUpperCase(),
+          value: nomCommercial.toUpperCase(),
+          data: `/api/fournisseurs/${id}`,
+        })
+      })
+    } catch (e) { toast.error(e?.message ?? 'Une erreur est survenue.') }
+    
+    return fournisseurs
+  }
   
   return (
     <>
@@ -27,7 +58,7 @@ export default function ApproForm() {
         <Col md={6} className='mb-3'><FormRequiredFieldsNoticeText/></Col>
         
         <Col md={6} className='mb-3 text-md-end'>
-          <Button size='sm' onClick={(): void => handleShow(setShow)}>
+          <Button disabled={isLoading} size='sm' onClick={(): void => handleShow(setShow)}>
             <i className='bi bi-cart-plus'/> Ajouter un produit <i className='bi bi-chevron-right'/>
           </Button>
         </Col>
@@ -42,7 +73,7 @@ export default function ApproForm() {
               <Col md={4} className='mb-3'>
                 <SelectField
                   required
-                  disabled={false}
+                  disabled={isLoading}
                   name='devise'
                   value={state.devise}
                   onChange={e => onApproCurrencyChange(
@@ -59,10 +90,10 @@ export default function ApproForm() {
               </Col>
               
               <Col md={4} className='mb-3'>
-                <SingleSelectField
+                <SingleAsyncSelectField
                   required
-                  disabled={false}
-                  onRefresh={(): void => { }}
+                  disabled={isProviderFetching || isLoading}
+                  onRefresh={async (): Promise<void> => { await providerRefresh() }}
                   options={providerOptions()}
                   value={state?.fkFournisseur ?? null}
                   onChange={e => setState(p => ({ ...p, fkFournisseur: e }))}
@@ -70,13 +101,14 @@ export default function ApproForm() {
                   error={errors.fkFournisseur}
                   label='Fournisseur'
                   placeholder='-- --'
+                  loadOptions={onSearchFournisseurs}
                 />
               </Col>
               
               <Col md={4} className='mb-3'>
                 <TextField
-                  disabled={false}
-                  type='date'
+                  disabled={isLoading}
+                  type='datetime-local'
                   name='createdAt'
                   onChange={(e): void => handleChange(e, state, setState)}
                   value={state.createdAt}
@@ -88,7 +120,15 @@ export default function ApproForm() {
             </Row>
           </Card.Body>
           
-          <ApproTab state={state} setState={setState} taxes={taxes} setTaxes={setTaxes} />
+          <ApproTab
+            state={state}
+            setState={setState}
+            taxes={taxes}
+            setTaxes={setTaxes}
+            loader={isLoading}
+            onPostAppro={onPostAppro}
+            setErrors={setErrors}
+          />
         </Card>
       </div>
       
@@ -103,6 +143,7 @@ export default function ApproForm() {
             state={state}
             setState={setState}
             setTaxes={setTaxes}
+            loader={isLoading}
           />
         ) as ReactNode}
       />

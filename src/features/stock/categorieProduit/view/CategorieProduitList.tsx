@@ -22,14 +22,14 @@ export default function CategorieProduitList({ categories, setCategories, onRefr
         state={search}
         value={search.keyword}
         setState={setSearch}
-        btnLabel='Rechercher des catégories'
+        btnLabel='Rechercher'
         onSubmit={(): void => { }}
         loader={loader}
         size='sm'
         md1={5}
         md2={7}
-        md3={6}
-        md4={6}
+        md3={9}
+        md4={3}
       />
       
       <ActionsComp

@@ -26,6 +26,23 @@ const fournisseurApiSlice = API.injectEndpoints({
       }
     }),
     
+    getSearchFournisseurs: build.query<Fournisseur[], string>({
+      query: (keywords: string) => `${API_PATH}/fournisseurs?nomCommercial=${keywords}`,
+      transformResponse: (response: JsonLDResponseInt<Fournisseur>) => {
+        totalFournisseursItems = response.totalItems
+        return response.member;
+      },
+      providesTags: (result) => {
+        if (result && Array.isArray(result)) {
+          return [
+            ...result.map(({ id }) => ({ type: 'UNIQUE' as const, id })),
+            { type: 'LIST' as const, id: 'LIST' }
+          ]
+        }
+        return [{ type: 'LIST' as const, id: 'LIST' }];
+      }
+    }),
+    
     getUniqueFournisseur: build.query<Fournisseur, string | number | undefined>({
       query: id => `${API_PATH}/fournisseurs/${id}`,
       providesTags: (result, error, arg) => [{
@@ -71,6 +88,7 @@ const fournisseurApiSlice = API.injectEndpoints({
 
 export const {
   useGetFournisseursQuery,
+  useLazyGetSearchFournisseursQuery,
   useGetUniqueFournisseurQuery,
   usePostFournisseurMutation,
   useEditFournisseurMutation,

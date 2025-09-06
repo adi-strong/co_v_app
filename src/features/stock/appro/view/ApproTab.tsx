@@ -1,6 +1,6 @@
-import {Button, Card, Col, Row, Table} from "react-bootstrap";
-import type {ApproProductItem, SaveAppro} from "../model/approService.ts";
-import type {Dispatch, SetStateAction} from "react";
+import {Button, Card, Col, Row, Spinner, Table} from "react-bootstrap";
+import type {ApproError, ApproProductItem, SaveAppro} from "../model/approService.ts";
+import type {Dispatch, ReactNode, SetStateAction} from "react";
 import {TextField} from "../../../../components";
 import {handleChange} from "../../../../services/form.hander.service.ts";
 import {formatDecimalNumberWithSpaces, formatNumberWithSpaces, handleShow} from "../../../../services/services.ts";
@@ -12,6 +12,7 @@ import useGetApproSubTotal from "../hooks/useGetApproSubTotal.ts";
 import useGetApproTaxTotal from "../hooks/useGetApproTaxTotal.ts";
 import useGetApproTotalAmount from "../hooks/useGetApproTotalAmount.ts";
 import moment from "moment";
+import useGetApproSubTotalWithDiscount from "../hooks/useGetApproSubTotalWithDiscount.ts";
 
 const ApproTabItem = (props: {
   product: ApproProductItem
@@ -20,6 +21,7 @@ const ApproTabItem = (props: {
   taxes: BaseTaxeInt[]
   setState: Dispatch<SetStateAction<SaveAppro>>
   setTaxes: Dispatch<SetStateAction<BaseTaxeInt[]>>
+  loader: boolean
 }) => {
   
   const {
@@ -33,7 +35,7 @@ const ApproTabItem = (props: {
     datePeremption,
   } = props.product
   
-  const { index, products, setState, taxes, setTaxes } = props
+  const { index, products, setState, taxes, setTaxes, loader } = props
   
   const quantity: number = qty ?? quantite
   const unitPrice: number = price ?? prixHt
@@ -44,6 +46,7 @@ const ApproTabItem = (props: {
       <tr>
         <td>
           <Button
+            disabled={loader}
             variant='link'
             className='text-danger p-0 me-1'
             onClick={(): void => onApproRemoveProduct(index, products, setState, setTaxes, tva)}
@@ -63,20 +66,24 @@ const ApproTabItem = (props: {
   
 }
 
-export default function ApproTab({ state, setState, taxes = [], setTaxes }: {
+export default function ApproTab({ state, setState, taxes = [], setTaxes, loader, onPostAppro, setErrors }: {
   state: SaveAppro
   taxes: BaseTaxeInt[]
   setState: Dispatch<SetStateAction<SaveAppro>>
   setTaxes: Dispatch<SetStateAction<BaseTaxeInt[]>>
+  loader: boolean
+  onPostAppro: (data?: SaveAppro) => Promise<any>
+  setErrors: Dispatch<SetStateAction<ApproError>>
 }) {
   
   const [show, setShow] = useState<boolean>(false)
   
   const { productItems, remise } = state
   
-  const subTotal = useGetApproSubTotal(state.productItems, state.remise)
+  const subTotal = useGetApproSubTotal(state.productItems)
+  const subTotalWithDiscount = useGetApproSubTotalWithDiscount(subTotal(), remise)
   const taxesAmount = useGetApproTaxTotal(taxes)
-  const totalAmount = useGetApproTotalAmount(subTotal(), taxesAmount())
+  const totalAmount = useGetApproTotalAmount(subTotalWithDiscount(), taxesAmount())
   
   return (
     <>
@@ -85,6 +92,7 @@ export default function ApproTab({ state, setState, taxes = [], setTaxes }: {
         <tr>
           <th className='text-start'>
             <Button
+              disabled={loader}
               variant='link'
               size='sm'
               className='me-1 p-0'
@@ -113,9 +121,20 @@ export default function ApproTab({ state, setState, taxes = [], setTaxes }: {
             setState={setState}
             taxes={taxes}
             setTaxes={setTaxes}
+            loader={loader}
           />
         ))}
         </tbody>
+        
+        <tfoot>
+        <tr>
+          <th colSpan={5}>Sous-total HT</th>
+          <th className='text-end'>
+            {formatDecimalNumberWithSpaces(subTotal().toFixed(2))}{' '}
+            ({state.devise})
+          </th>
+        </tr>
+        </tfoot>
       </Table>
       
       <Card.Body>
@@ -145,7 +164,7 @@ export default function ApproTab({ state, setState, taxes = [], setTaxes }: {
           <Col md={6} className='mb-3'>
             <div className='mb-3'>
               <TextField
-                disabled={false}
+                disabled={loader}
                 type='number'
                 name='remise'
                 onChange={(e): void => handleChange(e, state, setState)}
@@ -158,9 +177,9 @@ export default function ApproTab({ state, setState, taxes = [], setTaxes }: {
             <Table responsive bordered striped>
               <tbody>
               <tr>
-                <th>Sous-total HT</th>
+                <th>Sous-total</th>
                 <th className='text-end'>
-                  {formatDecimalNumberWithSpaces(subTotal().toFixed(2))} ({state.devise})
+                  {formatDecimalNumberWithSpaces(subTotalWithDiscount().toFixed(2))} ({state.devise})
                 </th>
               </tr>
               
@@ -180,14 +199,23 @@ export default function ApproTab({ state, setState, taxes = [], setTaxes }: {
               </tbody>
             </Table>
             
-            <Button className='mt-3 w-100' onClick={(): void => handleShow(setShow)}>
-              Approvisionner
+            <Button disabled={loader} className='mt-3 w-100' onClick={(): void => handleShow(setShow)}>
+              {loader && (<Spinner className='me-1' animation='border' size='sm' />) as ReactNode}
+              {loader ? 'Veuillez patienter' : 'Approvisionner'}
             </Button>
           </Col>
         </Row>
       </Card.Body>
       
-      <ConfirmApproForm show={show} onHide={(): void => handleShow(setShow)} state={state} />
+      <ConfirmApproForm
+        show={show}
+        onHide={(): void => handleShow(setShow)}
+        onPostAppro={onPostAppro}
+        state={state}
+        setErrors={setErrors}
+        setState={setState}
+        setTaxes={setTaxes}
+      />
     </>
   )
   

@@ -5,7 +5,7 @@ import type {MediaObjectInt} from "../../../../interfaces/MediaObjectInt.ts";
 import type {SingleValue} from "react-select";
 import type {SelectOptionType, THeadItemType} from "../../../../services/services.ts";
 import {getCategorieProduitFakeData} from "../../categorieProduit/model/categorieProduitService.ts";
-import type {Dispatch, FormEvent, SetStateAction} from "react";
+import type {Dispatch, SetStateAction} from "react";
 import type {NavigateFunction} from "react-router-dom";
 import type {JsonLdApiResponseInt} from "../../../../interfaces/JsonLdApiResponseInt.ts";
 import toast from "react-hot-toast";
@@ -31,6 +31,7 @@ export interface Produit {
   updatedAt?: string
   selected: boolean
   lotProduits: LotProduit[]
+  quantity: number
 }
 
 export interface SaveProduit {
@@ -99,6 +100,7 @@ export const getProduitFakeData = (): Produit[] => [
     selected: false,
     fkUnite: getUniteConsommationFakeData()[0],
     lotProduits: [],
+    quantity: 0,
   },
   {
     id: 2,
@@ -111,6 +113,7 @@ export const getProduitFakeData = (): Produit[] => [
     selected: false,
     fkUnite: getUniteConsommationFakeData()[0],
     lotProduits: [],
+    quantity: 0,
   },
 ]
 
@@ -134,7 +137,7 @@ const castProduitToForomData = (state: SaveProduit): FormData => {
   if (codeQr) formData.append('codeQr', codeQr)
   if (description) formData.append('description', description)
   if (fkCategorie && fkCategorie?.data) formData.append('fkCategorie', fkCategorie.data)
-  if (fkUnite && fkCategorie?.data) formData.append('fkUnite', fkUnite.data)
+  if (fkUnite && fkUnite?.data) formData.append('fkUnite', fkUnite.data)
   if (file && file[0]?.file) formData.append('file', file[0].file)
   
   return formData
@@ -144,9 +147,19 @@ export const getProduitHeadItems = (): THeadItemType[] => [
   { th: 'Code' },
   { th: 'Quantité' },
   { th: 'U.C' },
-  { th: 'Prix TTC' },
-  { th: 'Péremption' },
+  { th: 'Date' },
 ]
+
+export const quantityAlertColor = (quantity: number | string): string => {
+  const qty: number = Number(quantity)
+  let color: string
+  
+  if (qty > 41 && qty < 52) color = 'waring'
+  else if (qty < 22) color = 'danger'
+  else color = 'secondary'
+  
+  return color
+}
 
 /**
  *
@@ -203,12 +216,14 @@ export async function onPostProduitSubmit(
  * @param navigate
  * @param onRefresh
  * @param onHide
+ * @param handleHide
  */
 export async function onPatchProduitSubmit(
   state: SaveProduit,
   setErrors: Dispatch<SetStateAction<ProduitError>>,
   onHide: () => void,
   onSubmit: (data: SaveProduit) => Promise<any>,
+  handleHide?: () => void,
   onRefresh?: () => void,
   navigate?: NavigateFunction
 ): Promise<void> {
@@ -222,6 +237,7 @@ export async function onPatchProduitSubmit(
       onHide()
       
       if (onRefresh) onRefresh()
+      if (handleHide) handleHide()
       if (navigate) navigate(`/app/produits/${id}/${data?.slug}`)
     }
     
@@ -235,7 +251,7 @@ export async function onPatchProduitSubmit(
   
 }
 
-export async function onDeleteProduit(
+export async function onDeleteProduitSubmit(
   state: Produit,
   onSubmit: (data: Produit) => Promise<void>,
   onRefresh: () => void,

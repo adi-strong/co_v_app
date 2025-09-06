@@ -1,7 +1,6 @@
 import type {SaveAppro} from "../model/approService.ts";
 import type {Dispatch, ReactNode, SetStateAction} from "react";
-import useGetProduitOptions from "../../produit/useGetProduitOptions.ts";
-import {CheckField, SingleSelectField, TextField} from "../../../../components";
+import {CheckField, TextField} from "../../../../components";
 import {useState} from "react";
 import type {SingleValue} from "react-select";
 import type {SelectOptionType} from "../../../../services/services.ts";
@@ -14,21 +13,51 @@ import {
 } from "../model/approService.ts";
 import {handleChange} from "../../../../services/form.hander.service.ts";
 import {Button, Col, Form, InputGroup, Row} from "react-bootstrap";
-import {formatDecimalNumberWithSpaces} from "../../../../services/services.ts";
 import type {BaseTaxeInt} from "../../../../interfaces/BaseTaxeInt.ts";
+import {useGetProduitsQuery, useLazyGetSearchProduitsQuery} from "../../produit/model/produit.api.slice.ts";
+import toast from "react-hot-toast";
+import type {JsonLdApiResponseInt} from "../../../../interfaces/JsonLdApiResponseInt.ts";
+import type {Produit} from "../../produit/model/produitService.ts";
+import SingleAsyncSelectField from "../../../../components/forms/SingleAsyncSelectField.tsx";
+import useGetProduitOptions from "../../produit/hooks/useGetProduitOptions.ts";
 
-export default function ApproCartForm({ taux, state, setState, setTaxes }: {
+export default function ApproCartForm({ taux, state, setState, setTaxes, loader }: {
   state: SaveAppro
   setState: Dispatch<SetStateAction<SaveAppro>>
   taux: number
   setTaxes: Dispatch<SetStateAction<BaseTaxeInt[]>>
+  loader: boolean
 }) {
-  
-  const productOptions = useGetProduitOptions()
   
   const [product, setProduct] = useState<SingleValue<SelectOptionType>>(null)
   const [data, setData] = useState(initApproProductItem())
   const [isBy, setIsBy] = useState<boolean>(false)
+  const [getSearchProduits] = useLazyGetSearchProduitsQuery()
+  
+  const { refetch: produitsRefresh, isFetching: isProduitsFetching } = useGetProduitsQuery('LIST')
+  
+  const productOptions = useGetProduitOptions()
+  
+  const onSearchProduits = async (keywords: string): Promise<any> => {
+    const products: SelectOptionType[] = []
+    try {
+      const { data, error }: JsonLdApiResponseInt<Produit[]> = await getSearchProduits(keywords)
+      if (error && error?.data && error.data?.detail) toast.error(error.data.detail)
+      if (data && data.length > 0) data.forEach(({ id, nom, fkUnite }: Produit): void => {
+        const data: { uniteID: number; unite: string | null } = {
+          uniteID: fkUnite ? fkUnite.id : 0,
+          unite: fkUnite ? fkUnite.nom : null,
+        }
+        products.push({
+          label: nom.toUpperCase(),
+          value: nom.toUpperCase(),
+          data,
+        })
+      })
+    } catch (e) { toast.error(e?.message ?? 'Une erreur est survenue.') }
+    
+    return products
+  }
   
   const onReset = (): void => {
     setIsBy(false)
@@ -49,15 +78,29 @@ export default function ApproCartForm({ taux, state, setState, setTaxes }: {
       setTaxes
     )}>
       <div className='mb-3'>
-        <SingleSelectField
+        <SingleAsyncSelectField
           required
-          onRefresh={(): void => { }}
-          options={productOptions()}
+          disabled={isProduitsFetching || loader}
+          onRefresh={async (): Promise<void> => { await produitsRefresh() }}
+          options={productOptions}
           value={product}
           onChange={e => onApproProductChange(e, setProduct, setData)}
           name='product'
           label='Produit'
           placeholder='-- Aucun produit sélectionné --'
+          loadOptions={onSearchProduits}
+        />
+      </div>
+      
+      <div className='mb-3'>
+        <CheckField
+          inline
+          disabled={loader}
+          name='isBy'
+          value={isBy}
+          checked={isBy}
+          onChange={(): void => onApproOtherQtyChange(isBy, setIsBy, setData)}
+          label='Autres spécifications'
         />
       </div>
       
@@ -67,7 +110,7 @@ export default function ApproCartForm({ taux, state, setState, setTaxes }: {
             <Col md={6} className='mb-3'>
               <TextField
                 required
-                disabled={false}
+                disabled={loader}
                 type='number'
                 name='prixHt'
                 onChange={(e): void => onApproPrixHTChange(e, setData)}
@@ -78,7 +121,7 @@ export default function ApproCartForm({ taux, state, setState, setTaxes }: {
             
             <Col md={6} className='mb-3'>
               <TextField
-                disabled={false}
+                disabled={loader}
                 type='number'
                 name='taxe'
                 onChange={(e): void => onApproTaxeChange(e, setData)}
@@ -101,25 +144,13 @@ export default function ApproCartForm({ taux, state, setState, setTaxes }: {
           </>
         ) as ReactNode}
         
-        <Col sm={12} className='mb-3'>
-          <CheckField
-            inline
-            disabled={false}
-            name='isBy'
-            value={isBy}
-            checked={isBy}
-            onChange={(): void => onApproOtherQtyChange(isBy, setIsBy, setData)}
-            label='Autres spécifications'
-          />
-        </Col>
-        
         {!isBy && (
           <div className='mb-3'>
             <Form.Label htmlFor='quantite'><code>*</code> Quantité</Form.Label>
             <InputGroup>
               <TextField
                 required
-                disabled={false}
+                disabled={loader}
                 type='number'
                 name='quantite'
                 onChange={(e): void => handleChange(e, data, setData)}
@@ -138,7 +169,7 @@ export default function ApproCartForm({ taux, state, setState, setTaxes }: {
               <TextField
                 required
                 autoFocus
-                disabled={false}
+                disabled={loader}
                 name='unite'
                 onChange={(e): void => handleChange(e, data, setData)}
                 value={data?.unite ?? ''}
@@ -154,7 +185,7 @@ export default function ApproCartForm({ taux, state, setState, setTaxes }: {
                   className='text-capitalize mx-1'>{data?.unite ?? '—'}</span> =</InputGroup.Text>
                 <TextField
                   required
-                  disabled={false}
+                  disabled={loader}
                   type='number'
                   name='realQty'
                   onChange={(e): void => onApproRealQtyChange(e, data, setData)}
@@ -170,7 +201,7 @@ export default function ApproCartForm({ taux, state, setState, setTaxes }: {
             <div className='mb-3'>
               <TextField
                 required
-                disabled={false}
+                disabled={loader}
                 type='number'
                 name='qty'
                 onChange={(e): void => onApproQtyChange(e, setData)}
@@ -183,7 +214,7 @@ export default function ApproCartForm({ taux, state, setState, setTaxes }: {
               <Col md={6} className='mb-3'>
                 <TextField
                   required
-                  disabled={false}
+                  disabled={loader}
                   type='number'
                   name='price'
                   onChange={(e): void => onApproPriceChange(e, setData)}
@@ -195,7 +226,7 @@ export default function ApproCartForm({ taux, state, setState, setTaxes }: {
               <Col md={6} className='mb-3'>
                 <TextField
                   required
-                  disabled={false}
+                  disabled={loader}
                   type='number'
                   name='prixHt'
                   onChange={(e): void => onApproPrixHTChange(e, setData)}
@@ -209,7 +240,7 @@ export default function ApproCartForm({ taux, state, setState, setTaxes }: {
               
               <Col md={6} className='mb-3'>
                 <TextField
-                  disabled={false}
+                  disabled={loader}
                   type='number'
                   name='taxe'
                   onChange={(e): void => onApproTaxeChange(e, setData)}
@@ -226,10 +257,7 @@ export default function ApproCartForm({ taux, state, setState, setTaxes }: {
                   name='prixTtc'
                   onChange={(e): void => handleChange(e, data, setData)}
                   value={data.tva > 0 ? data.prixTtc.toFixed(2) : data.prixTtc}
-                  label={<>
-                    Prix TTC {'/ '}
-                    {data?.unite && `(${product && product?.data && product.data?.unite ? product.data.unite : '—'})`}
-                  </>}
+                  label='Prix TTC'
                 />
               </Col>
             </Row>
@@ -256,7 +284,7 @@ export default function ApproCartForm({ taux, state, setState, setTaxes }: {
       
       <div className='mb-3'>
         <TextField
-          disabled={false}
+          disabled={loader}
           type='date'
           name='datePeremption'
           onChange={(e): void => handleChange(e, data, setData)}
@@ -265,11 +293,11 @@ export default function ApproCartForm({ taux, state, setState, setTaxes }: {
         />
       </div>
       
-      <Button type='button' variant='secondary' onClick={onReset} className='mb-1 w-100'>
+      <Button disabled={loader} type='button' variant='secondary' onClick={onReset} className='mb-1 w-100'>
         <i className='bi bi-trash'/> Effacer
       </Button>
       
-      <Button type='submit' className='w-100'>
+      <Button disabled={loader} type='submit' className='w-100'>
         <i className='bi bi-plus'/> Ajouter
       </Button>
     </form>

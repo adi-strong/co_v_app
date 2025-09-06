@@ -1,20 +1,30 @@
-import type {Dispatch, SetStateAction} from "react";
+import type {Dispatch, ReactNode, SetStateAction} from "react";
 import {useState} from "react";
-import {Button, Card, Col, Row, Table} from "react-bootstrap";
-import {Link} from "react-router-dom";
+import {Button, Card, Col, Row, Spinner, Table} from "react-bootstrap";
+import {selectAllStateItems, tableWhiteStyle} from "../../../../services/services.ts";
 import {CheckField, TextField} from "../../../../components";
 import {handleChange} from "../../../../services/form.hander.service.ts";
-import {selectAllStateItems, tableWhiteStyle} from "../../../../services/services.ts";
-import {getProduitHeadItems} from "../../produit/model/produitService.ts";
-import type {LotProduit} from "../model/lotProduitService.ts";
+import {RepeatableTableRows} from "../../../../loaders";
+import type {Produit} from "../model/produitService.ts";
 import ProduitItem from "./ProduitItem.tsx";
+import {getProduitHeadItems} from "../model/produitService.ts";
+import {Link} from "react-router-dom";
 
 export default function ProduitData(props: {
-  produits: LotProduit[]
-  setProduits: Dispatch<SetStateAction<LotProduit[]>>
+  product: Produit[]
+  setProducts: Dispatch<SetStateAction<Produit[]>>
+  onRefresh: () => void
+  loader: boolean
+  isFetching: boolean
 }) {
   
-  const { produits, setProduits } = props
+  const {
+    product,
+    setProducts,
+    onRefresh,
+    loader,
+    isFetching,
+  } = props
   
   const [search, setSearch] = useState<{ keyword: string }>({ keyword: '' })
   const [isSelectedAll, setIsSelectedAll] = useState<boolean>(false)
@@ -24,13 +34,14 @@ export default function ProduitData(props: {
       <Row>
         <Col md={6}>
           <Card.Title as='h5' className='mx-4 mt-5 me-4'>
-            <Button variant='link' size='sm' className='me-2'>
-              <i className='bi bi-arrow-clockwise'/>
+            <Button disabled={isFetching} variant='link' className='me-1' size='sm' onClick={onRefresh} title='Actualiser'>
+              {!isFetching && (<i className='bi bi-arrow-clockwise' />) as ReactNode}
+              {isFetching && (<Spinner animation='grow' size='sm' />) as ReactNode}
             </Button>
-            Liste des produit
+            Liste des produits
             
-            <Link to='/app/produits/new' className='mx-5 btn btn-sm btn-link' title='Nouvel enregistrement'>
-              <i className='bi bi-plus'/> Nouveau produit
+            <Link to='/app/produits/new' className='mx-5 btn btn-link' title='Nouveau fournisseur'>
+              <i className='bi bi-plus'/> Nouveau
             </Link>
           </Card.Title>
         </Col>
@@ -39,7 +50,7 @@ export default function ProduitData(props: {
           <form className='row' onSubmit={e => e.preventDefault()}>
             <Col md={7} className='mb-1'>
               <TextField
-                disabled={false}
+                disabled={loader}
                 size='sm'
                 name='keyword'
                 value={search.keyword}
@@ -48,8 +59,8 @@ export default function ProduitData(props: {
             </Col>
             
             <Col md={5} className='mb-1'>
-              <Button type='submit' disabled={false} variant='outline-primary' className='w-100' size='sm'>
-                Rechercher des produits
+              <Button type='submit' disabled={loader} variant='outline-primary' className='w-100' size='sm'>
+                Rechercher
               </Button>
             </Col>
           </form>
@@ -82,10 +93,10 @@ export default function ProduitData(props: {
               name='isSelectedAll'
               value={isSelectedAll}
               checked={isSelectedAll}
-              onChange={(): void => selectAllStateItems(isSelectedAll, setIsSelectedAll, setProduits)}
+              onChange={(): void => selectAllStateItems(isSelectedAll, setIsSelectedAll, setProducts)}
               className='me-0'
             />
-            Produit
+            Nom
           </th>
           
           {getProduitHeadItems().length > 0 && getProduitHeadItems().map(t =>
@@ -94,17 +105,18 @@ export default function ProduitData(props: {
         </thead>
         
         <tbody style={tableWhiteStyle.tbody}>
-        {produits.length > 0 && produits.map((c, index: number) =>
+        {product.length > 0 && product.map((c, index: number) =>
           <ProduitItem
             key={index}
-            produit={c}
-            setProduits={setProduits}
+            product={c}
+            setProducts={setProducts}
             index={index}
-            isSelectedAll={isSelectedAll}
-            setIsSelectedAll={setIsSelectedAll}
+            onRefresh={onRefresh}
           />)}
         </tbody>
       </Table>
+      
+      {loader && <RepeatableTableRows/>}
     </>
   )
   

@@ -26,6 +26,23 @@ const produitApiSlice = API.injectEndpoints({
       }
     }),
     
+    getSearchProduits: build.query<Produit[], string>({
+      query: (keywords: string) => `${API_PATH}/produits?nom=${keywords}`,
+      transformResponse: (response: JsonLDResponseInt<Produit>) => {
+        totalProduitsItems = response.totalItems
+        return response.member;
+      },
+      providesTags: (result) => {
+        if (result && Array.isArray(result)) {
+          return [
+            ...result.map(({ id }) => ({ type: 'UNIQUE' as const, id })),
+            { type: 'LIST' as const, id: 'LIST' }
+          ]
+        }
+        return [{ type: 'LIST' as const, id: 'LIST' }];
+      }
+    }),
+    
     getUniqueProduit: build.query<Produit, string | number | undefined>({
       query: id => `${API_PATH}/produits/${id}`,
       providesTags: (result, error, arg) => [{
@@ -78,6 +95,7 @@ const produitApiSlice = API.injectEndpoints({
 
 export const {
   useGetProduitsQuery,
+  useLazyGetSearchProduitsQuery,
   useLazyGetProduitsQuery,
   useGetUniqueProduitQuery,
   usePostProduitMutation,

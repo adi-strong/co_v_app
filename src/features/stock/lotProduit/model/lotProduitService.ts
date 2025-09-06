@@ -5,16 +5,20 @@ import type {Produit} from "../../produit/model/produitService.ts";
 import type {UniteConsommation} from "../../uniteConsommation/model/uniteConsommationService.ts";
 import type {NumLot} from "../../numLot/model/numLotService.ts";
 import type {SingleValue} from "react-select";
-import type {SelectOptionType} from "../../../../services/services.ts";
-import type {Dispatch, FormEvent, SetStateAction} from "react";
+import type {PriceType, SelectOptionType, THeadItemType} from "../../../../services/services.ts";
+import type {ChangeEvent, Dispatch, FormEvent, SetStateAction} from "react";
 import type {NavigateFunction} from "react-router-dom";
 import type {JsonLdApiResponseInt} from "../../../../interfaces/JsonLdApiResponseInt.ts";
 import toast from "react-hot-toast";
+import type {MediaObjectInt} from "../../../../interfaces/MediaObjectInt.ts";
+import moment from "moment";
+import {onSetPrixHtChange, onSetTaxChange} from "../../../../services/services.ts";
 
 // INTERFACES OR TYPES
 export interface LotProduit {
   '@id'?: string
   id: number
+  nom: string
   quantite: number
   typeQuantite: string
   tva?: number
@@ -31,6 +35,8 @@ export interface LotProduit {
   fkUnite?: UniteConsommation
   releasedAt?: string
   selected: boolean
+  image?: MediaObjectInt
+  devise: string
 }
 
 export interface SaveLotProduit {
@@ -75,22 +81,47 @@ export const initLotProduitErrorState = (): LotProduitError => ({
 /* ------------------------------------------- */
 
 // EVENTS & FUNCTIONS
+export const getLotProdHeadItems = (): THeadItemType[] => [
+  { th: 'Qté.' },
+  { th: 'Prix HT' },
+  { th: 'Prix TTC' },
+  { th: 'TVA' },
+  { th: 'Péremption' },
+]
+
+export const getLotAlertColor = (date: string): string => {
+  let color: string
+  
+  const dateParam: Date = new Date(date)
+  const currentDate: Date = new Date()
+  
+  const diff: number = moment(dateParam).diff(currentDate, 'days')
+  
+  if (diff > 32 && diff < 33) color = 'warning'
+  else if (diff < 15) color = 'danger'
+  else color = 'secondary'
+  
+  return color
+}
+
 /**
  *
  * @param e
  * @param state
  * @param setErrors
  * @param onSubmit
- * @param navigate
  * @param onRefresh
+ * @param onHide
+ * @param navigate
  */
 export async function onPatchLotProduitSubmit(
   e: FormEvent<HTMLFormElement>,
   state: SaveLotProduit,
   setErrors: Dispatch<SetStateAction<LotProduitError>>,
   onSubmit: (data: SaveLotProduit) => Promise<any>,
-  navigate: NavigateFunction,
-  onRefresh?: () => void
+  onRefresh: () => void,
+  onHide?: () => void,
+  navigate?: NavigateFunction,
 ): Promise<void> {
   
   e.preventDefault()
@@ -101,8 +132,9 @@ export async function onPatchLotProduitSubmit(
     const { data, error }: JsonLdApiResponseInt<LotProduit> = await onSubmit(state)
     if (data) {
       toast.success('Modification bien effectuée.')
-      if (onRefresh) onRefresh()
-      navigate(`/app/produits/${data.fkProduit.id}/${data.fkProduit?.slug}`)
+      onRefresh()
+      if (onHide) onHide()
+      if (navigate) navigate(`/app/produits/${data.fkProduit.id}/${data.fkProduit?.slug}`)
     }
     
     if (error && error?.data) {
@@ -113,6 +145,42 @@ export async function onPatchLotProduitSubmit(
     }
   } catch (e) { toast.error('Problème réseau.') }
   
+}
+
+export const onTvaLotProdChange = (
+  e: ChangeEvent<HTMLInputElement>,
+  setState: Dispatch<SetStateAction<SaveLotProduit>>): void => {
+  setState(prod => {
+    const prices: PriceType = onSetTaxChange(e, prod.prixHt)
+    
+    let tva: number = prices.taxe
+    let prixTtc: number = prices.prixTtc
+    
+    return {
+      ...prod,
+      tva,
+      prixTtc,
+    }
+  })
+}
+
+export const onPrixHTLotProdChange = (
+  e: ChangeEvent<HTMLInputElement>,
+  setState: Dispatch<SetStateAction<SaveLotProduit>>): void => {
+  setState(prod => {
+    const prices: PriceType = onSetPrixHtChange(e, prod.tva)
+    const prixHt: number = prices.prixHt
+    const prixTtc: number = prices.prixTtc
+    
+    prod.prixHt = prices.prixHt
+    prod.prixTtc = prices.prixTtc
+    
+    return {
+      ...prod,
+      prixHt,
+      prixTtc,
+    }
+  })
 }
 // END EVENTS & FUNCTIONS
 

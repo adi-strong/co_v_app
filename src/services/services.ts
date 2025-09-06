@@ -225,6 +225,17 @@ export const onGoTo = (link: string, navigate: NavigateFunction, replace?: boole
   else navigate(link, {replace: true})
 }
 
+export const getTotalFirstCurrencyAmount = (firstCurrency: string, devise: string, rate: number, amount: number): number => {
+  return firstCurrency === devise
+    ? amount
+    : amount * rate
+}
+
+export const getTotalLastCurrencyAmount = (lastCurrency: string, devise: string, rate: number, amount: number): number => {
+  return lastCurrency === devise
+    ? amount
+    : amount / rate
+}
 // END INIT
 
 // ******************************************* ******************************************** //

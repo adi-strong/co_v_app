@@ -71,6 +71,8 @@ const
     import('../stock/fournisseur/view/fournisseurView.tsx')),
   Prod = lazy(() =>
     import('../stock/produit/view/produitView.tsx')),
+  LotProd = lazy(() =>
+    import('../stock/lotProduit/view/lotProdView.tsx')),
   NProd = lazy(() =>
     import('../stock/produit/view/newProduit.tsx')),
   Appro = lazy(() =>
@@ -263,6 +265,10 @@ const pages: RouteType[] = [
       {
         path: 'produits',
         element: <Prod />
+      },
+      {
+        path: 'produits/articles',
+        element: <LotProd />
       },
       {
         path: 'produits/new',

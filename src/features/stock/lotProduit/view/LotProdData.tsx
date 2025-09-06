@@ -1,76 +1,62 @@
-import {ReactNode, useState} from "react";
+import type {Dispatch, ReactNode, SetStateAction} from "react";
+import {useState} from "react";
 import {Button, Card, Col, Row, Spinner, Table} from "react-bootstrap";
+import {Link} from "react-router-dom";
 import {TextField} from "../../../../components";
 import {handleChange} from "../../../../services/form.hander.service.ts";
 import {tableWhiteStyle} from "../../../../services/services.ts";
-import type {Appro} from "../model/approService.ts";
-import ApproItem from "./ApproItem.tsx";
-import {Link} from "react-router-dom";
-import type {CompteCaisseState} from "../../../finances/compteCaisse/model/compteCaisse.slice.ts";
-import {useSelector} from "react-redux";
 import {RepeatableTableRows} from "../../../../loaders";
+import type {LotProduit} from "../model/lotProduitService.ts";
+import {getLotProdHeadItems} from "../model/lotProduitService.ts";
+import LotProdItem from "./LotProdItem.tsx";
 
-export default function ApproData(props: {
-  appros: Appro[]
+export default function LotProdData(props: {
+  product: LotProduit[]
+  setProducts: Dispatch<SetStateAction<LotProduit[]>>
   onRefresh: () => void
   loader: boolean
   isFetching: boolean
 }) {
   
   const {
-    appros,
+    product,
+    onRefresh,
     loader,
     isFetching,
-    onRefresh,
   } = props
   
-  const { compte } = useSelector((state: CompteCaisseState) => state.compte)
-  
-  const [search, setSearch] = useState<{ start: string, end: '' }>({
-    end: '',
-    start: '',
-  })
+  const [search, setSearch] = useState<{ keyword: string }>({ keyword: '' })
   
   return (
     <>
       <Row>
-        <Col md={5}>
+        <Col md={6}>
           <Card.Title as='h5' className='mx-4 mt-5 me-4'>
             <Button disabled={isFetching} variant='link' className='me-1' size='sm' onClick={onRefresh} title='Actualiser'>
               {!isFetching && (<i className='bi bi-arrow-clockwise' />) as ReactNode}
               {isFetching && (<Spinner animation='grow' size='sm' />) as ReactNode}
             </Button>
-            Historique des approvisionnements
+            Liste des produits
+            
+            <Link to='/app/produits/new' className='mx-5 btn btn-link' title='Nouveau fournisseur'>
+              <i className='bi bi-plus'/> Nouveau
+            </Link>
           </Card.Title>
         </Col>
         
-        <Col md={7} className='pt-4 pt-5 px-4 text-md-end'>
+        <Col md={6} className='pt-4 pt-5 px-4 text-md-end'>
           <form className='row' onSubmit={e => e.preventDefault()}>
-            <Col md={4} className='mb-1'>
+            <Col md={7} className='mb-1'>
               <TextField
                 disabled={loader}
-                type='date'
                 size='sm'
-                name='start'
-                value={search.start}
+                name='keyword'
+                value={search.keyword}
                 onChange={e => handleChange(e, search, setSearch)}
-                placeholder='N° facture'
               />
             </Col>
             
-            <Col md={4} className='mb-1'>
-              <TextField
-                disabled={loader}
-                type='date'
-                size='sm'
-                name='end'
-                value={search.end}
-                onChange={e => handleChange(e, search, setSearch)}
-                placeholder='N° facture'
-              />
-            </Col>
-            
-            <Col md={4} className='mb-1'>
+            <Col md={5} className='mb-1'>
               <Button type='submit' disabled={loader} variant='outline-primary' className='w-100' size='sm'>
                 Rechercher
               </Button>
@@ -81,16 +67,14 @@ export default function ApproData(props: {
       
       <Row className='px-6 pe-4 pb-4'>
         <Col md={6} className='mb-1'>
-          <Button disabled={loader} variant='outline-warning' size='sm' className='me-2'>
+          <Button disabled={false} variant='outline-warning' size='sm' className='me-1'>
             <i className='bi bi-file-earmark-pdf me-1'/>
             Imprimer en pdf
           </Button>
-          
-          <Link to='/app/approvisionnements/new'><i className='bi bi-plus'/> Nouveau</Link>
         </Col>
         
         <Col md={6} className='mb-1 text-md-end'>
-          <Button disabled={loader} variant='outline-success' size='sm'>
+          <Button disabled={false} variant='outline-success' size='sm'>
             <i className='bi bi-file-earmark-excel me-1'/>
             Exporter en excel
           </Button>
@@ -100,19 +84,21 @@ export default function ApproData(props: {
       <Table hover responsive>
         <thead className='table-light'>
         <tr>
-          <th style={{ fontSize: '1rem' }}>N°</th>
-          <th style={{ fontSize: '1rem' }}>Montant ({compte && compte.first.code})</th>
-          <th style={{ fontSize: '1rem' }}>Montant ({compte && compte.last.code})</th>
-          <th style={{ fontSize: '1rem' }}>Taux</th>
-          <th style={{ fontSize: '1rem' }}>TVA</th>
-          <th style={{ fontSize: '1rem' }}>Date</th>
-          <th/>
+          <th style={{ fontSize: '0.8rem' }}>Nom</th>
+          
+          {getLotProdHeadItems().length > 0 && getLotProdHeadItems().map(t =>
+            <th key={t.th} style={{ fontSize: '0.8rem' }}>{t.th}</th>)}
         </tr>
         </thead>
         
         <tbody style={tableWhiteStyle.tbody}>
-        {appros.length > 0 && appros.map(a =>
-          <ApproItem key={a.id} appro={a} />)}
+        {product.length > 0 && product.map((c, index: number) =>
+          <LotProdItem
+            key={index}
+            lotProd={c}
+            index={index}
+            onRefresh={onRefresh}
+          />)}
         </tbody>
       </Table>
       

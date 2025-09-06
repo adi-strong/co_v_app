@@ -19,10 +19,16 @@ import {
   onPatchProduitSubmit,
   onPostProduitSubmit
 } from "../model/produitService.ts";
+import {useNavigate} from "react-router-dom";
 
-export default function ProduitForm({ data, onRefresh }: { data?: Produit, onRefresh?: () => void }) {
+export default function ProduitForm({ data, onRefresh, onHide }: {
+  data?: Produit,
+  onRefresh?: () => void
+  onHide?: () => void
+}) {
   
   const maxNumber: number = 1
+  const navigate = useNavigate()
   
   const [show, setShow] = useState<boolean>(false)
   const [produit, setProduit] = useState(initProduitState())
@@ -45,13 +51,14 @@ export default function ProduitForm({ data, onRefresh }: { data?: Produit, onRef
   /* ------------------------------------------------------------------------------- */
   // Handle Submit
   
-  const onSubmit = (handleHide: () => void): void => {
+  const onSubmit = (onHide: () => void, handleHide?: () => void): void => {
     if (data) {
       onPatchProduitSubmit(
         produit,
         setErrors,
-        handleHide,
+        onHide,
         onEditProduit,
+        handleHide,
         onRefresh
       )
     }
@@ -61,8 +68,9 @@ export default function ProduitForm({ data, onRefresh }: { data?: Produit, onRef
         setProduit,
         setErrors,
         onPostProduit,
-        handleHide,
-        onRefresh
+        onHide,
+        onRefresh,
+        navigate
       )
     }
   }
@@ -74,74 +82,76 @@ export default function ProduitForm({ data, onRefresh }: { data?: Produit, onRef
     <>
       <FormRequiredFieldsNoticeText/>
       <Row>
-        <Col md={5} className='mb-3'>
-          <ImageUploading
-            multiple
-            value={produit?.file ?? []}
-            onChange={onImageChange}
-            maxNumber={maxNumber}
-            dataURLKey='dataURL'
-          >
-            {({ onImageUpload, imageList, onImageRemoveAll, onImageUpdate }) => (
-              <>
-                {imageList.length < 1 && (
-                  <>
-                    <Image
-                      fluid
-                      thumbnail
-                      src={avatar}
-                      alt=''
-                    />
-                    
-                    <div className='mt-3'>
-                      <Button
-                        disabled={isLoading || isEditLoading}
-                        type='button'
-                        variant='outline-white'
-                        className='me-1'
-                        onClick={onImageUpload}
-                      ><i className='bi bi-upload'/> Charger une image</Button>
+        {!data && (
+          <Col md={5} className='mb-3'>
+            <ImageUploading
+              multiple
+              value={produit?.file ?? []}
+              onChange={onImageChange}
+              maxNumber={maxNumber}
+              dataURLKey='dataURL'
+            >
+              {({ onImageUpload, imageList, onImageRemoveAll, onImageUpdate }) => (
+                <>
+                  {imageList.length < 1 && (
+                    <>
+                      <Image
+                        fluid
+                        thumbnail
+                        src={avatar}
+                        alt=''
+                      />
                       
-                      <Button
-                        disabled={isLoading || isEditLoading}
-                        type='button'
-                        variant='outline-white'
-                      ><i className='bi bi-trash'/> Supprimer l'image</Button>
-                    </div>
-                  </>
-                )}
-                
-                {imageList.length > 0 && imageList.map((file: ImageType, index: number) => (
-                  <div key={index}>
-                    <Image
-                      fluid
-                      thumbnail
-                      src={file.dataURL}
-                      alt=''
-                    />
-                    
-                    <div className='mt-3'>
-                      <Button
-                        type='button'
-                        variant='outline-white'
-                        className='me-1'
-                        onClick={(): void => onImageUpdate(index)}
-                      ><i className='bi bi-upload'/> Mettre l'image à jour</Button>
+                      <div className='mt-3'>
+                        <Button
+                          disabled={isLoading || isEditLoading}
+                          type='button'
+                          variant='outline-white'
+                          className='me-1'
+                          onClick={onImageUpload}
+                        ><i className='bi bi-upload'/> Charger une image</Button>
+                        
+                        <Button
+                          disabled={isLoading || isEditLoading}
+                          type='button'
+                          variant='outline-white'
+                        ><i className='bi bi-trash'/> Supprimer l'image</Button>
+                      </div>
+                    </>
+                  )}
+                  
+                  {imageList.length > 0 && imageList.map((file: ImageType, index: number) => (
+                    <div key={index}>
+                      <Image
+                        fluid
+                        thumbnail
+                        src={file.dataURL}
+                        alt=''
+                      />
                       
-                      <Button
-                        type='button'
-                        variant='outline-white'
-                        onClick={onImageRemoveAll}
-                      ><i className='bi bi-trash'/> Supprimer l'image</Button>
+                      <div className='mt-3'>
+                        <Button
+                          type='button'
+                          variant='outline-white'
+                          className='me-1'
+                          onClick={(): void => onImageUpdate(index)}
+                        ><i className='bi bi-upload'/> Mettre l'image à jour</Button>
+                        
+                        <Button
+                          type='button'
+                          variant='outline-white'
+                          onClick={onImageRemoveAll}
+                        ><i className='bi bi-trash'/> Supprimer l'image</Button>
+                      </div>
                     </div>
-                  </div>
-                ))}
-              </>
-            ) as ReactNode}
-          </ImageUploading>
-        </Col>
+                  ))}
+                </>
+              ) as ReactNode}
+            </ImageUploading>
+          </Col>
+        ) as ReactNode}
         
-        <Col md={7}>
+        <Col md={data ? 12 : 7}>
           <div className='mb-3'>
             <TextField
               required
@@ -175,6 +185,7 @@ export default function ProduitForm({ data, onRefresh }: { data?: Produit, onRef
           
           <div className='mb-3'>
             <SingleSelectField
+              required
               disabled={isLoading || isEditLoading || isCategoryFetching}
               onRefresh={async (): Promise<void> => { await categoryRefresh() }}
               options={categoriesOptions()}
@@ -183,11 +194,13 @@ export default function ProduitForm({ data, onRefresh }: { data?: Produit, onRef
               name='fkCategorie'
               label='Catégorie de produit'
               placeholder='-- Aucune catégorie sélectionnée --'
+              error={errors.fkCategorie}
             />
           </div>
           
           <div className='mb-3'>
             <SingleSelectField
+              required
               disabled={isLoading || isEditLoading || isUnityFetching}
               onRefresh={async (): Promise<void> => { await unityRefresh() }}
               options={unitiesOptions()}
@@ -196,6 +209,7 @@ export default function ProduitForm({ data, onRefresh }: { data?: Produit, onRef
               name='fkUnite'
               label='Unité de consommation'
               placeholder='-- Aucune unité sélectionnée --'
+              error={errors.fkUnite}
             />
           </div>
           
@@ -253,7 +267,8 @@ export default function ProduitForm({ data, onRefresh }: { data?: Produit, onRef
         setErrors={setErrors}
         show={show}
         onHide={(): void => handleShow(setShow)}
-        onSubmit={(): void => onSubmit((): void => handleShow(setShow))}
+        handleHide={onHide}
+        onSubmit={onSubmit}
       />
     </>
   )

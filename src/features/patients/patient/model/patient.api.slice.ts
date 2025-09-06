@@ -40,7 +40,7 @@ const patientApiSlice = API.injectEndpoints({
         totalPatientsItems = response.totalItems
         return response.member;
       },
-      /* providesTags: (result) => {
+      providesTags: (result) => {
         if (result && Array.isArray(result)) {
           return [
             ...result.map(({ id }) => ({ type: 'UNIQUE' as const, id })),
@@ -48,7 +48,7 @@ const patientApiSlice = API.injectEndpoints({
           ]
         }
         return [{ type: 'LIST' as const, id: 'LIST' }];
-      } */
+      }
     }),
     
     editPatient: build.mutation<Patient, SavePatient>({

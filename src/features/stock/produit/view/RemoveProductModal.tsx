@@ -1,10 +1,10 @@
 import {Button, Modal} from "react-bootstrap";
-import type {Fonction} from "../model/fonctionService.ts";
-import {useDeleteFonctionMutation} from "../model/fonction.api.slice.ts";
-import {onDeleteFonctionSubmit} from "../model/fonctionService.ts";
+import type {Produit} from "../model/produitService.ts";
+import {useDeleteProduitMutation} from "../model/produit.api.slice.ts";
+import {onDeleteProduitSubmit} from "../model/produitService.ts";
 
-export default function RemoveFonctionModal(props: {
-  data: Fonction
+export default function RemoveProductModal(props: {
+  data: Produit
   show: boolean
   onHide: () => void
   onRefresh: () => void
@@ -12,7 +12,7 @@ export default function RemoveFonctionModal(props: {
   
   const { show, data, onHide, onRefresh } = props
   
-  const [onDeleteFonction] = useDeleteFonctionMutation()
+  const [onDeleteProduct] = useDeleteProduitMutation()
   
   return (
     <Modal show={show} onHide={onHide}>
@@ -28,8 +28,8 @@ export default function RemoveFonctionModal(props: {
         </p>
         
         <code className='text-dark'>
-          Êtes-vous certain(e) de vouloir supprimer cette
-          <b className='mx-1'>Fonction</b>
+          Êtes-vous certain(e) de vouloir supprimer ce
+          <b className='mx-1'>Produit</b>
           <i className='bi bi-question-circle text-danger mx-1'/>
         </code>
       </Modal.Body>
@@ -39,9 +39,9 @@ export default function RemoveFonctionModal(props: {
         <Button
           autoFocus
           variant='danger'
-          onClick={async (): Promise<void> => onDeleteFonctionSubmit(
+          onClick={async (): Promise<void> => onDeleteProduitSubmit(
             data,
-            onDeleteFonction,
+            onDeleteProduct,
             onRefresh,
             onHide
           )}

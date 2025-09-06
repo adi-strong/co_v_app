@@ -1,22 +1,22 @@
-import {memo, useState} from 'react';
 import {useActivePage, useDocumentTitle} from "../../../../hooks";
+import {memo, useState} from "react";
 import {BodyContainer, PageTitles} from "../../../../components";
 import {Card} from "react-bootstrap";
-import type {Produit} from "../model/produitService.ts";
-import useGetProduitsItems from "../hooks/useGetProduitsItems.ts";
-import ProduitsList from "./ProduitsList.tsx";
-import {useGetProduitsQuery} from "../model/produit.api.slice.ts";
+import {useGetLotProduitsQuery} from "../model/lotProduit.api.slice.ts";
+import type {LotProduit} from "../model/lotProduitService.ts";
+import useGetLotsProduitsItems from "../hooks/useGetLotsProduitsItems.ts";
+import LotProdList from "./LotProdList.tsx";
 
-const ProduitView = () => {
+const LotProdView = () => {
   
   useDocumentTitle('Produits')
   useActivePage('pharmacy')
   
-  const { data, isLoading, isFetching, refetch } = useGetProduitsQuery('LIST')
+  const { data, isLoading, isFetching, refetch } = useGetLotProduitsQuery('LIST')
   
-  const [products, setProducts] = useState<Produit[]>([])
+  const [products, setProducts] = useState<LotProduit[]>([])
   
-  useGetProduitsItems(data, setProducts)
+  useGetLotsProduitsItems(data, setProducts)
   
   const onRefresh = async (): Promise<void> => { await refetch() }
   
@@ -25,7 +25,7 @@ const ProduitView = () => {
       <PageTitles title='Produits' />
       
       <Card>
-        <ProduitsList
+        <LotProdList
           produits={products}
           setProduits={setProducts}
           onRefresh={onRefresh}
@@ -38,4 +38,4 @@ const ProduitView = () => {
   
 };
 
-export default memo(ProduitView)
+export default memo(LotProdView)

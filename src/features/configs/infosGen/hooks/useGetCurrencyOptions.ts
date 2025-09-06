@@ -1,28 +1,14 @@
+import {useSelector} from "react-redux";
+import type {DeviseState} from "../../../finances/compteCaisse/model/devise.slice.ts";
 import {useCallback} from "react";
 import type {SelectOptionType} from "../../../../services/services.ts";
-import type {CurrencyType} from "../../../../config/configs.ts";
-import {getCurrencies} from "../../../../config/configs.ts";
 
 export default function useGetCurrencyOptions() {
   
-  const currencies: CurrencyType = getCurrencies()
+  const { devise } = useSelector((state: DeviseState) => state.devise)
   
-  return useCallback(() => {
-    let options: SelectOptionType[] = []
-    if (currencies) {
-      options = [
-        {
-          label: currencies.first.label,
-          value: currencies.first.code,
-        },
-        {
-          label: currencies.last.label,
-          value: currencies.last.code,
-        },
-      ]
-    }
-    
-    return options
-  }, [currencies])
+  return useCallback((): SelectOptionType[] => {
+    return devise ? devise.options : []
+  }, [devise])
   
 }

@@ -3,13 +3,15 @@ import {Button, Modal} from "react-bootstrap";
 export default function ConfirmProduitModal(props: {
   show: boolean
   onHide: () => void
-  onSubmit: (onHide: () => void) => void
+  handleHide?: () => void
+  onSubmit: (onHide: () => void, handleHide?: () => void) => void
 }) {
   
   const {
     show,
     onHide,
     onSubmit,
+    handleHide,
   } = props
   
   return (
@@ -27,7 +29,7 @@ export default function ConfirmProduitModal(props: {
           <i className='bi bi-x'/> Annuler
         </Button>
         
-        <Button autoFocus type='button' variant='outline-warning' onClick={(): void => onSubmit(onHide)}>
+        <Button autoFocus type='button' variant='outline-warning' onClick={(): void => onSubmit(onHide, handleHide)}>
           <i className='bi bi-check'/> Valider
         </Button>
       </Modal.Footer>

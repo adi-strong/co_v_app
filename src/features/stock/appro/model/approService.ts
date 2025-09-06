@@ -22,6 +22,8 @@ export interface Appro {
   fkUser: object
   approProduits: []
   createdAt?: string
+  devise: string
+  taux: number
 }
 
 export interface ApproProdut {
@@ -36,6 +38,8 @@ export interface ApproProdut {
   datePeremption: string
   fkUnite?: UniteConsommation
   lotProduit: LotProduit
+  price?: number
+  qty?: number
 }
 
 export interface ApproProductItem {
@@ -124,24 +128,27 @@ export const getProductQtyTypeOptions = (): SelectOptionType[] => [
 
 /**
  *
- * @param e
  * @param state
+ * @param setState
  * @param setErrors
+ * @param setTaxes
  * @param onSubmit
+ * @param onHide
  * @param navigate
- * @param onRefresh
  */
 export async function onApproSubmit(
-  e: FormEvent<HTMLFormElement>,
   state: SaveAppro,
+  setState: Dispatch<SetStateAction<SaveAppro>>,
   setErrors: Dispatch<SetStateAction<ApproError>>,
+  setTaxes: Dispatch<SetStateAction<BaseTaxeInt[]>>,
   onSubmit: (data: SaveAppro) => Promise<any>,
-  navigate: () => NavigateFunction,
-  onRefresh?: () => void
+  onHide: () => void,
+  navigate?: NavigateFunction
 ): Promise<void> {
   
-  e.preventDefault()
   setErrors(initApproProdutErrorState())
+  
+  onHide()
   
   try {
     const { data, error }: JsonLdApiResponseInt<Appro> = await onSubmit(state)
@@ -154,8 +161,9 @@ export async function onApproSubmit(
     
     if (data) {
       toast.success('Approvisionnement bien effectué.')
-      if (onRefresh) onRefresh()
-      navigate()
+      setState(initApproProdutState())
+      setTaxes([])
+      if (navigate) navigate('/app/approvisionnements')
     }
   } catch (e) { toast.error('Problème réseau.') }
   
@@ -289,8 +297,8 @@ export const addOnApproCartSubmit = (
     if (data.tva > 0) {
       const id: number = data.id
       let tva: number = data.tva
-      let price: number = data?.price ?? data.prixHt
-      let quantity: number = data?.qty ?? data.quantite
+      let price: number = data?.price && data.price > 0.00 ? data.price : data.prixHt
+      let quantity: number = data?.qty && data.qty > 0.00 ? data.qty : data.quantite
       
       let baseHT: number = price * quantity
       let sum: number = (baseHT * tva) / 100
@@ -480,13 +488,42 @@ export const onApproRemoveProduct = (
 }
 
 
-
 export const onApproReset = (
   setState: Dispatch<SetStateAction<SaveAppro>>,
   setTaxes: Dispatch<SetStateAction<BaseTaxeInt[]>>
 ): void => {
   setTaxes([])
   setState(state => ({ ...state, productItems: [] }))
+}
+
+export const getApproSubTotal = (products: ApproProdut[]): number => {
+  let subTotal: number = 0
+  
+  if (products.length > 0) products.forEach((product: ApproProdut): void => {
+    const price: number = product?.price && product.price > 0 ? Number(product.price) : Number(product.prixHt)
+    const quantity: number = product?.qty && product.qty > 0 ? Number(product.qty) : Number(product.quantite)
+    subTotal += (price * quantity)
+  })
+  
+  return subTotal
+}
+
+export const getApproSubTotalWithDiscount = (subTotal: number, discount: number): number => {
+  if (discount > 0.00) {
+    const discountAmount: number = (subTotal * discount) / 100
+    subTotal -= discountAmount
+  }
+  
+  return subTotal
+}
+
+export const getApproTaxTotal = (taxes: BaseTaxeInt[]): number => {
+  let taxesAmount: number = 0
+  if (taxes.length > 0) taxes.forEach((tax: BaseTaxeInt): void => {
+    taxesAmount += tax.amount
+  })
+  
+  return taxesAmount
 }
 // END EVENTS & FUNCTIONS
 

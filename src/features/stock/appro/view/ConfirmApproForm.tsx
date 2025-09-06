@@ -1,13 +1,28 @@
-import type {SaveAppro} from "../model/approService.ts";
+import type {ApproError, SaveAppro} from "../model/approService.ts";
 import {Button, Modal} from "react-bootstrap";
+import type {Dispatch, SetStateAction} from "react";
+import {onApproSubmit} from "../model/approService.ts";
+import type {BaseTaxeInt} from "../../../../interfaces/BaseTaxeInt.ts";
 
 export default function ConfirmApproForm(props: {
   show: boolean
   onHide: () => void
   state: SaveAppro
+  setState: Dispatch<SetStateAction<SaveAppro>>
+  setErrors: Dispatch<SetStateAction<ApproError>>
+  setTaxes: Dispatch<SetStateAction<BaseTaxeInt[]>>
+  onPostAppro: (data?: SaveAppro) => Promise<any>
 }) {
   
-  const { show, onHide } = props
+  const {
+    show,
+    onHide,
+    onPostAppro,
+    state,
+    setErrors,
+    setState,
+    setTaxes,
+  } = props
   
   return (
     <Modal show={show} onHide={onHide}>
@@ -32,7 +47,14 @@ export default function ConfirmApproForm(props: {
           <i className='bi bi-x'/> Annuler
         </Button>
         
-        <Button variant='outline-warning' onClick={onHide}>
+        <Button autoFocus variant='outline-warning' onClick={async (): Promise<void> => onApproSubmit(
+          state,
+          setState,
+          setErrors,
+          setTaxes,
+          onPostAppro,
+          onHide
+        )}>
           <i className='bi bi-check'/> Valider
         </Button>
       </Modal.Footer>
