@@ -3,9 +3,9 @@ import {useActivePage, useDocumentTitle} from "../../../../hooks";
 import {BodyContainer, PageTitles} from "../../../../components";
 import {Card} from "react-bootstrap";
 import AgentsList from "./AgentsList.tsx";
-import useGetFonctionsItems from "../../fonction/hooks/useGetFonctionsItems.ts";
 import type {Agent} from "../model/agentService.ts";
 import {useGetAgentsQuery} from "../model/agent.api.slice.ts";
+import useGetAgentsItems from "../hooks/useGetAgentsItems.ts";
 
 const AgentView = () => {
   
@@ -16,7 +16,7 @@ const AgentView = () => {
   
   const [agents, setAgents] = useState<Agent[]>([])
   
-  useGetFonctionsItems(data, setAgents)
+  useGetAgentsItems(data, setAgents)
   
   const onRefresh = async (): Promise<void> => { await refetch() }
   

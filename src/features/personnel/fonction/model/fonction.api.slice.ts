@@ -9,15 +9,6 @@ const fonctionApiSlice = API.injectEndpoints({
 
   endpoints: build => ({
     
-    postFonction: build.mutation<Fonction, SaveFonction>({
-      query: (data: SaveFonction) => ({
-        url: `${API_PATH}/fonctions`,
-        method: APP_METHODS.POST,
-        headers: APP_HEADERS.POST_HEADERS,
-        body: JSON.stringify(data)
-      })
-    }),
-    
     getFonctions: build.query<Fonction[], string>({
       query: () => `${API_PATH}/fonctions`,
       transformResponse: (response: JsonLDResponseInt<Fonction>) => {
@@ -33,6 +24,23 @@ const fonctionApiSlice = API.injectEndpoints({
         }
         return [{ type: 'LIST' as const, id: 'LIST' }];
       }
+    }),
+    
+    getUniqueFonction: build.query<Fonction, string | number | undefined>({
+      query: id => `${API_PATH}/fonctions/${id}`,
+      providesTags: (result, error, arg) => [{
+        type: 'UNIQUE',
+        id: arg
+      }]
+    }),
+    
+    postFonction: build.mutation<Fonction, SaveFonction>({
+      query: (data: SaveFonction) => ({
+        url: `${API_PATH}/fonctions`,
+        method: APP_METHODS.POST,
+        headers: APP_HEADERS.POST_HEADERS,
+        body: JSON.stringify(data)
+      })
     }),
     
     editFonction: build.mutation<Fonction, SaveFonction>({
@@ -53,14 +61,6 @@ const fonctionApiSlice = API.injectEndpoints({
         url: `${API_PATH}/fonctions/${data.id}`,
         method: APP_METHODS.DELETE
       })
-    }),
-    
-    getUniqueFonction: build.query<Fonction, string | number | undefined>({
-      query: id => `${API_PATH}/fonctions/${id}`,
-      providesTags: (result, error, arg) => [{
-        type: 'UNIQUE',
-        id: arg
-      }]
     }),
 
   })

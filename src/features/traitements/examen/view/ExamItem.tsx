@@ -7,31 +7,32 @@ import {
   onMouseLeaveEvent,
   setSelectedDataItem
 } from "../../../../services/services.ts";
-import {CheckField, RemoveModal, SideContent} from "../../../../components";
+import {CheckField, SideContent} from "../../../../components";
 import {Link} from "react-router-dom";
 import {Button} from "react-bootstrap";
 import moment from "moment";
 import type {Examen} from "../model/examenService.ts";
 import ExamForm from "./ExamForm.tsx";
-
-function onSubmit(data: any, onHide: () => void, onRefresh: () => void): void { onHide() }
+import RemoveExamModal from "./RemoveExamModal.tsx";
 
 export default function ExamItem(props: {
   exam: Examen
   setExams: Dispatch<SetStateAction<Examen[]>>
   index: number
+  onRefresh: () => void
 }) {
   
   const {
     exam,
     index,
     setExams,
+    onRefresh,
   } = props
   
   const [isEdit, setIsEdit] = useState<boolean>(false)
   const [isDel, setIsDel] = useState<boolean>(false)
   
-  const { fkCategorie, createdAt, prixHt, prixTtc} = exam
+  const { prixHt, prixTtc} = exam
   
   return (
     <>
@@ -64,21 +65,15 @@ export default function ExamItem(props: {
           </div>
         </td>
         
-        <td>{fkCategorie && fkCategorie?.nom ? fkCategorie.nom.toUpperCase() : '—'}</td>
         <td>{formatDecimalNumberWithSpaces(prixHt)}</td>
         <td>{formatDecimalNumberWithSpaces(prixTtc)}</td>
-        
-        <td>{createdAt ? moment(createdAt).format('DD/MM/YY') : '—'}</td>
       </tr>
       
-      <RemoveModal
-        isItIrreversible
-        onSubmit={() => onSubmit(exam, (): void => handleShow(setIsDel), (): void => { })}
+      <RemoveExamModal
         onHide={(): void => handleShow(setIsDel)}
         data={exam}
         show={isDel}
-        onRefresh={(): void => { }}
-        title={<>examen : {exam.nom.toUpperCase()}</>}
+        onRefresh={onRefresh}
       />
       
       <SideContent
@@ -86,8 +81,13 @@ export default function ExamItem(props: {
         onHide={(): void => handleShow(setIsEdit)}
         title='Modifier un examen'
         icon='pencil-square'
-        onRefresh={() => { }}
-        children={<ExamForm data={exam}/> as ReactNode}
+        children={
+          <ExamForm
+            data={exam}
+            onRefresh={onRefresh}
+            onHide={(): void => handleShow(setIsEdit)}
+          /> as ReactNode
+        }
       />
     </>
   )

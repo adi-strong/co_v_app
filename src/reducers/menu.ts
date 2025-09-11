@@ -53,10 +53,10 @@ const initialState: MenuInterface = {
       ],
     }, // 3 - Patients
     {
-      label: 'Traitements',
+      label: 'Dossiers médicaux',
       to: '#!',
       key: 'treats',
-      icon: 'bi bi-h-circle',
+      icon: 'bi bi-folder',
       isActive: false,
       isOpen: false,
       subItems: [
@@ -64,8 +64,6 @@ const initialState: MenuInterface = {
         {label: 'Nouvelle fiche', to: '/app/consultations/new'},
         {label: 'Documents de suivi', to: '/app/suivis'},
         {label: 'Laboratoire', to: '/app/labs'},
-        {label: 'Examens', to: '/app/examens'},
-        {label: 'Lits', to: '/app/lits'},
         {label: 'Hospitalisations', to: '/app/hospitalisations'},
       ],
     }, // 4 - Traitements
@@ -156,9 +154,11 @@ const initialState: MenuInterface = {
       subItems: [
         {label: 'Réglages généraux', to: '/app/params'},
         {label: 'Types des fiches', to: '/app/types-des-fiches'},
-        // {label: 'Types documents suivi', to: '/app/types-documents-suivis'},
         {label: 'Catégories des examens', to: '/app/categories-examens'},
+        {label: 'Examens', to: '/app/examens'},
+        {label: 'Traitement', to: '/app/traitements'},
         {label: 'Catégories des lits', to: '/app/categories-lits'},
+        {label: 'Lits', to: '/app/lits'},
       ],
     }, // 10 - Réglages
     

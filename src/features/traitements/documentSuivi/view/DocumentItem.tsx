@@ -1,39 +1,56 @@
-import {onMouseEnterEvent, onMouseLeaveEvent} from "../../../../services/services.ts";
+import {formatNumberWithSpaces} from "../../../../services/services.ts";
 import {Link} from "react-router-dom";
 import moment from "moment";
 import type {DocumentSuivi} from "../model/documentSuiviService.ts";
+import {consultStatusColor, consultStatusLabel} from "../../consultation/model/consultationService.ts";
+import {Badge} from "react-bootstrap";
 
-export default function DocumentItem({ doc, index }: { doc: DocumentSuivi, index: number }) {
+export default function DocumentItem({ doc }: { doc: DocumentSuivi }) {
   
-  const { id } = doc
+  const {
+    id,
+    fkConsultation,
+    statut,
+    dateDebut,
+  } = doc
   
   return (
     <>
       <tr>
-        <td
-          id={`item-${index}`}
-          className='text-capitalize'
-          onMouseEnter={(): void => onMouseEnterEvent(index)}
-          onMouseLeave={(): void => onMouseLeaveEvent(index)}
-        >
-          <Link to={`/app/suivis/${id}}`}>
+        <td className='text-uppercase'>
+          <Link to={`/app/suivis/${id}`}>
             {doc?.fkPatient?.fullName ?? '—'}
           </Link>
-          
-          <div id={`actions-${index}`} hidden>
-            <Link to={`/app/suivis/${doc.id}/edit`} className='p-0 btn btn-sm btn-link'>
-              Retoucher
-            </Link>
-          </div>
         </td>
         
-        <td>{doc?.dateDebut
-          ? `du le ${moment(doc.dateDebut).format('DD/MM/YY à HH:mm') }`
+        <td className='text-uppercase'>
+          {fkConsultation ? (
+            <Link to={`/app/consultations/${fkConsultation.id}`}>
+              <span className='text-dark me-1'>#{formatNumberWithSpaces(fkConsultation.id)}</span>:
+              {fkConsultation?.fkType?.nom}
+            </Link>
+          ) : '—'}
+        </td>
+        
+        <td>
+          <Badge bg={consultStatusColor[statut]}>{consultStatusLabel[statut]}</Badge>
+        </td>
+        
+        <td>{dateDebut
+          ? `du le ${moment(dateDebut).format('DD/MM/YY à HH:mm') }`
           : '—'}</td>
         
-        <td>{doc?.dateFin
-          ? `au le ${moment(doc.dateFin).format('DD/MM/YY à HH:mm') }`
-          : '—'}</td>
+        <td className='text-md-end'>
+          <Link to={`/app/suivis/${id}`}>
+            <i className='bi bi-eye-fill'/>
+          </Link>
+          
+          {' | '}
+          
+          <Link to={`/app/suivis/${id}/edit`}>
+            <i className='bi bi-pencil-square'/>
+          </Link>
+        </td>
       </tr>
     </>
   )

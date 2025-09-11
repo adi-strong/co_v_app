@@ -2,6 +2,7 @@ import type {Dispatch, FormEvent, SetStateAction} from "react";
 import toast from "react-hot-toast";
 import type {JsonLdApiResponseInt} from "../../../../interfaces/JsonLdApiResponseInt.ts";
 import type {NavigateFunction} from "react-router-dom";
+import type {Agent} from "../../agent/model/agentService.ts";
 
 // INTERFACES OR TYPES
 export interface Fonction {
@@ -12,6 +13,7 @@ export interface Fonction {
   updatedAt?: string
   slug?: string
   selected: boolean
+  agents: Agent[]
 }
 
 export interface SaveFonction {
@@ -48,6 +50,7 @@ export const getFonctionFakeData = (): Fonction[] => [
     createdAt: new Date().toISOString(),
     "@id": '/api/categorie_exams/1',
     selected: false,
+    agents: []
   },
   {
     id: 2,
@@ -56,6 +59,7 @@ export const getFonctionFakeData = (): Fonction[] => [
     createdAt: new Date().toISOString(),
     "@id": '/api/categorie_exams/2',
     selected: false,
+    agents: []
   },
 ]
 

@@ -5,6 +5,7 @@ import type {Dispatch, FormEvent, SetStateAction} from "react";
 import type {JsonLdApiResponseInt} from "../../../../interfaces/JsonLdApiResponseInt.ts";
 import toast from "react-hot-toast";
 import {getCategorieLitFakeData} from "../../categorieLit/model/categorieLitService.ts";
+import type {NavigateFunction} from "react-router-dom";
 
 // INTERFACES OR TYPES
 export interface Lit {
@@ -34,6 +35,18 @@ export interface LitError {
   prix: string | null
   fkCategorie: string | null
   mode: string | null
+}
+
+export type LitStatusKey = 'busy' | 'free'
+
+export const litStatusLabel: Record<LitStatusKey, string> = {
+  busy: 'Occupé',
+  free: 'Disponible'
+}
+
+export const litStatusColor: Record<LitStatusKey, string> = {
+  busy: 'danger',
+  free: 'success'
 }
 // END INTERFACES OR TYPES
 
@@ -82,16 +95,17 @@ export const getLitModeOptions = (): SelectOptionType[] => [
 export const getLitHeadItems = (): THeadItemType[] => [
   { th: 'Mode' },
   { th: 'Prix' },
-  { th: 'Date' },
+  { th: 'Statut' },
 ]
 
 export async function onLitSubmit(
   e: FormEvent<HTMLFormElement>,
   state: SaveLit,
+  setState: Dispatch<SetStateAction<SaveLit>>,
   setErrors: Dispatch<SetStateAction<LitError>>,
   onSubmit: (data: SaveLit) => Promise<any>,
-  onHide: () => void,
-  onRefresh?: () => void
+  onRefresh?: () => void,
+  onHide?: () => void,
 ): Promise<void> {
   
   e.preventDefault()
@@ -100,8 +114,10 @@ export async function onLitSubmit(
     const { data, error}: JsonLdApiResponseInt<Lit> = await onSubmit(state)
     if (data) {
       toast.success(`${id > 0 ? 'Modification ' : 'Enregistrement '} bien effectué${'e'}`)
+      setState(initLitState())
+      
       if (onRefresh) onRefresh()
-      onHide()
+      if (onHide) onHide()
     }
     
     if (error && error?.data) {
@@ -111,6 +127,25 @@ export async function onLitSubmit(
       })
     }
   } catch (e) { toast.error('Problème réseau.') }
+  
+}
+
+export async function onDeleteLitSubmit(
+  state: Lit,
+  onSubmit: (data: Lit) => Promise<void>,
+  onRefresh: () => void,
+  onHide: () => void,
+  navigate?: NavigateFunction
+): Promise<void> {
+  onHide()
+  
+  const { error }: JsonLdApiResponseInt<void> = await onSubmit(state)
+  if (error && error.data && error.data?.detail) toast.error(error.data.detail)
+  else {
+    toast.success('Suppression bien effectuée.')
+    onRefresh()
+    if (navigate) navigate('/app/lits')
+  }
   
 }
 // END EVENTS & FUNCTIONS

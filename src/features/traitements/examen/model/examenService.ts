@@ -80,19 +80,19 @@ export const getExamenFakeData = (): Examen[] => [
 ]
 
 export const getExamHeadItems = (): THeadItemType[] => [
-  { th: 'Catégorie' },
   { th: 'Prix HT' },
   { th: 'Prix TTC' },
-  { th: 'Date' },
 ]
 
 export async function onExamenSubmit(
   e: FormEvent<HTMLFormElement>,
-  state: Examen,
+  state: SaveExamen,
+  setState: Dispatch<SetStateAction<SaveExamen>>,
   setErrors: Dispatch<SetStateAction<ExamenError>>,
-  onSubmit: (data: Examen) => Promise<any>,
-  navigate: NavigateFunction,
-  onRefresh?: () => void
+  onSubmit: (data: SaveExamen) => Promise<any>,
+  onRefresh?: () => void,
+  onHide?: () => void,
+  navigate?: NavigateFunction
 ): Promise<void> {
   
   e.preventDefault()
@@ -101,8 +101,11 @@ export async function onExamenSubmit(
     const { data, error}: JsonLdApiResponseInt<Examen> = await onSubmit(state)
     if (data) {
       toast.success(`${id > 0 ? 'Modification ' : 'Enregistrement '} bien effectué${'e'}`)
+      setState(initExamenState())
+      
       if (onRefresh) onRefresh()
-      navigate('/app/categories-examens')
+      if (navigate) navigate('/app/examens')
+      if (onHide) onHide()
     }
     
     if (error && error?.data) {
@@ -112,6 +115,25 @@ export async function onExamenSubmit(
       })
     }
   } catch (e) { toast.error('Problème réseau.') }
+  
+}
+
+export async function onDeleteExamSubmit(
+  state: Examen,
+  onSubmit: (data: Examen) => Promise<void>,
+  onRefresh: () => void,
+  onHide: () => void,
+  navigate?: NavigateFunction
+): Promise<void> {
+  onHide()
+  
+  const { error }: JsonLdApiResponseInt<void> = await onSubmit(state)
+  if (error && error.data && error.data?.detail) toast.error(error.data.detail)
+  else {
+    toast.success('Suppression bien effectuée.')
+    onRefresh()
+    if (navigate) navigate('/app/examens')
+  }
   
 }
 // END EVENTS & FUNCTIONS

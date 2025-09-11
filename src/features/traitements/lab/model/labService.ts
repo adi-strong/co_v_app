@@ -5,6 +5,7 @@ import type {Dispatch, FormEvent, SetStateAction} from "react";
 import type {JsonLdApiResponseInt} from "../../../../interfaces/JsonLdApiResponseInt.ts";
 import toast from "react-hot-toast";
 import type {THeadItemType} from "../../../../services/services.ts";
+import type {Agent} from "../../../personnel/agent/model/agentService.ts";
   
 // INTERFACES OR TYPES
 export interface Lab {
@@ -17,11 +18,19 @@ export interface Lab {
   comment: string
   fkPatient: Patient
   releasedAt?: string
+  fkAgent?: Agent
+}
+
+export interface LabExams {
+  resultats: string
+  valeurNormale: string
+  examID: number
+  label: string
 }
 
 export interface SaveLab {
   id: number
-  examsItems: ExamenPrescrit[]
+  examsItems: LabExams[]
   conclusion: string
   comment: string
 }
@@ -55,12 +64,11 @@ export const initLabErrorState = (): LabError => ({
 // EVENTS & FUNCTIONS
 export const getLabHeadItems = (): THeadItemType[] => [
   { th: 'Fiche' },
-  { th: 'Médecin' },
+  { th: 'Laborantin' },
   { th: 'Date' },
 ]
 
 export async function onLabSubmit(
-  e: FormEvent<HTMLFormElement>,
   state: SaveLab,
   setErrors: Dispatch<SetStateAction<LabError>>,
   onSubmit: (data: SaveLab) => Promise<any>,
@@ -68,12 +76,11 @@ export async function onLabSubmit(
   onRefresh?: () => void
 ): Promise<void> {
   
-  e.preventDefault()
   const { id } = state
   try {
     const { data, error}: JsonLdApiResponseInt<Lab> = await onSubmit(state)
     if (data) {
-      toast.success(`${id > 0 ? 'Modification ' : 'Enregistrement '} bien effectué${'e'}`)
+      toast.success(`${id > 0 ? 'Publication ' : 'Enregistrement '} bien effectué${'e'}`)
       if (onRefresh) onRefresh()
       onHide()
     }

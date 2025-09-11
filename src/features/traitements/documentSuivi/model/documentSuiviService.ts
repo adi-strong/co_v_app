@@ -14,17 +14,34 @@ import type {Dispatch, FormEvent, SetStateAction} from "react";
 import type {JsonLdApiResponseInt} from "../../../../interfaces/JsonLdApiResponseInt.ts";
 import toast from "react-hot-toast";
 import type {Traitement} from "../../traitement/model/traitementService.ts";
+import type {NavigateFunction} from "react-router-dom";
 
 // INTERFACES OR TYPES
 export interface SuiviTraitement {
   id: number
-  prixHt: number
-  prixTtc: number
+  prixHt?: number
+  prixTtc?: number
   fkTraitement: Traitement
   fkDocSuivi: DocumentSuivi
   fkAgent: Agent
   fkUser?: User
   releasedAt?: string
+  observation?: string
+}
+
+export interface SaveSuiviTraitement {
+  fkDocSuivi: string | null
+  releasedAt: string
+  observation: string
+  suivisItems: SelectOptionType[]
+  id: number
+}
+
+export interface SuiviTraitementError {
+  traitements: string | null,
+  releasedAt: string | null,
+  fkDocSuivi: string | null,
+  observation: string | null,
 }
 
 export interface DocumentSuivi {
@@ -62,6 +79,7 @@ export interface SaveDocumentSuivi {
   
   end: boolean
   dateSortie: string
+  traitements: SelectOptionType[]
   suivisItems: SuiviItem[]
 }
 
@@ -98,6 +116,7 @@ export const initDocumentSuiviState = (): SaveDocumentSuivi => ({
   fkType: null,
   motif: '',
   statut: 'EN_COURS',
+  traitements: []
 })
 
 export const initDocumentSuiviErrorState = (): DocumentSuiviError => ({
@@ -115,6 +134,21 @@ export const initDocumentSuiviErrorState = (): DocumentSuiviError => ({
   prescriptionsItems: null,
   signes: null,
 })
+
+export const initSuiviTraitementState = (): SaveSuiviTraitement => ({
+  suivisItems: [],
+  releasedAt: '',
+  fkDocSuivi: null,
+  observation: '',
+  id: 0,
+})
+
+export const initSuiviTraitementErrorState = (): SuiviTraitementError => ({
+  fkDocSuivi: null,
+  traitements: null,
+  observation: null,
+  releasedAt: null,
+})
 // END INIT
 
 /* ------------------------------------------- */
@@ -123,7 +157,6 @@ export const initDocumentSuiviErrorState = (): DocumentSuiviError => ({
 export const getDocStatusOptions = (): SelectOptionType[] => [
   { label: '-- --', value: '' },
   { label: 'EN COURS', value: 'EN_COURS' },
-  { label: 'TERMINÉE', value: 'TERMINEE' },
   { label: 'ANNULÉE', value: 'ANNULEE' },
 ]
 
@@ -132,8 +165,8 @@ export async function onDocumentSuiviSubmit(
   state: SaveDocumentSuivi,
   setErrors: Dispatch<SetStateAction<DocumentSuiviError>>,
   onSubmit: (data: SaveDocumentSuivi) => Promise<any>,
-  onHide: () => void,
-  onRefresh?: () => void
+  onRefresh?: () => void,
+  navigate?: NavigateFunction,
 ): Promise<void> {
   
   e.preventDefault()
@@ -143,7 +176,7 @@ export async function onDocumentSuiviSubmit(
     if (data) {
       toast.success(`${id > 0 ? 'Modification ' : 'Enregistrement '} bien effectué${'e'}`)
       if (onRefresh) onRefresh()
-      onHide()
+      if (navigate) navigate('/app/suivis')
     }
     
     if (error && error?.data) {
@@ -154,6 +187,42 @@ export async function onDocumentSuiviSubmit(
     }
   } catch (e) { toast.error('Problème réseau.') }
   
+}
+
+export async function onSuiviTraitementSubmit(
+  state: SaveSuiviTraitement,
+  setState: React.Dispatch<React.SetStateAction<SaveSuiviTraitement>>,
+  setErrors: React.Dispatch<React.SetStateAction<SuiviTraitementError>>,
+  onSubmit: (data: SaveSuiviTraitement) => Promise<any>,
+  onRefresh: () => void,
+  onHide: () => void,
+  docSuivi?: DocumentSuivi,
+): Promise<void> {
+  const fkDocSuivi: string | null = docSuivi ? `/api/document_suivis/${docSuivi.id}` : null
+  const id: number = docSuivi ? docSuivi.id : 0
+  
+  setErrors(initSuiviTraitementErrorState())
+  
+  try {
+    const { data, error }: JsonLdApiResponseInt<SuiviTraitement[]> = await onSubmit({ ...state, fkDocSuivi, id })
+    
+    if (error && error?.data) {
+      if (error.data?.detail) toast.error(error.data.detail)
+      
+      const { violations } = error.data
+      if (violations) violations.forEach(({ message, propertyPath }): void  => {
+        setErrors(prev => ({ ...prev, [propertyPath]: message }))
+      })
+    }
+    
+    if (data) {
+      toast.success('Validation bien effectuée.')
+      setState(initSuiviTraitementState())
+      
+      onRefresh()
+      onHide()
+    }
+  } catch (e) { toast.error('Problème réseau.') }
 }
 // END EVENTS & FUNCTIONS
 

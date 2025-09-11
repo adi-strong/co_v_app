@@ -5,7 +5,7 @@ export default function LogoLoader() {
   
   return (
     <div className='text-center pt-3 pb-3'>
-      <Image fluid roundedCircle src={logo} className='loader-image' alt=''/>
+      <Image fluid rounded roundedCircle src={(logo) as string} className='loader-image' alt=''/>
     </div>
   )
   

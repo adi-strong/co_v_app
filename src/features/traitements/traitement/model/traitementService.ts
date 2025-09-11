@@ -1,6 +1,7 @@
 import type {Dispatch, FormEvent, SetStateAction} from "react";
 import toast from "react-hot-toast";
 import type {JsonLdApiResponseInt} from "../../../../interfaces/JsonLdApiResponseInt.ts";
+import type {NavigateFunction} from "react-router-dom";
 
 // INTERFACES OR TYPES
 export interface Traitement {
@@ -72,21 +73,27 @@ export const getTraitementFakeData = (): Traitement[] => [
 
 export async function onTraitementSubmit(
   e: FormEvent<HTMLFormElement>,
-  state: Traitement,
+  state: SaveTraitement,
+  setState: Dispatch<SetStateAction<SaveTraitement>>,
   setErrors: Dispatch<SetStateAction<TraitementError>>,
-  onSubmit: (data: Traitement) => Promise<any>,
-  onHide: () => void,
-  onRefresh?: () => void
+  onSubmit: (data: SaveTraitement) => Promise<any>,
+  onRefresh?: () => void,
+  onHide?: () => void
 ): Promise<void> {
   
   e.preventDefault()
+  setErrors(initTraitementErrorState())
+  
   const { id } = state
+  
   try {
     const { data, error}: JsonLdApiResponseInt<Traitement> = await onSubmit(state)
     if (data) {
       toast.success(`${id > 0 ? 'Modification ' : 'Enregistrement '} bien effectué${'e'}`)
+      setState(initTraitementState())
+      
       if (onRefresh) onRefresh()
-      onHide()
+      if (onHide) onHide()
     }
     
     if (error && error?.data) {
@@ -96,6 +103,25 @@ export async function onTraitementSubmit(
       })
     }
   } catch (e) { toast.error('Problème réseau.') }
+  
+}
+
+export async function onDeleteTraitementSubmit(
+  state: Traitement,
+  onSubmit: (data: Traitement) => Promise<void>,
+  onRefresh: () => void,
+  onHide: () => void,
+  navigate?: NavigateFunction
+): Promise<void> {
+  onHide()
+  
+  const { error }: JsonLdApiResponseInt<Traitement> = await onSubmit(state)
+  if (error && error.data && error.data?.detail) toast.error(error.data.detail)
+  else {
+    toast.success('Suppression bien effectuée.')
+    onRefresh()
+    if (navigate) navigate('/app/traitements')
+  }
   
 }
 // END EVENTS & FUNCTIONS

@@ -1,5 +1,4 @@
 import type {Dispatch, ReactNode, SetStateAction} from "react";
-import type {TypeDocSuivi} from "../../../traitements/typeDocSuivi/model/typeDocSuiviService.ts";
 import {Button, Spinner, Table} from "react-bootstrap";
 import {CheckField} from "../../../../components";
 import {selectAllStateItems, tableWhiteStyle} from "../../../../services/services.ts";
@@ -55,7 +54,7 @@ export default function FonctionData(props: {
         </thead>
         
         <tbody style={tableWhiteStyle.tbody}>
-        {fonctions.length > 0 && fonctions.map((c: TypeDocSuivi, index: number) =>
+        {fonctions.length > 0 && fonctions.map((c, index: number) =>
           <FonctionItem
             key={index}
             fonction={c}

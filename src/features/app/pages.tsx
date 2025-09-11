@@ -40,12 +40,20 @@ const
     import('../traitements/prescription/view/showPrescription.tsx')),
   Consult = lazy(() =>
     import('../traitements/consultation/view/consultationView.tsx')),
+  UConsult = lazy(() =>
+    import('../traitements/consultation/view/showConsultation.tsx')),
+  EConsult = lazy(() =>
+    import('../traitements/consultation/view/editConsultation.tsx')),
   NConsult = lazy(() =>
     import('../traitements/consultation/view/newConsult.tsx')),
   Doc = lazy(() =>
     import('../traitements/documentSuivi/view/documentSuiviView.tsx')),
   NDoc = lazy(() =>
     import('../traitements/documentSuivi/view/newDocument.tsx')),
+  EDoc = lazy(() =>
+    import('../traitements/documentSuivi/view/editDocument.tsx')),
+  UDoc = lazy(() =>
+    import('../traitements/documentSuivi/view/showDocumentSuivi.tsx')),
   Labs = lazy(() =>
     import('../traitements/lab/view/labView.tsx')),
   Exams = lazy(() =>
@@ -123,7 +131,10 @@ const
   Agents = lazy(() => import('../personnel/agent/view/agentView.tsx')),
   NAgent = lazy(() => import('../personnel/agent/view/newAgent.tsx')),
   EAgent = lazy(() => import('../personnel/agent/view/editAgent.tsx')),
-  UAgent = lazy(() => import('../personnel/agent/view/showAgent.tsx'))
+  UAgent = lazy(() => import('../personnel/agent/view/showAgent.tsx')),
+  
+  Treats = lazy(() =>
+    import('../traitements/traitement/view/traitementView.tsx'))
 
 const pages: RouteType[] = [
   {
@@ -200,6 +211,14 @@ const pages: RouteType[] = [
         element: <Consult />
       },
       {
+        path: 'consultations/:id',
+        element: <UConsult />
+      },
+      {
+        path: 'consultations/:id/edit',
+        element: <EConsult />
+      },
+      {
         path: 'consultations/new',
         element: <NConsult />
       },
@@ -210,6 +229,14 @@ const pages: RouteType[] = [
       {
         path: 'suivis/new',
         element: <NDoc />
+      },
+      {
+        path: 'suivis/:id/edit',
+        element: <EDoc />
+      },
+      {
+        path: 'suivis/:id',
+        element: <UDoc />
       },
       {
         path: 'labs',
@@ -404,6 +431,13 @@ const pages: RouteType[] = [
         element: <UAgent />
       },
       // End agents
+      
+      // Traitements
+      {
+        path: 'traitements',
+        element: <Treats />
+      },
+      // End Traitements
     ]
   },
 ]

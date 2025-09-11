@@ -1,42 +1,44 @@
-import {
-  onMouseEnterEvent,
-  onMouseLeaveEvent,
-} from "../../../../services/services.ts";
 import {Link} from "react-router-dom";
 import moment from "moment/moment";
 import type {Consultation} from "../model/consultationService.ts";
+import {Badge} from "react-bootstrap";
+import {consultStatusColor, consultStatusLabel} from "../model/consultationService.ts";
 
-export default function ConsultItem({ consultation, index }: { consultation: Consultation, index: number }) {
+export default function ConsultItem({ consultation, index, onRefresh }: {
+  consultation: Consultation,
+  index: number
+  onRefresh: () => void
+}) {
   
-  const { id, slug } = consultation
+  const {
+    id,
+    fkType,
+    fkPatient,
+    statut,
+    dateDebut,
+  } = consultation
   
   return (
     <>
       <tr>
-        <td
-          id={`item-${index}`}
-          className='text-capitalize'
-          onMouseEnter={(): void => onMouseEnterEvent(index)}
-          onMouseLeave={(): void => onMouseLeaveEvent(index)}
-        >
-          <Link to={`/app/consultation/${id}/${slug}`}>
-            {consultation?.fkPatient?.fullName ?? '—'}
+        <td>
+          <Link to={`/app/consultations/${id}`} className='text-uppercase'>
+            {fkPatient?.fullName ?? '—'}
           </Link>
-          
-          <div id={`actions-${index}`} hidden>
-            <Link to={`/app/consultations/${consultation.id}/${consultation?.slug}/edit`} className='p-0 btn btn-sm btn-link'>
-              Retoucher
-            </Link>
-          </div>
         </td>
         
-        <td>{consultation?.dateDebut
-          ? `du le ${moment(consultation.dateDebut).format('DD/MM/YY à HH:mm') }`
+        <td>{fkType ? fkType.nom.toUpperCase() : '—'}</td>
+        <td><Badge bg={consultStatusColor[statut]}>{consultStatusLabel[statut]}</Badge></td>
+        
+        <td>{dateDebut
+          ? `du ${moment(dateDebut).format('DD/MM/YY à HH:mm')}`
           : '—'}</td>
         
-        <td>{consultation?.dateFin
-          ? `au le ${moment(consultation.dateFin).format('DD/MM/YY à HH:mm') }`
-          : '—'}</td>
+        <td className='text-md-end'>
+          <Link to={`/app/consultations/${id}`} className='text-uppercase me-1'>
+            <i className='bi bi-eye-fill'/>
+          </Link>
+        </td>
       </tr>
     </>
   )

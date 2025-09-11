@@ -1,29 +1,68 @@
-import type {Service} from "../../../personnel/service/model/serviceService.ts";
 import {useState} from "react";
-import {initServiceErrorState, initServiceState} from "../../../personnel/service/model/serviceService.ts";
-import {Button, Card} from "react-bootstrap";
-import {TextField} from "../../../../components";
+import {Button, Card, Spinner} from "react-bootstrap";
+import {SingleSelectField, TextField} from "../../../../components";
 import {handleChange} from "../../../../services/form.hander.service.ts";
 import type {Lit} from "../model/litService.ts";
-import {getLitModeOptions, initLitErrorState, initLitState} from "../model/litService.ts";
+import {getLitModeOptions, initLitErrorState, initLitState, onLitSubmit} from "../model/litService.ts";
 import SelectField from "../../../../components/forms/SelectField.tsx";
+import {useEditLitMutation, usePostLitMutation} from "../model/lit.api.slice.ts";
+import useSetLitData from "../hooks/useSetLitData.ts";
+import {useGetCategoriesLitsQuery} from "../../categorieLit/model/categorieLit.api.slice.ts";
+import useGetCatLitsOptions from "../../categorieLit/hooks/useGetCatLitsOptions.ts";
 
-export default function LitForm({ data }: { data?: Lit }) {
+export default function LitForm({ data, onHide, onRefresh }: { 
+  data?: Lit
+  onRefresh: () => void
+  onHide?: () => void
+}) {
   
   const [lit, setLit] = useState(initLitState())
-  const [errors/*, setErrors */] = useState(initLitErrorState())
+  const [errors, setErrors] = useState(initLitErrorState())
+  const [onPostLit, { isLoading }] = usePostLitMutation()
+  const [onEditLit, { isLoading: isEditLoading }] = useEditLitMutation()
+  
+  const { refetch: categoriesLitsRefresh, categoriesLitsLoader } = useGetCategoriesLitsQuery('LIST')
+  
+  useSetLitData(data, setLit)
+  const categoriesLitsOptions = useGetCatLitsOptions()
   
   return (
     <>
-      <form className={!data ? 'pt-13' : ''} onSubmit={e => e.preventDefault()}>
+      <form className={!data ? 'pt-13' : ''} onSubmit={e => onLitSubmit(
+        e,
+        lit,
+        setLit,
+        setErrors,
+        data ? onEditLit : onPostLit,
+        onRefresh,
+        onHide
+      )}>
         {!data && <Card.Title as='h5' className='mb-6 text-dark'>Ajouter un lit</Card.Title>}
         
         <Card.Text as='p'>Veuillez renseigner les champs (<code>*</code>) obligatoires :</Card.Text>
         
         <div className='mb-3'>
+          <SingleSelectField
+            required
+            disabled={isLoading || isEditLoading || categoriesLitsLoader}
+            onRefresh={async (): Promise<void> => {
+              await categoriesLitsRefresh()
+            }}
+            options={categoriesLitsOptions()}
+            value={lit?.fkCategorie ?? null}
+            onChange={fkCategorie => setLit(e => ({...e, fkCategorie}))}
+            name='fkCategorie'
+            label='Catégorie'
+            error={errors.fkCategorie}
+            placeholder='-- Aucune catégorie sélectionnée --'
+            size='sm'
+          />
+        </div>
+        
+        <div className='mb-3'>
           <TextField
             required
-            disabled={false}
+            disabled={isLoading || isEditLoading}
             name='numero'
             onChange={(e): void => handleChange(e, lit, setLit)}
             value={lit.numero}
@@ -39,7 +78,7 @@ export default function LitForm({ data }: { data?: Lit }) {
         <div className='mb-3'>
           <SelectField
             required
-            disabled={false}
+            disabled={isLoading || isEditLoading}
             name='mode'
             label='Mode de paiement'
             value={lit.mode}
@@ -53,7 +92,7 @@ export default function LitForm({ data }: { data?: Lit }) {
         <div className='mb-3'>
           <TextField
             required
-            disabled={false}
+            disabled={isLoading || isEditLoading}
             type='number'
             name='prix'
             onChange={(e): void => handleChange(e, lit, setLit)}
@@ -65,9 +104,10 @@ export default function LitForm({ data }: { data?: Lit }) {
           />
         </div>
         
-        <Button disabled={false} type='submit' size='sm' className={data ? 'w-100' : ''}>
-          {data ? 'Modifier ' : 'Ajouter '}
-          un lit
+        <Button disabled={isLoading || isEditLoading} type='submit' size='sm' className={data ? 'w-100' : ''}>
+          {(isLoading || isEditLoading) && <Spinner className='me-1' animation='border' size='sm'/>}
+          {!(isLoading || isEditLoading) && data ? 'Modifier ' : !(isLoading || isEditLoading) && 'Ajouter '}
+          {(isLoading || isEditLoading) ? 'Veuillez patienter' : 'un lit'}
         </Button>
       </form>
     </>

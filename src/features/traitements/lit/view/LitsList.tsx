@@ -1,13 +1,17 @@
-import {useState} from "react";
+import {Dispatch, SetStateAction, useState} from "react";
 import {ActionsComp, SearchComp} from "../../../../components";
 import {getgetCategorieLitActionsOptions} from "../../categorieLit/model/categorieLitService.ts";
 import type {Lit} from "../model/litService.ts";
-import {getLitsFakeData} from "../model/litService.ts";
 import LitData from "./LitData.tsx";
 
-export default function LitsLits() {
+export default function LitsList({ lits, setLits, onRefresh, isFetching, loader }: {
+  lits: Lit[]
+  setLits: Dispatch<SetStateAction<Lit[]>>
+  onRefresh: () => void
+  loader: boolean
+  isFetching: boolean
+}) {
   
-  const [lits, setLits] = useState<Lit[]>(getLitsFakeData())
   const [isSelectedAll, setIsSelectedAll] = useState<boolean>(false)
   const [search, setSearch] = useState<{keyword: string}>({keyword: ''})
   const [action, setAction] = useState<string>('')
@@ -20,7 +24,7 @@ export default function LitsLits() {
         setState={setSearch}
         btnLabel='Rechercher des lits'
         onSubmit={(): void => { }}
-        loader={false}
+        loader={loader}
         size='sm'
         md1={5}
         md2={7}
@@ -33,7 +37,7 @@ export default function LitsLits() {
         options={getgetCategorieLitActionsOptions()}
         state={action}
         setState={setAction}
-        loader={false}
+        loader={loader}
         size='sm'
       />
       
@@ -42,6 +46,9 @@ export default function LitsLits() {
         setIsSelectedAll={setIsSelectedAll}
         lits={lits}
         setLits={setLits}
+        loader={loader}
+        isFetching={isFetching}
+        onRefresh={onRefresh}
       />
     </>
   )

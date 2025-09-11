@@ -1,6 +1,7 @@
 import {Button, Modal} from "react-bootstrap";
 import {useDeleteServiceMutation} from "../model/service.api.slice.ts";
-import {onDeleteServiceSubmit, Service} from "../model/serviceService.ts";
+import type {Service} from "../model/serviceService.ts";
+import {onDeleteServiceSubmit} from "../model/serviceService.ts";
 
 export default function RemoveServiceModal(props: {
   data: Service,

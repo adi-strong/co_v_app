@@ -1,7 +1,7 @@
 import type {Dispatch, ReactNode, SetStateAction} from "react";
 import {useState} from "react";
 import {
-  formatDecimalNumberWithSpaces,
+  formatDecimalNumberWithSpaces, formatNumberWithSpaces,
   handleShow,
   onMouseEnterEvent,
   onMouseLeaveEvent,
@@ -9,7 +9,6 @@ import {
 } from "../../../../services/services.ts";
 import {CheckField, SideContent} from "../../../../components";
 import {Button} from "react-bootstrap";
-import moment from "moment";
 import type {TypeConsultation} from "../model/typeConsultationService.ts";
 import TypeConsultForm from "./TypeConsultForm.tsx";
 import RemoveTypeConsultModal from "./RemoveTypeConsultModal.tsx";
@@ -30,6 +29,8 @@ export default function TypeConsultItem(props: {
   
   const [isEdit, setIsEdit] = useState<boolean>(false)
   const [isDel, setIsDel] = useState<boolean>(false)
+  
+  const { taxe } = typeConsult
   
   return (
     <>
@@ -60,10 +61,9 @@ export default function TypeConsultItem(props: {
           </div>
         </td>
         
-        <td>{typeConsult?.taxe ? formatDecimalNumberWithSpaces(typeConsult.taxe) : '—'}</td>
+        <td>{typeConsult?.taxe ? formatNumberWithSpaces(Number(taxe).toFixed(1)+'%') : '—'}</td>
         <td>{formatDecimalNumberWithSpaces(typeConsult.prixHt)}</td>
         <td>{formatDecimalNumberWithSpaces(typeConsult.prixTtc)}</td>
-        <td>{typeConsult?.createdAt ? moment(typeConsult.createdAt).format('DD/MM/YY') : '—'}</td>
       </tr>
       
       <RemoveTypeConsultModal
@@ -77,6 +77,7 @@ export default function TypeConsultItem(props: {
         show={isEdit}
         onHide={(): void => handleShow(setIsEdit)}
         title='Modifier le type de fiches'
+        icon='pencil-square'
         children={
           <TypeConsultForm
             data={typeConsult}

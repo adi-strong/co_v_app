@@ -1,7 +1,7 @@
 import type {ChangeEvent, Dispatch, SetStateAction} from "react";
 
 export const handleChange = (
-  e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+  e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
   state: any,
   setState: React.Dispatch<React.SetStateAction<any>>
 ): void => {
@@ -65,7 +65,7 @@ export const handleSubItemToTheItemArrayChange = (
     }
     
     const nameParts = target.name.split('-')
-    const fieldName = nameParts[1]
+    const fieldName = nameParts[0]
     
     values[index] = {
       ...values[index],

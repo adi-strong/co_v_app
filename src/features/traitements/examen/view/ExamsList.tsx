@@ -1,15 +1,19 @@
-import {useState} from "react";
+import {Dispatch, SetStateAction, useState} from "react";
 import {ActionsComp, SearchComp} from "../../../../components";
 import {getgetCategorieLitActionsOptions} from "../../categorieLit/model/categorieLitService.ts";
 import type {Examen} from "../model/examenService.ts";
-import {getExamenFakeData} from "../model/examenService.ts";
 import ExamData from "./ExamData.tsx";
 
-export default function ExamsList() {
+export default function ExamsList({ exams, setExams, onRefresh, isFetching, loader }: {
+  exams: Examen[]
+  setExams: Dispatch<SetStateAction<Examen[]>>
+  onRefresh: () => void
+  loader: boolean
+  isFetching: boolean
+}) {
   
-  const [exams, setExams] = useState<Examen[]>(getExamenFakeData())
   const [isSelectedAll, setIsSelectedAll] = useState<boolean>(false)
-  const [search, setSearch] = useState<{keyword: string}>({keyword: ''})
+  const [search, setSearch] = useState<{keyword: string}>({ keyword: '' })
   const [action, setAction] = useState<string>('')
   
   return (
@@ -20,7 +24,7 @@ export default function ExamsList() {
         setState={setSearch}
         btnLabel='Rechercher des examens'
         onSubmit={(): void => { }}
-        loader={false}
+        loader={loader}
         size='sm'
         md1={5}
         md2={7}
@@ -33,7 +37,7 @@ export default function ExamsList() {
         options={getgetCategorieLitActionsOptions()}
         state={action}
         setState={setAction}
-        loader={false}
+        loader={loader}
         size='sm'
       />
       
@@ -42,6 +46,9 @@ export default function ExamsList() {
         setIsSelectedAll={setIsSelectedAll}
         exams={exams}
         setExams={setExams}
+        loader={loader}
+        isFetching={isFetching}
+        onRefresh={onRefresh}
       />
     </>
   )

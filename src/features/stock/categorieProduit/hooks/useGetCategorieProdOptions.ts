@@ -1,12 +1,12 @@
 import {useCallback} from "react";
 import type {MultiValue} from "react-select";
 import type {SelectOptionType} from "../../../../services/services.ts";
-import {useGetCategorieProduitsQuery} from "../model/categorieProduit.api.slice.ts";
 import type {CategorieProduit} from "../model/categorieProduitService.ts";
+import {useGetCategoriesExamsQuery} from "../../../traitements/categorieExam/model/categorieExam.api.slice.ts";
 
 export default function useGetCategorieProdOptions() {
   
-  const { data: categories = [], isSuccess } = useGetCategorieProduitsQuery('LIST')
+  const { data: categories = [], isSuccess } = useGetCategoriesExamsQuery('LIST')
   
   return useCallback(() => {
     

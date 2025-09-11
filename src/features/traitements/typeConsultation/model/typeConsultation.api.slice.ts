@@ -40,6 +40,23 @@ const typeConsultationApiSlice = API.injectEndpoints({
       }
     }),
     
+    getSearchTypeConsultations: build.query<TypeConsultation[], string>({
+      query: (keywords: string) => `${API_PATH}/type_consultations?nom=${keywords}`,
+      transformResponse: (response: JsonLDResponseInt<TypeConsultation>) => {
+        totalTypeConsultationsItems = response.totalItems
+        return response.member;
+      },
+      providesTags: (result) => {
+        if (result && Array.isArray(result)) {
+          return [
+            ...result.map(({ id }) => ({ type: 'UNIQUE' as const, id })),
+            { type: 'LIST' as const, id: 'LIST' }
+          ]
+        }
+        return [{ type: 'LIST' as const, id: 'LIST' }];
+      }
+    }),
+    
     editTypeConsultation: build.mutation<TypeConsultation, SaveTypeConsultation>({
       query: (data: SaveTypeConsultation) => ({
         url: `${API_PATH}/type_consultations/${data?.id}`,
@@ -86,6 +103,7 @@ const typeConsultationApiSlice = API.injectEndpoints({
 export const {
   usePostTypeConsultationMutation,
   useGetTypeConsultationsQuery,
+  useLazyGetSearchTypeConsultationsQuery,
   useEditTypeConsultationMutation,
   useDeleteTypeConsultationMutation,
   useGetUniqueTypeConsultationQuery,

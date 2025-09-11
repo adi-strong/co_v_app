@@ -37910,3 +37910,19 @@ div.code-toolbar > .toolbar > .toolbar-item > span:hover, div.code-toolbar > .to
 td:hover .actions { display: block }
 
 .border-radius-0 { border-radius: 0 }
+
+/* ********************************************************************************************* */
+/* ********************************************************************************************* */
+
+/* styles.css ou dans un module CSS */
+.loader-image {
+  width: 390px;
+  height: 390px;
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+  0% { opacity: 1; }
+  50% { opacity: 0.3; }
+  100% { opacity: 1; }
+}

@@ -7,10 +7,12 @@ import type {ExamenPrescrit, ProduitPrescrit} from "../../prescription/model/pre
 import type {Hospitalisation} from "../../hospitalisation/model/hospitalisationService.ts";
 import type {DocumentSuivi} from "../../documentSuivi/model/documentSuiviService.ts";
 import type {MultiValue, SingleValue} from "react-select";
-import type {SelectOptionType, THeadItemType} from "../../../../services/services.ts";
-import type {Dispatch, FormEvent, SetStateAction} from "react";
+import type {SelectOptionType, TabInt, THeadItemType} from "../../../../services/services.ts";
+import type {Dispatch, SetStateAction} from "react";
 import type {JsonLdApiResponseInt} from "../../../../interfaces/JsonLdApiResponseInt.ts";
 import toast from "react-hot-toast";
+import type {NavigateFunction} from "react-router-dom";
+import type {ViolationInt} from "../../../../interfaces/ViolationInt.ts";
 
 // INTERFACES OR TYPES
 export interface SigneVital {
@@ -23,6 +25,32 @@ export interface SigneVital {
   saturationEnOxygene?: string
   comment?: string
   releasedAt?: string
+}
+
+export interface SaveSigneVital {
+  temperature: number
+  poids: number
+  tensionArterielle: string
+  frequenceCardiaque: string
+  frequenceRespiratoire: string
+  saturationEnOxygene: string
+  comment: string
+  releasedAt: string
+  fkDocSuivi: string | null
+  fkConsultation: string | null
+}
+
+export interface SigneVitalError {
+  temperature: string | null
+  poids: string | null
+  tensionArterielle: string | null
+  frequenceCardiaque: string | null
+  frequenceRespiratoire: string | null
+  saturationEnOxygene: string | null
+  comment: string | null
+  releasedAt: string | null
+  fkDocSuivi: string | null
+  fkConsultation: string | null
 }
 
 export interface PremierSoin {
@@ -39,10 +67,10 @@ export interface Consultation {
   id: number
   motif: string
   diagnostic: string
-  conclusion: string
-  comment: string
+  conclusion?: string
+  comment?: string
   statut: string
-  renseignementClinic: string
+  renseignementClinic?: string
   dateDebut: string
   dateFin: string
   finished: boolean
@@ -127,6 +155,20 @@ export interface ConsultationError {
   signes: string | null
   prescriptionsItems: string | null
 }
+
+export type ConsultStatusKey = 'EN_COURS' | 'ANNULEE' | 'TERMINEE'
+
+export const consultStatusLabel: Record<ConsultStatusKey, string> = {
+  ANNULEE: 'Annulée',
+  EN_COURS: 'En cours',
+  TERMINEE: 'Terminée',
+}
+
+export const consultStatusColor: Record<ConsultStatusKey, string> = {
+  ANNULEE: 'danger',
+  EN_COURS: 'warning',
+  TERMINEE: 'success',
+}
 // END INTERFACES OR TYPES
 
 /* ------------------------------------------- */
@@ -186,6 +228,32 @@ export const initConsultationErrorState = (): ConsultationError => ({
   signes: null,
   prescriptionsItems: null,
 })
+
+export const initSigneVitalState = (): SaveSigneVital => ({
+  comment: '',
+  poids: 0,
+  fkConsultation: null,
+  fkDocSuivi: null,
+  frequenceCardiaque: '',
+  frequenceRespiratoire: '',
+  releasedAt: '',
+  saturationEnOxygene: '',
+  temperature: 0,
+  tensionArterielle: '',
+})
+
+export const initSigneVitalErrorState = (): SigneVitalError => ({
+  temperature: null,
+  poids: null,
+  tensionArterielle: null,
+  frequenceCardiaque: null,
+  frequenceRespiratoire: null,
+  saturationEnOxygene: null,
+  comment: null,
+  releasedAt: null,
+  fkDocSuivi: null,
+  fkConsultation: null,
+})
 // END INIT
 
 /* ------------------------------------------- */
@@ -194,38 +262,47 @@ export const initConsultationErrorState = (): ConsultationError => ({
 export const getConsultHeadItems = (): THeadItemType[] => [
   { th: 'Fiche' },
   { th: 'Statut' },
-  { th: 'Date début' },
+  { th: 'Admission' },
+]
+
+export const getUniqueConsultHeadItems = (): TabInt[] => [
+  { title: 'Anamnèse', event: 'anamnesis' },
+  { title: 'Fiche', event: 'file' },
+  { title: 'Traitements', event: 'treatments' },
 ]
 
 /**
  *
- * @param e
  * @param state
  * @param setErrors
  * @param onSubmit
  * @param onHide
+ * @param navigate
  * @param onRefresh
  */
 export async function onConsultSubmit(
-  e: FormEvent<HTMLFormElement>,
   state: SaveConsultation,
   setErrors: Dispatch<SetStateAction<ConsultationError>>,
   onSubmit: (data: SaveConsultation) => Promise<any>,
+  navigate: NavigateFunction,
   onHide: () => void,
   onRefresh?: () => void
 ): Promise<void> {
-  
-  e.preventDefault()
+  onHide()
   const { id } = state
+  
   try {
     const { data, error}: JsonLdApiResponseInt<Consultation> = await onSubmit(state)
     if (data) {
       toast.success(`${id > 0 ? 'Modification ' : 'Enregistrement '} bien effectué${'e'}`)
       if (onRefresh) onRefresh()
-      onHide()
+      if (onHide) onHide()
+      navigate(`/app/consultations/${data.id}`)
     }
     
     if (error && error?.data) {
+      if (error.data?.detail) toast.error(error.data.detail)
+      
       const { violations } = error.data
       if (violations) violations.forEach(({ message, propertyPath }): void => {
         setErrors(prev => ({ ...prev, [propertyPath]: message }))
@@ -278,12 +355,109 @@ export const onConsultExamsChange = (
   })
 }
 
-export const getConsultStatusOptions = (): SingleValue<SelectOptionType>[] => [
+export const getConsultStatusOptions = (): SelectOptionType[] => [
   { label: '-- Aucune option sélectionnée --', value: '' },
   { label: 'EN COURS', value: 'EN_COURS' },
   { label: 'ANNULÉE', value: 'ANNULEE' },
-  { label: 'TERMINÉE', value: 'TERMINEE' },
 ]
+
+export const onConsultEndChange = (setState: Dispatch<SetStateAction<SaveConsultation>>): void => {
+  setState(consult => {
+    return {
+      ...consult,
+      dateFin: '',
+      end: !consult.end,
+    }
+  })
+}
+
+export const onConsultSignChange = (
+  e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+  state: SaveConsultation,
+  setState: Dispatch<SetStateAction<SaveConsultation>>,
+): void => {
+  let value: any;
+  const target = e.target;
+  
+  switch (target.type) {
+    case 'number':
+      const numValue = Number(target.value);
+      value = isNaN(numValue) || numValue < 0 ? 0 : numValue;
+      break;
+    case 'file':
+      if (target instanceof HTMLInputElement && target.files) {
+        value = target.files.length > 0 ? target.files[0] : null;
+      }
+      break;
+    case 'checkbox' || 'radio' || 'switch':
+      if (target instanceof HTMLInputElement && target.checked) {
+        value = target.checked
+      } else value = false
+      break
+    default:
+      value = target.value;
+      break;
+  }
+  
+  const signes = {
+    ...state.signes,
+    [target.name]: value
+  }
+  
+  setState(consult => ({
+    ...consult,
+    signes
+  } as SaveConsultation))
+}
+
+export const onConsultSigneVitalSubmit = async (
+  state: SaveSigneVital,
+  setState: Dispatch<SetStateAction<SaveSigneVital>>,
+  setErrors: Dispatch<SetStateAction<SigneVitalError>>,
+  onSubmit: (data: SaveSigneVital) => Promise<any>,
+  onRefresh: () => void,
+  onHide: () => void,
+  consult?: Consultation,
+  suiviDoc?: DocumentSuivi
+): Promise<void> => {
+  setErrors(initSigneVitalErrorState())
+  let fkDocSuivi = null
+  let fkConsultation = null
+  
+  if (consult) {
+    fkConsultation = consult ? consult['@id'] : null
+    fkDocSuivi = consult?.documentSuivi ? consult.documentSuivi['@id'] : null
+  }
+  
+  if (suiviDoc) {
+    fkDocSuivi = suiviDoc ? suiviDoc['@id'] : null
+    fkConsultation = suiviDoc?.fkConsultation ? suiviDoc.fkConsultation['@id'] : null
+  }
+  
+  try {
+    const { data, error }: JsonLdApiResponseInt<SigneVital> = await onSubmit({
+      ...state,
+      fkDocSuivi,
+      fkConsultation
+    } as SaveSigneVital)
+    
+    if (data) {
+      toast.success('Validation bien effectuée.')
+      onRefresh()
+      onHide()
+      setState(initSigneVitalState())
+    }
+    
+    if (error && error?.data) {
+      if (error.data?.detail) toast.error(error.data.detail)
+      
+      const { violations } = error.data
+      if (violations) violations.forEach(({ message, propertyPath }: ViolationInt): void => {
+        setErrors(prev => ({ ...prev, [propertyPath]: message }))
+      })
+    }
+  } catch (e) { toast.error('Problème réseau.') }
+}
 // END EVENTS & FUNCTIONS
 
 /* ------------------------------------------- */

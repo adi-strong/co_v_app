@@ -1,5 +1,5 @@
-import {useState} from "react";
-import {Button, Card, Col, Row, Table} from "react-bootstrap";
+import {ReactNode, useState} from "react";
+import {Button, Card, Col, Row, Spinner, Table} from "react-bootstrap";
 import {Link} from "react-router-dom";
 import {TextField} from "../../../../components";
 import {handleChange} from "../../../../services/form.hander.service.ts";
@@ -7,8 +7,14 @@ import {tableWhiteStyle} from "../../../../services/services.ts";
 import type {Consultation} from "../model/consultationService.ts";
 import {getConsultHeadItems} from "../model/consultationService.ts";
 import ConsultItem from "./ConsultItem.tsx";
+import {RepeatableTableRows} from "../../../../loaders";
 
-export default function ConsultData({ consultations }: { consultations: Consultation[] }) {
+export default function ConsultData({ consultations, onRefresh, loader, isFetching }: {
+  consultations: Consultation[]
+  onRefresh: () => void
+  loader: boolean
+  isFetching: boolean
+}) {
   
   const [search, setSearch] = useState<{ start: string, end: '' }>({
     end: '',
@@ -20,14 +26,12 @@ export default function ConsultData({ consultations }: { consultations: Consulta
       <Row>
         <Col md={4}>
           <Card.Title as='h5' className='mx-4 mt-5 me-4'>
-            <Button variant='link' size='sm' className='me-2'>
-              <i className='bi bi-arrow-clockwise'/>
+            <Button disabled={isFetching} variant='link' className='me-1' size='sm' onClick={onRefresh} title='Actualiser'>
+              {!isFetching && (<i className='bi bi-arrow-clockwise' />) as ReactNode}
+              {isFetching && (<Spinner animation='grow' size='sm' />) as ReactNode}
             </Button>
-            Liste de fiches
             
-            <Link to='/app/consultations/new' className='mx-5 btn btn-sm btn-link' title='Nouvel enregistrement'>
-              <i className='bi bi-plus'/> Nouvelle fiche
-            </Link>
+            Liste de fiches
           </Card.Title>
         </Col>
         
@@ -72,6 +76,10 @@ export default function ConsultData({ consultations }: { consultations: Consulta
             <i className='bi bi-file-earmark-pdf me-1'/>
             Imprimer en pdf
           </Button>
+          
+          <Link to='/app/consultations/new' className='mx-2 btn btn-sm btn-link' title='Nouvel enregistrement'>
+            <i className='bi bi-plus'/> Nouvelle fiche
+          </Link>
         </Col>
         
         <Col md={6} className='mb-1 text-md-end'>
@@ -92,6 +100,7 @@ export default function ConsultData({ consultations }: { consultations: Consulta
           
           {getConsultHeadItems().length > 0 && getConsultHeadItems().map(t =>
             <th key={t.th} style={{ fontSize: '1rem' }}>{t.th}</th>)}
+          <th/>
         </tr>
         </thead>
         
@@ -101,9 +110,12 @@ export default function ConsultData({ consultations }: { consultations: Consulta
             key={index}
             consultation={c}
             index={index}
+            onRefresh={onRefresh}
           />)}
         </tbody>
       </Table>
+      
+      {loader && <RepeatableTableRows/>}
     </>
   )
   

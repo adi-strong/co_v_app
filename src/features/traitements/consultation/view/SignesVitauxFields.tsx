@@ -1,24 +1,26 @@
-import type {SigneItem} from "../model/consultationService.ts";
-import {useState} from "react";
+import type {SaveConsultation} from "../model/consultationService.ts";
+import {Dispatch, SetStateAction} from "react";
 import {TextField} from "../../../../components";
-import {handleChange} from "../../../../services/form.hander.service.ts";
 import {Col, Row} from "react-bootstrap";
+import {onConsultSignChange} from "../model/consultationService.ts";
 
-export default function SignesVitauxFields({ signes }: { signes: SigneItem }) {
+export default function SignesVitauxFields({ state, setConsult, loader }: {
+  state: SaveConsultation
+  setConsult?: Dispatch<SetStateAction<SaveConsultation>>
+  loader: boolean
+}) {
   
-  const [state, setState] = useState<SigneItem>(signes)
-  
-  return (
+  return state?.signes && (
     <Row>
       <Col md={4} className='mb-3'>
         <TextField
           required
           autoFocus
-          disabled={false}
+          disabled={loader}
           type='number'
           name='temperature'
-          onChange={(e): void => handleChange(e, state, setState)}
-          value={state.temperature}
+          onChange={(e): void => onConsultSignChange(e, state, setConsult)}
+          value={state.signes.temperature}
           label='Température °'
         />
       </Col>
@@ -26,51 +28,51 @@ export default function SignesVitauxFields({ signes }: { signes: SigneItem }) {
       <Col md={4} className='mb-3'>
         <TextField
           required
-          disabled={false}
+          disabled={loader}
           type='number'
           name='poids'
-          onChange={(e): void => handleChange(e, state, setState)}
-          value={state.poids}
+          onChange={(e): void => onConsultSignChange(e, state, setConsult)}
+          value={state.signes.poids}
           label='Poids (kg)'
         />
       </Col>
       
       <Col md={4} className='mb-3'>
         <TextField
-          disabled={false}
+          disabled={loader}
           name='tensionArterielle'
-          onChange={(e): void => handleChange(e, state, setState)}
-          value={state.tensionArterielle}
+          onChange={(e): void => onConsultSignChange(e, state, setConsult)}
+          value={state.signes.tensionArterielle}
           label='Tension artérielle (Cm Hg, ...)'
         />
       </Col>
       
       <Col md={4} className='mb-3'>
         <TextField
-          disabled={false}
+          disabled={loader}
           name='frequenceRespiratoire'
-          onChange={(e): void => handleChange(e, state, setState)}
-          value={state.frequenceRespiratoire}
+          onChange={(e): void => onConsultSignChange(e, state, setConsult)}
+          value={state.signes.frequenceRespiratoire}
           label='Fréquence respiratoire (Pm, ...)'
         />
       </Col>
       
       <Col md={4} className='mb-3'>
         <TextField
-          disabled={false}
+          disabled={loader}
           name='frequenceCardiaque'
-          onChange={(e): void => handleChange(e, state, setState)}
-          value={state.frequenceCardiaque}
+          onChange={(e): void => onConsultSignChange(e, state, setConsult)}
+          value={state.signes.frequenceCardiaque}
           label='Fréquence cardiaque (bpm, ...)'
         />
       </Col>
       
       <Col md={4} className='mb-3'>
         <TextField
-          disabled={false}
+          disabled={loader}
           name='saturationEnOxygene'
-          onChange={(e): void => handleChange(e, state, setState)}
-          value={state.saturationEnOxygene}
+          onChange={(e): void => onConsultSignChange(e, state, setConsult)}
+          value={state.signes.saturationEnOxygene}
           label='Fréquence cardiaque (SpO2, ...)'
         />
       </Col>

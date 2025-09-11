@@ -1,13 +1,19 @@
-import {useState} from "react";
-import {Button, Card, Col, Row, Table} from "react-bootstrap";
+import {ReactNode, useState} from "react";
+import {Button, Card, Col, Row, Spinner, Table} from "react-bootstrap";
 import {TextField} from "../../../../components";
 import {handleChange} from "../../../../services/form.hander.service.ts";
 import {tableWhiteStyle} from "../../../../services/services.ts";
 import type {Lab} from "../model/labService.ts";
 import LabItem from "./LabItem.tsx";
 import {getLabHeadItems} from "../model/labService.ts";
+import {RepeatableTableRows} from "../../../../loaders";
 
-export default function LabData({ labs }: { labs: Lab[] }) {
+export default function LabData({ labs, loader, onRefresh, isFetching }: {
+  labs: Lab[]
+  onRefresh: () => void
+  loader: boolean
+  isFetching: boolean
+}) {
   
   const [search, setSearch] = useState<{ start: string, end: '' }>({
     end: '',
@@ -19,9 +25,11 @@ export default function LabData({ labs }: { labs: Lab[] }) {
       <Row>
         <Col md={4}>
           <Card.Title as='h5' className='mx-4 mt-5 me-4'>
-            <Button variant='link' size='sm' className='me-2'>
-              <i className='bi bi-arrow-clockwise'/>
+            <Button disabled={isFetching} variant='link' className='me-1' size='sm' onClick={onRefresh} title='Actualiser'>
+              {!isFetching && (<i className='bi bi-arrow-clockwise' />) as ReactNode}
+              {isFetching && (<Spinner animation='grow' size='sm' />) as ReactNode}
             </Button>
+            
             Liste des documents
           </Card.Title>
         </Col>
@@ -30,7 +38,7 @@ export default function LabData({ labs }: { labs: Lab[] }) {
           <form className='row' onSubmit={e => e.preventDefault()}>
             <Col md={4} className='mb-1'>
               <TextField
-                disabled={false}
+                disabled={loader}
                 type='date'
                 size='sm'
                 name='start'
@@ -42,7 +50,7 @@ export default function LabData({ labs }: { labs: Lab[] }) {
             
             <Col md={4} className='mb-1'>
               <TextField
-                disabled={false}
+                disabled={loader}
                 type='date'
                 size='sm'
                 name='end'
@@ -53,7 +61,7 @@ export default function LabData({ labs }: { labs: Lab[] }) {
             </Col>
             
             <Col md={4} className='mb-1'>
-              <Button type='submit' disabled={false} variant='outline-primary' className='w-100' size='sm'>
+              <Button type='submit' disabled={loader} variant='outline-primary' className='w-100' size='sm'>
                 Rechercher des fiches
               </Button>
             </Col>
@@ -87,6 +95,7 @@ export default function LabData({ labs }: { labs: Lab[] }) {
           
           {getLabHeadItems().length > 0 && getLabHeadItems().map(t =>
             <th key={t.th} style={{ fontSize: '1rem' }}>{t.th}</th>)}
+          <th/>
         </tr>
         </thead>
         
@@ -95,10 +104,12 @@ export default function LabData({ labs }: { labs: Lab[] }) {
           <LabItem
             key={index}
             lab={c}
-            index={index}
+            onRefresh={onRefresh}
           />)}
         </tbody>
       </Table>
+      
+      {loader && <RepeatableTableRows/>}
     </>
   )
   

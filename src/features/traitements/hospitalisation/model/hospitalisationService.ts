@@ -5,12 +5,13 @@ import type {Dispatch, FormEvent, SetStateAction} from "react";
 import type {JsonLdApiResponseInt} from "../../../../interfaces/JsonLdApiResponseInt.ts";
 import toast from "react-hot-toast";
 import type {Consultation} from "../../consultation/model/consultationService.ts";
+import type {NavigateFunction} from "react-router-dom";
+import type {Patient} from "../../../patients/patient/model/patientService.ts";
 
 // INTERFACES OR TYPES
 export interface Hospitalisation {
   '@id'?: string
   id: number
-  motif: string
   modeEntree: string
   modeSortie?: string
   dateAdmission: string
@@ -25,6 +26,7 @@ export interface Hospitalisation {
   finished: boolean
   releasedAt?: string
   fkConsultation: Consultation
+  fkPatient?: Patient
 }
 
 export interface SaveHospitalisation {
@@ -36,9 +38,8 @@ export interface SaveHospitalisation {
   dateSortie: string
   statut: string
   fkLit: SingleValue<SelectOptionType> | null
-  prix: number
-  mode: string
   finished: boolean
+  fkConsultation: string
 }
 
 export interface HospitalisationError {
@@ -53,6 +54,30 @@ export interface HospitalisationError {
   mode: string | null
   finished: string | null
 }
+
+export type HospModeEntryKeys = 'URGENT' | 'TRAITEMENT' | 'SUIVI'
+export const hospEntryLabel: Record<HospModeEntryKeys, string> = {
+  SUIVI: 'SUIVI',
+  TRAITEMENT: 'TRAITEMENT',
+  URGENT: 'URGENCE',
+}
+export const hospEntryColor: Record<HospModeEntryKeys, string> = {
+  SUIVI: 'success',
+  TRAITEMENT: 'primary',
+  URGENT: 'danger',
+}
+
+export type HospModeLeaveKeys = 'URGENCE' | 'TRANSFERT' | 'FIN_SUIVI'
+export const hospLeaveLabel: Record<HospModeLeaveKeys, string> = {
+  FIN_SUIVI: 'CLÔTURE',
+  TRANSFERT: 'TRANSFERT',
+  URGENCE: 'URGENCE',
+}
+export const hospLeaveColor: Record<HospModeLeaveKeys, string> = {
+  FIN_SUIVI: 'success',
+  TRANSFERT: 'primary',
+  URGENCE: 'dark',
+}
 // END INTERFACES OR TYPES
 
 /* ------------------------------------------- */
@@ -60,16 +85,15 @@ export interface HospitalisationError {
 // INIT
 export const initHospitalisationState = (): SaveHospitalisation => ({
   id: 0,
-  prix: 0,
   finished: false,
   dateAdmission: '',
   dateSortie: '',
   fkLit: null,
-  mode: 'NONE',
-  modeEntree: 'NONE',
-  modeSortie: 'NONE',
+  modeEntree: '',
+  modeSortie: '',
   motif: '',
-  statut: 'NONE',
+  statut: '',
+  fkConsultation: '',
 })
 
 export const initHospitalisationErrorState = (): HospitalisationError => ({
@@ -90,26 +114,43 @@ export const initHospitalisationErrorState = (): HospitalisationError => ({
 
 // EVENTS & FUNCTIONS
 export const getHospHeadItems = (): THeadItemType[] => [
+  { th: 'Lit' },
   { th: 'Mode d\'entrée' },
   { th: 'Statut' },
   { th: 'Date d\'enregistrement' },
 ]
 
+export const getHospEntryModeOptions = (): SelectOptionType[] => [
+  { label: '-- Aucun mode sélectionné --', value: '' },
+  { label: 'Suivi', value: 'SUIVI' },
+  { label: 'Traitement', value: 'TRAITEMENT' },
+  { label: 'Urgence', value: 'URGENT' },
+]
+
+export const getHospLeaveModeOptions = (): SelectOptionType[] => [
+  { label: '-- Aucun mode sélectionné --', value: '' },
+  { label: 'Fin de suivi', value: 'FIN_SUIVI' },
+  { label: 'Transfert', value: 'TRANSFERT' },
+  { label: 'Urgence', value: 'URGENCE' },
+]
+
 export async function onHospitalisationSubmit(
-  e: FormEvent<HTMLFormElement>,
   state: SaveHospitalisation,
   setErrors: Dispatch<SetStateAction<HospitalisationError>>,
   onSubmit: (data: SaveHospitalisation) => Promise<any>,
   onHide: () => void,
-  onRefresh?: () => void
+  consult: Consultation,
+  onRefresh?: () => void,
 ): Promise<void> {
-  
-  e.preventDefault()
+  setErrors(initHospitalisationErrorState())
   const { id } = state
+  
+  const fkConsultation = `/api/consultations/${consult.id}`
+  
   try {
-    const { data, error}: JsonLdApiResponseInt<Hospitalisation> = await onSubmit(state)
+    const { data, error}: JsonLdApiResponseInt<Hospitalisation> = await onSubmit({ ...state, fkConsultation })
     if (data) {
-      toast.success(`${id > 0 ? 'Modification ' : 'Enregistrement '} bien effectué${'e'}`)
+      toast.success(`${id > 0 ? 'Opération ' : 'Enregistrement '} bien effectué${'e'}`)
       if (onRefresh) onRefresh()
       onHide()
     }
@@ -121,6 +162,25 @@ export async function onHospitalisationSubmit(
       })
     }
   } catch (e) { toast.error('Problème réseau.') }
+  
+}
+
+export async function onDeleteHospSubmit(
+  state: Hospitalisation,
+  onSubmit: (data: Hospitalisation) => Promise<void>,
+  onRefresh: () => void,
+  onHide: () => void,
+  navigate?: NavigateFunction
+): Promise<void> {
+  onHide()
+  
+  const { error }: JsonLdApiResponseInt<void> = await onSubmit(state)
+  if (error && error.data && error.data?.detail) toast.error(error.data.detail)
+  else {
+    toast.success('Suppression bien effectuée.')
+    onRefresh()
+    if (navigate) navigate('/app/hospitalisations')
+  }
   
 }
 // END EVENTS & FUNCTIONS

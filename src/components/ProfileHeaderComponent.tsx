@@ -46,7 +46,7 @@ export default function ProfileHeaderComponent(props: {
                   className='avatar-xxl avatar-indicators avatar-online me-2 position-relative d-flex justify-content-end align-items-end mt-n10'>
                   <Image
                     roundedCircle
-                    src={profileMedia ? APP_ENTRYPOINT + profileMedia.contentUrl : avatarImg}
+                    src={(profileMedia ? APP_ENTRYPOINT + profileMedia.contentUrl : avatarImg) as string}
                     className='avatar-xxl border border-4 border-white-color-40'
                     alt=''
                   />

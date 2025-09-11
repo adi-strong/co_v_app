@@ -182,7 +182,7 @@ export default function AgentForm({ data, uRefresh, loader = false }: {
                 name='prenom'
                 onChange={(e): void => handleChange(e, agent, setAgent)}
                 value={agent.prenom}
-                label='Postnom'
+                label='Prénom'
                 maxLength={255}
                 error={errors.prenom}
               />

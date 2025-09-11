@@ -71,10 +71,9 @@ export const getTypeConsultationFakeData = (): TypeConsultation[] => [
 ]
 
 export const getTypeConsultTheadItems = (): THeadItemType[] => [
-  { th: 'Taxe(s) / TVA' },
-  { th: 'Prix HT' },
-  { th: 'Prix TTC' },
-  { th: 'Date' },
+  { th: 'TVA' },
+  { th: 'P. HT' },
+  { th: 'P. TTC' },
 ]
 
 export async function onTypeConsultationSubmit(

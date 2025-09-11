@@ -1,21 +1,41 @@
 import {useState} from "react";
-import {Button, Card} from "react-bootstrap";
+import {Button, Card, Spinner} from "react-bootstrap";
 import {SingleSelectField, TextField} from "../../../../components";
 import {handleChange} from "../../../../services/form.hander.service.ts";
 import type {Examen} from "../model/examenService.ts";
-import {initExamenErrorState, initExamenState} from "../model/examenService.ts";
-import useGetExamOptions from "../hooks/useGetExamOptions.ts";
+import {initExamenErrorState, initExamenState, onExamenSubmit} from "../model/examenService.ts";
+import {useGetCategoriesExamsQuery} from "../../categorieExam/model/categorieExam.api.slice.ts";
+import useGetCategorieProdOptions from "../../../stock/categorieProduit/hooks/useGetCategorieProdOptions.ts";
+import {useEditExamenMutation, usePostExamenMutation} from "../model/examen.api.slice.ts";
+import useSetExamData from "../hooks/useSetExamData.ts";
 
-export default function ExamForm({ data }: { data?: Examen }) {
-  
-  const examOptions = useGetExamOptions()
+export default function ExamForm({ data, onHide, onRefresh }: {
+  data?: Examen
+  onRefresh: () => void
+  onHide?: () => void
+}) {
   
   const [exam, setExam] = useState(initExamenState())
-  const [errors/*, setErrors */] = useState(initExamenErrorState())
+  const [errors, setErrors] = useState(initExamenErrorState())
+  const [onPostExam, { isLoading }] = usePostExamenMutation()
+  const [onEditExam, { isLoading: isEditLoading }] = useEditExamenMutation()
+  
+  const { refetch: categoriessRefresh, isFetching: categoriesLoader } = useGetCategoriesExamsQuery('LIST')
+  
+  useSetExamData(data, setExam)
+  const examsCategoriesOptions = useGetCategorieProdOptions()
   
   return (
     <>
-      <form className={!data ? 'pt-13' : ''} onSubmit={e => e.preventDefault()}>
+      <form className={!data ? 'pt-13' : ''} onSubmit={e => onExamenSubmit(
+        e,
+        exam,
+        setExam,
+        setErrors,
+        data ? onEditExam : onPostExam,
+        onRefresh,
+        onHide
+      )}>
         {!data && <Card.Title as='h5' className='mb-6 text-dark'>Ajouter un examen</Card.Title>}
         
         <Card.Text as='p'>Veuillez renseigner les champs (<code>*</code>) obligatoires :</Card.Text>
@@ -23,9 +43,9 @@ export default function ExamForm({ data }: { data?: Examen }) {
         <div className='mb-3'>
           <SingleSelectField
             required
-            disabled={false}
-            onRefresh={(): void => { }}
-            options={examOptions()}
+            disabled={isLoading || isEditLoading || categoriesLoader}
+            onRefresh={async (): Promise<void> => { await categoriessRefresh() }}
+            options={examsCategoriesOptions()}
             value={exam?.fkCategorie ?? null}
             onChange={fkCategorie => setExam(e => ({ ...e, fkCategorie }))}
             name='fkCategorie'
@@ -39,7 +59,7 @@ export default function ExamForm({ data }: { data?: Examen }) {
         <div className='mb-3'>
           <TextField
             required
-            disabled={false}
+            disabled={isLoading || isEditLoading}
             name='nom'
             onChange={(e): void => handleChange(e, exam, setExam)}
             value={exam.nom}
@@ -55,7 +75,7 @@ export default function ExamForm({ data }: { data?: Examen }) {
         <div className='mb-3'>
           <TextField
             required
-            disabled={false}
+            disabled={isLoading || isEditLoading}
             type='number'
             name='prixHt'
             onChange={(e): void => handleChange(e, exam, setExam)}
@@ -70,7 +90,7 @@ export default function ExamForm({ data }: { data?: Examen }) {
         <div className='mb-3'>
           <TextField
             required
-            disabled={false}
+            disabled={isLoading || isEditLoading}
             type='number'
             name='prixTtc'
             onChange={(e): void => handleChange(e, exam, setExam)}
@@ -82,9 +102,10 @@ export default function ExamForm({ data }: { data?: Examen }) {
           />
         </div>
         
-        <Button disabled={false} type='submit' size='sm' className={data ? 'w-100' : ''}>
-          {data ? 'Modifier ' : 'Ajouter '}
-          un examen
+        <Button disabled={isLoading || isEditLoading} type='submit' size='sm' className={data ? 'w-100' : ''}>
+          {(isLoading || isEditLoading) && <Spinner className='me-1' animation='border' size='sm' />}
+          {!(isLoading || isEditLoading) && data ? 'Modifier ' : !(isLoading || isEditLoading) && 'Ajouter '}
+          {(isLoading || isEditLoading) ? 'Veuillez patienter' : 'un examen'}
         </Button>
       </form>
     </>

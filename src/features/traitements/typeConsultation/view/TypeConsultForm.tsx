@@ -8,7 +8,6 @@ import {
   initTypeConsultationState,
   onConsultPrixHTChange, onConsultTaxChange, onTypeConsultationSubmit
 } from "../model/typeConsultationService.ts";
-import {formatDecimalNumberWithSpaces} from "../../../../services/services.ts";
 import {useEditTypeConsultationMutation, usePostTypeConsultationMutation} from "../model/typeConsultation.api.slice.ts";
 import useSetTypeConsultationsData from "../hooks/useSetTypeConsultationsData.ts";
 
@@ -93,7 +92,7 @@ export default function TypeConsultForm({ data, onHide, onRefresh }: {
             name='prixTtc'
             onChange={(e): void => handleChange(e, state, setState)}
             value={state.taxe > 0 && !isNaN(state.prixTtc)
-              ? formatDecimalNumberWithSpaces(state.prixTtc.toFixed(2))
+              ? state.prixTtc.toFixed(2)
               : state.prixTtc}
             text='Ce champ ne peut accepter que des valeurs numériques.'
             label='Prix TTC'

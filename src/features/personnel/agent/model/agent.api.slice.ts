@@ -2,6 +2,7 @@ import {API} from "../../../app/store";
 import {API_PATH, APP_HEADERS, APP_METHODS} from "../../../../config/configs.ts";
 import type {JsonLDResponseInt} from "../../../../interfaces/JsonLDResponseInt.ts";
 import type {Agent, SaveAgent} from "./agentService.ts";
+import type {Fonction} from "../../fonction/model/fonctionService.ts";
 
 let totalAgentsItems: number = 0
 
@@ -12,6 +13,23 @@ const agentApiSlice = API.injectEndpoints({
     getAgents: build.query<Agent[], string>({
       query: () => `${API_PATH}/agents`,
       transformResponse: (response: JsonLDResponseInt<Agent>) => {
+        totalAgentsItems = response.totalItems
+        return response.member;
+      },
+      providesTags: (result) => {
+        if (result && Array.isArray(result)) {
+          return [
+            ...result.map(({ id }) => ({ type: 'UNIQUE' as const, id })),
+            { type: 'LIST' as const, id: 'LIST' }
+          ]
+        }
+        return [{ type: 'LIST' as const, id: 'LIST' }];
+      }
+    }),
+    
+    getAgentsByFonction: build.query<Fonction[], string>({
+      query: (keywords) => `${API_PATH}/fonctions?nom=${keywords}`,
+      transformResponse: (response: JsonLDResponseInt<Fonction>) => {
         totalAgentsItems = response.totalItems
         return response.member;
       },
@@ -100,4 +118,5 @@ export const {
   usePostAgentMutation,
   useEditAgentMutation,
   useDeleteAgentMutation,
+  useGetAgentsByFonctionQuery,
 } = agentApiSlice

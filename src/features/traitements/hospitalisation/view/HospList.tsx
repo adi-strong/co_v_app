@@ -1,13 +1,21 @@
-import {useState} from "react";
-import ApproData from "../../../stock/appro/view/ApproData.tsx";
+import HospData from "./HospData.tsx";
+import type {Hospitalisation} from "../model/hospitalisationService.ts";
 
-export default function HospList() {
-  
-  const [hosps, setHosps] = useState([])
+export default function HospList({ hosps, onRefresh, isFetching, loader }: {
+  hosps: Hospitalisation[]
+  onRefresh: () => void
+  loader: boolean
+  isFetching: boolean
+}) {
   
   return (
     <>
-      <ApproData appros={hosps} />
+      <HospData
+        hosps={hosps}
+        onRefresh={onRefresh}
+        loader={loader}
+        isFetching={isFetching}
+      />
     </>
   )
   
