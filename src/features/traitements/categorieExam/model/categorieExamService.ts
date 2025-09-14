@@ -2,6 +2,7 @@ import type {Dispatch, FormEvent, SetStateAction} from "react";
 import toast from "react-hot-toast";
 import type {JsonLdApiResponseInt} from "../../../../interfaces/JsonLdApiResponseInt.ts";
 import type {NavigateFunction} from "react-router-dom";
+import type {Examen} from "../../examen/model/examenService.ts";
 
 // INTERFACES OR TYPES
 export interface CategorieExam {
@@ -12,6 +13,7 @@ export interface CategorieExam {
   updatedAt?: string
   slug?: string
   selected: boolean
+  exams: Examen[]
 }
 
 export interface SaveCategorieExam {
@@ -48,6 +50,7 @@ export const getCategorieExamFakeData = (): CategorieExam[] => [
     createdAt: new Date().toISOString(),
     "@id": '/api/categorie_exams/1',
     selected: false,
+    exams: [],
   },
   {
     id: 2,
@@ -56,6 +59,7 @@ export const getCategorieExamFakeData = (): CategorieExam[] => [
     createdAt: new Date().toISOString(),
     "@id": '/api/categorie_exams/2',
     selected: false,
+    exams: [],
   },
 ]
 

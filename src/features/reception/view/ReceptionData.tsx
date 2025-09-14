@@ -45,7 +45,7 @@ export default function ReceptionData({ receptions, loader, isFetching, onRefres
           <form className='row' onSubmit={e => e.preventDefault()}>
             <Col md={3} className='mb-1'>
               <TextField
-                disabled={false}
+                disabled={loader}
                 size='sm'
                 name='nomComplet'
                 value={search.nomComplet}
@@ -56,7 +56,7 @@ export default function ReceptionData({ receptions, loader, isFetching, onRefres
             
             <Col md={3} className='mb-1'>
               <TextField
-                disabled={false}
+                disabled={loader}
                 type='date'
                 size='sm'
                 name='start'
@@ -68,7 +68,7 @@ export default function ReceptionData({ receptions, loader, isFetching, onRefres
             
             <Col md={3} className='mb-1'>
               <TextField
-                disabled={false}
+                disabled={loader}
                 type='date'
                 size='sm'
                 name='end'
@@ -79,7 +79,7 @@ export default function ReceptionData({ receptions, loader, isFetching, onRefres
             </Col>
             
             <Col md={3} className='mb-1'>
-              <Button type='submit' disabled={false} variant='outline-primary' className='w-100' size='sm'>
+              <Button type='submit' disabled={loader} variant='outline-primary' className='w-100' size='sm'>
                 Rechercher
               </Button>
             </Col>
@@ -89,14 +89,14 @@ export default function ReceptionData({ receptions, loader, isFetching, onRefres
       
       <Row className='px-6 pe-4 pb-4'>
         <Col md={6} className='mb-1'>
-          <Button disabled={false} variant='outline-warning' size='sm' className='me-1'>
+          <Button disabled={loader} variant='outline-warning' size='sm' className='me-1'>
             <i className='bi bi-file-earmark-pdf me-1'/>
             Imprimer en pdf
           </Button>
         </Col>
         
         <Col md={6} className='mb-1 text-md-end'>
-          <Button disabled={false} variant='outline-success' size='sm'>
+          <Button disabled={loader} variant='outline-success' size='sm'>
             <i className='bi bi-file-earmark-excel me-1'/>
             Exporter en excel
           </Button>
@@ -108,6 +108,7 @@ export default function ReceptionData({ receptions, loader, isFetching, onRefres
         <tr>
           {getReceptionHeadItems().length > 0 && getReceptionHeadItems().map(t =>
             <th key={t.th} style={{ fontSize: '1rem' }}>{t.th}</th>)}
+          <th/>
         </tr>
         </thead>
         

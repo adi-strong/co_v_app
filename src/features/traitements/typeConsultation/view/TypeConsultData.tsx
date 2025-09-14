@@ -4,8 +4,9 @@ import {CheckField} from "../../../../components";
 import {selectAllStateItems, tableWhiteStyle} from "../../../../services/services.ts";
 import type {TypeConsultation} from "../model/typeConsultationService.ts";
 import TypeConsultItem from "./TypeConsultItem.tsx";
-import {getTypeConsultTheadItems} from "../model/typeConsultationService.ts";
 import {RepeatableTableRows} from "../../../../loaders";
+import {useSelector} from "react-redux";
+import type {CompteCaisseState} from "../../../finances/compteCaisse/model/compteCaisse.slice.ts";
 
 export default function TypeConsultData(props: {
   isSelectedAll: boolean
@@ -27,12 +28,14 @@ export default function TypeConsultData(props: {
     loader,
   } = props
   
+  const { compte } = useSelector((state: CompteCaisseState) => state.compte)
+  
   return (
     <>
       <Table hover striped responsive>
         <thead>
         <tr>
-          <th style={{ fontSize: '1rem' }}>
+          <th style={{fontSize: '1rem'}}>
             <CheckField
               inline
               name='isSelectedAll'
@@ -42,17 +45,18 @@ export default function TypeConsultData(props: {
               className='me-0'
             />
             
-            <Button disabled={isFetching} variant='link' className='me-1' size='sm' onClick={onRefresh} title='Actualiser'>
-              {!isFetching && (<i className='bi bi-arrow-clockwise' />) as ReactNode}
-              {isFetching && (<Spinner animation='grow' size='sm' />) as ReactNode}
+            <Button disabled={isFetching} variant='link' className='me-1' size='sm' onClick={onRefresh}
+                    title='Actualiser'>
+              {!isFetching && (<i className='bi bi-arrow-clockwise'/>) as ReactNode}
+              {isFetching && (<Spinner animation='grow' size='sm'/>) as ReactNode}
             </Button>
             
             Nom
           </th>
-          {getTypeConsultTheadItems().length > 0 && getTypeConsultTheadItems().map((t =>
-            <th key={t.th} style={{ fontSize: '1rem' }}>
-              {t.th}
-            </th>))}
+          
+          <th style={{fontSize: '1rem'}}>TVA</th>
+          <th style={{fontSize: '1rem'}}>P. HT {compte && `(${compte.first.code})`}</th>
+          <th style={{fontSize: '1rem'}}>P. TTC {compte && `(${compte.first.code})`}</th>
         </tr>
         </thead>
         

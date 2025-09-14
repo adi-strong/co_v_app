@@ -1,7 +1,7 @@
 import {Link} from "react-router-dom";
 import moment from "moment/moment";
 import type {Lab} from "../model/labService.ts";
-import {formatNumberWithSpaces, handleShow} from "../../../../services/services.ts";
+import {formatNumberWithSpaces, handleShow, subStr} from "../../../../services/services.ts";
 import {Button} from "react-bootstrap";
 import {useState} from "react";
 import LabResultModal from "./LabResultModal.tsx";
@@ -18,22 +18,22 @@ export default function LabItem({ lab, onRefresh }: { lab: Lab, onRefresh: () =>
     fkAgent,
   } = lab
   
-  const agent = lab?.fkAgent ? lab.fkAgent : null
+  const agent = fkAgent ? fkAgent : null
   
   return (
     <>
       <tr>
         <td className='text-uppercase'>
           <Link to={`/app/labs/${id}`}>
-            {lab?.fkPatient?.fullName ?? '—'}
+            {fkPatient?.fullName ?? '—'}
           </Link>
         </td>
         
-        <td className='text-uppercase'>
+        <td className='text-uppercase' title={fkConsultation?.fkType ? fkConsultation.fkType.nom : ''}>
           {fkConsultation ? (
             <Link to={`/app/consultations/${fkConsultation.id}`}>
               <span className='text-dark me-1'>#{formatNumberWithSpaces(fkConsultation.id)}</span>:
-              {fkConsultation?.fkType?.nom}
+              {fkConsultation?.fkType ? subStr(fkConsultation.fkType.nom, 20) : '—'}
             </Link>
           ) : '—'}
         </td>
@@ -48,9 +48,18 @@ export default function LabItem({ lab, onRefresh }: { lab: Lab, onRefresh: () =>
         
         <td>{releasedAt ? `du ${moment(releasedAt).format('DD/MM/YY à HH:mm')}` : '—'}</td>
         <td className='text-md-end'>
-          <Button size='sm' variant='link' onClick={(): void => handleShow(setShow)} className='p-0' title='Analyses'>
-            <i className='bi bi-file-earmark-medical-fill'/>
-          </Button>
+          <Link to={`/app/labs/${lab.id}`}>
+            <i className='bi bi-eye-fill'/>
+          </Link>
+          
+          {!lab.fkConsultation.finished && (
+            <>
+              {' | '}
+              <Button size='sm' variant='link' onClick={(): void => handleShow(setShow)} className='p-0' title='Analyses'>
+                <i className='bi bi-file-earmark-medical-fill'/>
+              </Button>
+            </>
+          )}
         </td>
       </tr>
       

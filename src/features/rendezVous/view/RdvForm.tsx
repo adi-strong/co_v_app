@@ -119,7 +119,7 @@ export default function RdvForm({ data, onRefresh, onHide }: {
         <div className='mb-3'>
           <TextField
             disabled={isLoading || isEditLoading}
-            type='date'
+            type='datetime-local'
             name='date'
             onChange={(e): void => handleChange(e, rdv, setRdv)}
             value={rdv.date}

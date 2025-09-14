@@ -4,7 +4,7 @@ import type {Agent} from "../../../personnel/agent/model/agentService.ts";
 import type {Hospitalisation} from "../../hospitalisation/model/hospitalisationService.ts";
 import type {
   Consultation,
-  SigneVital
+  SigneVital, SigneVitalHistoric
 } from "../../consultation/model/consultationService.ts";
 import type {Prescription} from "../../prescription/model/prescriptionService.ts";
 import type {Patient} from "../../../patients/patient/model/patientService.ts";
@@ -27,6 +27,7 @@ export interface SuiviTraitement {
   fkUser?: User
   releasedAt?: string
   observation?: string
+  diagnostic?: string
 }
 
 export interface SaveSuiviTraitement {
@@ -35,13 +36,36 @@ export interface SaveSuiviTraitement {
   observation: string
   suivisItems: SelectOptionType[]
   id: number
+  diagnostic: string
 }
 
 export interface SuiviTraitementError {
-  traitements: string | null,
-  releasedAt: string | null,
-  fkDocSuivi: string | null,
-  observation: string | null,
+  traitements: string | null
+  releasedAt: string | null
+  fkDocSuivi: string | null
+  observation: string | null
+  diagnostic: string | null
+}
+
+export interface ObservationTraitement {
+  '@id': string
+  id: number
+  observation?: string
+  diagnostic?: string
+  suiviTraitements: SuiviTraitement[]
+  fkDoc?: DocumentSuivi
+  fkAgent?: Agent
+  releasedAt?: string
+}
+
+export interface ObserveationTreatmentByDate {
+  date: string
+  contents: {
+    observation: string
+    suiviTraitements: SuiviTraitement[]
+    fkAgent?: Agent
+    diagnostic?: string
+  }[]
 }
 
 export interface DocumentSuivi {
@@ -63,6 +87,7 @@ export interface DocumentSuivi {
   signesVitaux: SigneVital[]
   createdAt?: string
   updatedAt?: string
+  observationTraitements: ObservationTraitement[]
 }
 
 export interface SuiviItem { id: number }
@@ -141,6 +166,7 @@ export const initSuiviTraitementState = (): SaveSuiviTraitement => ({
   fkDocSuivi: null,
   observation: '',
   id: 0,
+  diagnostic: '',
 })
 
 export const initSuiviTraitementErrorState = (): SuiviTraitementError => ({
@@ -148,6 +174,7 @@ export const initSuiviTraitementErrorState = (): SuiviTraitementError => ({
   traitements: null,
   observation: null,
   releasedAt: null,
+  diagnostic: null,
 })
 // END INIT
 
@@ -224,6 +251,78 @@ export async function onSuiviTraitementSubmit(
     }
   } catch (e) { toast.error('Problème réseau.') }
 }
+
+export const getSignesByDates = (signes: SigneVital[]): SigneVitalHistoric[] => {
+  const values: SigneVitalHistoric[] = []
+  const currentDate = new Date().toDateString().substring(0, 10)
+  
+  if (signes.length > 0) {
+    for (const key in signes) {
+      const sign = signes[key]
+      const date = sign?.releasedAt ? sign.releasedAt.substring(0, 10) : currentDate
+      
+      if (values.length < 1) values.push({ date, content: [sign] })
+      else {
+        const existingData = values.find(s => s.date === date)
+        if (existingData) existingData.content.push(sign)
+        else values.push({ date, content: [sign] })
+      }
+    }
+  }
+  
+  return values
+}
+
+export const getTreatmentsObserveByDates = (observations: ObservationTraitement[]): ObserveationTreatmentByDate[] => {
+  const values: ObserveationTreatmentByDate[] = []
+  const currentDate = new Date().toDateString().substring(0, 10)
+  
+  if (observations.length > 0) {
+    for (const key in observations) {
+      const observe = observations[key]
+      const date = observe?.releasedAt ? observe.releasedAt.substring(0, 10) : currentDate
+      
+      if (values.length < 1) {
+        values.push({
+          date,
+          contents: [
+            {
+              suiviTraitements: observe.suiviTraitements,
+              observation: observe?.observation ? observe.observation : '',
+              fkAgent: observe.fkAgent,
+              diagnostic: observe.diagnostic,
+            }
+          ]
+        })
+      }
+      else {
+        const existingData = values.find(t => t.date === date)
+        if (existingData) existingData.contents.push({
+          suiviTraitements: observe.suiviTraitements,
+          observation: observe?.observation ? observe.observation : '',
+          fkAgent: observe.fkAgent,
+          diagnostic: observe.diagnostic,
+        })
+        else {
+          values.push({
+            date,
+            contents: [
+              {
+                suiviTraitements: observe.suiviTraitements,
+                observation: observe?.observation ? observe.observation : '',
+                fkAgent: observe.fkAgent,
+                diagnostic: observe.diagnostic,
+              }
+            ]
+          })
+        }
+      }
+    }
+  }
+  
+  return values
+}
+
 // END EVENTS & FUNCTIONS
 
 /* ------------------------------------------- */

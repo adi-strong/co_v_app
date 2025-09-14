@@ -15,7 +15,7 @@ export default function useSetRdvData(data?: RendezVous, setState?: Dispatch<Sav
       
       setState({
         id: data.id,
-        date: data?.date ? data.date.substring(0, 10) : '',
+        date: data?.date ? data.date.substring(0, 16): '',
         tel: data.tel,
         email: data?.email ?? '',
         nom: data.nom,

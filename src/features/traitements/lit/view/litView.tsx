@@ -26,11 +26,11 @@ const LitView = () => {
       <PageTitles title="Lits d'hospitalisation"/>
       
       <Row>
-        <Col md={4} className='mb-3'>
+        <Col md={3} className='mb-3'>
           <LitForm onRefresh={onRefresh}/>
         </Col> {/* Forumulaore */}
         
-        <Col md={8} className='mb-3'>
+        <Col md={9} className='mb-3'>
           <LitsList
             setLits={setLits}
             lits={lits}

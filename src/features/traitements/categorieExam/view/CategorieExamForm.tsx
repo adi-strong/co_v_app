@@ -58,7 +58,7 @@ export default function CategorieExamForm({ data, onRefresh, onHide }: {
         <Button disabled={isLoading || isEditLoading} type='submit' size='sm' className={data ? 'w-100' : ''}>
           {(isLoading || isEditLoading) && <Spinner className='me-1' animation='border' size='sm' />}
           {!(isLoading || isEditLoading) && data ? 'Modifier ' : !(isLoading || isEditLoading) && 'Ajouter '}
-          {(isLoading || isEditLoading) ? 'Veuillez patienter' : 'une catégorie de lits'}
+          {(isLoading || isEditLoading) ? 'Veuillez patienter' : 'une catégorie'}
         </Button>
       </form>
     </>

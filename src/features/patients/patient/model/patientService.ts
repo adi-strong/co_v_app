@@ -36,7 +36,7 @@ export interface Patient {
   createdAt?: string
   updatedAt?: string
   selected: boolean
-  age?: number
+  age: number
 }
 
 export interface SavePatient {
@@ -76,6 +76,11 @@ export interface PatientError {
   estCeConventionne: string | null
   tel: string | null
   email: string | null
+}
+
+export interface PatientImage {
+  file: ImageListType
+  patientId: number
 }
 // END INTERFACES OR TYPES
 
@@ -120,6 +125,8 @@ export const initPatientErrorState = (): PatientError => ({
   tel: null,
   email: null,
 })
+
+export const initPatientImageState = (): PatientImage => ({ file: [], patientId: 0 })
 // END INIT
 
 /* ------------------------------------------- */
@@ -148,6 +155,7 @@ export const getPatientFakeData = (): Patient[] => [
     lieuDeNaissance: 'Kinshasa',
     slug: 'adivin',
     '@id': '/api/patients/1',
+    age: 0
   },
 ]
 
@@ -309,6 +317,33 @@ export const onIsStructureChange = (setState: Dispatch<SetStateAction<SavePatien
     estCeConventionne: !a.estCeConventionne,
     fkStructure: null,
   }))
+}
+
+export const onUpdatePatientProfileSubmit = async (
+  state: PatientImage,
+  setState: Dispatch<SetStateAction<PatientImage>>,
+  onSubmit: (data: FormData) => Promise<any>,
+  onRefresh: () => void,
+  onHide?: () => void
+): Promise<void> => {
+  if (onHide) onHide()
+  
+  const { file, patientId } = state
+  
+  const formData = new FormData()
+  if (file && file[0]?.file) formData.append('file', file[0].file)
+  if (patientId && patientId > 0) formData.append('patientId', patientId.toString())
+  
+  try {
+    const { data, error }: JsonLdApiResponseInt<void> = await onSubmit(formData)
+    if (data) {
+      toast.error('Profil mis à jour.')
+      setState(initPatientImageState())
+      onRefresh()
+    }
+    
+    if (error && error?.data && error.data?.detail) toast.error(error.data.detail)
+  } catch (e) { toast.error('Problème réseau') }
 }
 // END EVENTS & FUNCTIONS
 

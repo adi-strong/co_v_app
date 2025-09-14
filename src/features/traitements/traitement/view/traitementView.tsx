@@ -26,11 +26,11 @@ const TraitementView = () => {
       <PageTitles title='Traitements'/>
       
       <Row>
-        <Col md={4} className='mb-3'>
+        <Col md={3} className='mb-3'>
           <TraitementForm onRefresh={onRefresh}/>
         </Col> {/* Forumulaore */}
         
-        <Col md={8} className='mb-3'>
+        <Col md={9} className='mb-3'>
           <TraitementList
             traitements={treatments}
             setTraitements={setTreatments}

@@ -6,6 +6,7 @@ import authReducer from '../auth/model/auth.slice.ts'
 import infosReducer from '../configs/infosGen/model/infosGen.slice.ts'
 import compteReducer from '../finances/compteCaisse/model/compteCaisse.slice.ts'
 import deviseReducer from '../finances/compteCaisse/model/devise.slice.ts'
+import categoriesExamsReducer from '../traitements/categorieExam/model/categorieExam.slice.ts'
 
 const baseQuery = fetchBaseQuery({
   baseUrl: APP_ENTRYPOINT,
@@ -42,6 +43,7 @@ const store = configureStore({
     infos: infosReducer,
     compte: compteReducer,
     devise: deviseReducer,
+    categoriesExams: categoriesExamsReducer,
     [API.reducerPath]: API.reducer,
   },
   middleware: (getDefaultMiddleware) =>

@@ -50,10 +50,7 @@ const structureApiSlice = API.injectEndpoints({
         headers: APP_HEADERS.PATCH_HEADERS,
         body: JSON.stringify(data)
       }),
-      invalidatesTags: (result, error, arg) => [{
-        id: arg.id,
-        type: 'UNIQUE',
-      }]
+      invalidatesTags: ['UNIQUE', 'LIST']
     }),
     
     deleteStructure: build.mutation<void, Structure>({
@@ -62,7 +59,8 @@ const structureApiSlice = API.injectEndpoints({
         method: APP_METHODS.PATCH,
         headers: APP_HEADERS.PATCH_HEADERS,
         body: JSON.stringify({ deleted: true })
-      })
+      }),
+      invalidatesTags: ['UNIQUE', 'LIST']
     }),
 
   })

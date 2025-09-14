@@ -16,7 +16,7 @@ import {
 import {handleChange} from "../../../services/form.hander.service.ts";
 import useGetPatientsOptions from "../../patients/patient/hooks/useGetPatientsOptions.ts";
 import SelectField from "../../../components/forms/SelectField.tsx";
-import {usePostReceptionMutation} from "../model/reception.api.slice.ts";
+import {useGetReceptionsQuery, usePostReceptionMutation} from "../model/reception.api.slice.ts";
 import {useGetPatientsQuery, useLazyGetSearchPatientsQuery} from "../../patients/patient/model/patient.api.slice.ts";
 import SingleAsyncSelectField from "../../../components/forms/SingleAsyncSelectField.tsx";
 import type {JsonLdApiResponseInt} from "../../../interfaces/JsonLdApiResponseInt.ts";
@@ -62,12 +62,14 @@ export default function ReceptionForm() {
   const [reception, setReception] = useState(initReceptionState())
   const [errors, setErrors] = useState(initReceptionErrorState())
   const [onPostReception, { isLoading }] = usePostReceptionMutation()
-  
-  const { refetch: patientsRefresh, isFetching: isPatientsFetching } = useGetPatientsQuery('LIST')
   const [getSearchPatients] = useLazyGetSearchPatientsQuery()
+  
+  const { refetch } = useGetReceptionsQuery('LIST')
+  const { refetch: patientsRefresh, isFetching: isPatientsFetching } = useGetPatientsQuery('LIST')
   
   const patientsOptions = useGetPatientsOptions()
   
+  const onRefresh = async (): Promise<void> => { await refetch() }
   
   /* ----------------------------------------------------------------------------- */
   // Get Searched Patients Items
@@ -109,7 +111,8 @@ export default function ReceptionForm() {
       setErrors,
       onPostReception,
       onHide,
-      navigate
+      navigate,
+      onRefresh
     )
   }
   

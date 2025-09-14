@@ -29,29 +29,29 @@ export default function ShowReception({ reception }: { reception: Reception }) {
       
       <Row className='text-dark mb-4'>
         <Col md={4} className='fw-bold'>Lieu de naissance</Col>
-        <Col md={8} className='text-uppercase'>: {reception?.lieuNaissance ?? '—'}</Col>
+        <Col md={8} className='text-uppercase'>: {reception?.lieuNaissance ? reception.lieuNaissance : '—'}</Col>
       </Row>
       
       <Row className='text-dark mb-4'>
         <Col md={4} className='fw-bold'>Date de naissance</Col>
         <Col md={8} className='text-uppercase'>
-          : {reception?.dateNaissance ? moment(reception.dateNaissance).format('DD/MM.YY') : '—'}
+          : {reception?.dateNaissance ? moment(reception.dateNaissance).format('DD/MM/YY') : '—'}
         </Col>
       </Row>
       
       <Row className='text-dark mb-4'>
         <Col md={4} className='fw-bold'>N° Tél</Col>
-        <Col md={8} className='text-uppercase'>: {reception.tel}</Col>
+        <Col md={8} className='text-uppercase'>: {reception?.tel ? reception.tel : '—'}</Col>
       </Row>
       
       <Row className='text-dark mb-4'>
         <Col md={4} className='fw-bold'>E-mail</Col>
-        <Col md={8} className='text-lowercase fst-italic'>: {reception?.email ?? '—'}</Col>
+        <Col md={8} className='text-lowercase fst-italic'>: {reception?.email ? reception.email : '—'}</Col>
       </Row>
       
       <div className='text-dark mb-4'>
         <div className='fw-bold'>Commentaire(s) :</div>
-        <div className='fst-italic white'>{reception?.commentaire ?? '—'}</div>
+        <div className='fst-italic white'>{reception?.commentaire ? reception.commentaire : '...'}</div>
       </div>
     </>
   )

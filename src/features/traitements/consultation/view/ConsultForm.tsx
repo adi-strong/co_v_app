@@ -231,20 +231,6 @@ export default function ConsultForm({ data, onRefresh, loader }: {
         <div className='mb-3 mt-4'>
           <TextAreaField
             disabled={isLoading || isEditLoading || loader}
-            name='diagnostic'
-            onChange={(e): void => handleChange(e, state, setState)}
-            value={state.diagnostic}
-            label='Plaintes & diagnostics :'
-            placeholder='Diagnostic...'
-            rows={5}
-            size='sm'
-            error={errors.diagnostic}
-          />
-        </div>
-        
-        <div className='mb-3 mt-4'>
-          <TextAreaField
-            disabled={isLoading || isEditLoading || loader}
             name='conclusion'
             onChange={(e): void => handleChange(e, state, setState)}
             value={state.conclusion}

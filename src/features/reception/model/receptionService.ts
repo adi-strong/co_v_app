@@ -117,7 +117,7 @@ export const getReceptionsFakeData = (): Reception[] => [
 export const getReceiptReasonOptions = (): SelectOptionType[] => [
   { label: '-- Aucune option sélectionnée --', value: '' },
   { label: 'Entretien', value: 'ENTRETIEN' },
-  { label: 'Rendez-vous', value: 'RENDEZ_VOUS' },
+  { label: 'Rendez-vous', value: 'RENDEZ-VOUS' },
   { label: 'Consultation', value: 'CONSULTATION' },
   { label: 'Autre(s)', value: 'AUTRE' },
 ]
@@ -127,7 +127,8 @@ export async function onReceptionSubmit(
   setErrors: Dispatch<SetStateAction<ReceptionError>>,
   onSubmit: (data: SaveReception) => Promise<any>,
   onHide: () => void,
-  navigate?: NavigateFunction
+  navigate?: NavigateFunction,
+  onRefresh?: () => void
 ): Promise<void> {
   onHide()
   
@@ -136,6 +137,7 @@ export async function onReceptionSubmit(
     const { data, error}: JsonLdApiResponseInt<Reception> = await onSubmit(state)
     if (data) {
       toast.success(`${id > 0 ? 'Modification ' : 'Enregistrement '} bien effectué${'e'}`)
+      if (onRefresh) onRefresh()
       if (navigate) navigate('/app/receptions')
     }
     

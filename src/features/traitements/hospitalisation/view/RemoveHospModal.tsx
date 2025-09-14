@@ -34,7 +34,7 @@ export default function RemoveHospModal(props: {
       </Modal.Body>
       
       <Modal.Footer>
-        <Button variant='outline-dark'><i className='bi bi-x'/> Annuler</Button>
+        <Button variant='outline-dark' onClick={onHide}><i className='bi bi-x'/> Annuler</Button>
         <Button
           autoFocus
           variant='danger'

@@ -2,9 +2,9 @@ import type {Dispatch, ReactNode, SetStateAction} from "react";
 import {useState} from "react";
 import {Button, Card, Col, Row, Spinner, Table} from "react-bootstrap";
 import {Link} from "react-router-dom";
-import {CheckField, TextField} from "../../../../components";
+import {TextField} from "../../../../components";
 import {handleChange} from "../../../../services/form.hander.service.ts";
-import {selectAllStateItems, tableWhiteStyle} from "../../../../services/services.ts";
+import {tableWhiteStyle} from "../../../../services/services.ts";
 import type {Patient} from "../model/patientService.ts";
 import PatientItem from "./PatientItem.tsx";
 import {getPatientHeadItems} from "../model/patientService.ts";
@@ -21,7 +21,6 @@ export default function PatientData(props: {
   const { patients, setPatients, onRefresh, loader, isFetching} = props
   
   const [search, setSearch] = useState<{ keyword: string }>({ keyword: '' })
-  const [isSelectedAll, setIsSelectedAll] = useState<boolean>(false)
   
   return (
     <>
@@ -44,7 +43,7 @@ export default function PatientData(props: {
           <form className='row' onSubmit={e => e.preventDefault()}>
             <Col md={7} className='mb-1'>
               <TextField
-                disabled={false}
+                disabled={loader}
                 size='sm'
                 name='keyword'
                 value={search.keyword}
@@ -53,7 +52,7 @@ export default function PatientData(props: {
             </Col>
             
             <Col md={5} className='mb-1'>
-              <Button type='submit' disabled={false} variant='outline-primary' className='w-100' size='sm'>
+              <Button type='submit' disabled={loader} variant='outline-primary' className='w-100' size='sm'>
                 Rechercher des patients
               </Button>
             </Col>
@@ -63,14 +62,14 @@ export default function PatientData(props: {
       
       <Row className='px-6 pe-4 pb-4'>
         <Col md={6} className='mb-1'>
-          <Button disabled={false} variant='outline-warning' size='sm' className='me-1'>
+          <Button disabled={loader} variant='outline-warning' size='sm' className='me-1'>
             <i className='bi bi-file-earmark-pdf me-1'/>
             Imprimer en pdf
           </Button>
         </Col>
         
         <Col md={6} className='mb-1 text-md-end'>
-          <Button disabled={false} variant='outline-success' size='sm'>
+          <Button disabled={loader} variant='outline-success' size='sm'>
             <i className='bi bi-file-earmark-excel me-1'/>
             Exporter en excel
           </Button>
@@ -80,18 +79,7 @@ export default function PatientData(props: {
       <Table hover responsive>
         <thead className='table-light'>
         <tr>
-          <th style={{ fontSize: '1rem' }}>
-            <CheckField
-              inline
-              disabled={false}
-              name='isSelectedAll'
-              value={isSelectedAll}
-              checked={isSelectedAll}
-              onChange={(): void => selectAllStateItems(isSelectedAll, setIsSelectedAll, setPatients)}
-              className='me-0'
-            />
-            Nom complet
-          </th>
+          <th style={{ fontSize: '1rem' }}>Nom complet</th>
           
           {getPatientHeadItems().length > 0 && getPatientHeadItems().map(t =>
             <th key={t.th} style={{ fontSize: '1rem' }}>{t.th}</th>)}
@@ -103,7 +91,6 @@ export default function PatientData(props: {
           <PatientItem
             key={index}
             patient={c}
-            setPatients={setPatients}
             index={index}
             onRefresh={onRefresh}
           />)}

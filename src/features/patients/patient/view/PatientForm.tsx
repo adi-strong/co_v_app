@@ -70,7 +70,7 @@ export default function PatientForm({ data, onRefresh, loader = false }: {
                       <>
                         <Image
                           roundedCircle
-                          src={avatar}
+                          src={(avatar) as string}
                           style={{ width: '9rem', height: '9rem' }}
                           alt='avatar'
                         />
@@ -334,6 +334,7 @@ export default function PatientForm({ data, onRefresh, loader = false }: {
               <div className='mb-3'>
                 <SingleSelectField
                   required
+                  onRefresh={async (): Promise<void> => { await structuresRefresh() }}
                   disabled={isLoading || isEditLoading || isStructuresFetching || loader}
                   options={structuresOptions()}
                   value={patient?.fkStructure ?? null}

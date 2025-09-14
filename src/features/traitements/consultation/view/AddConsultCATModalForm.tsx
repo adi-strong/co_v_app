@@ -74,16 +74,29 @@ export default function AddConsultCATModalForm(props: {
           />
         </div>
         
+        <div className='mb-3'>
+          <TextAreaField
+            required
+            disabled={isLoading}
+            name='observation'
+            onChange={(e): void => handleChange(e, state, setState)}
+            value={state.observation}
+            label='Observation :'
+            error={errors.observation}
+            rows={7}
+            placeholder='Détails du suivi, C.A.T & Observation(s)...'
+          />
+        </div>
+        
         <TextAreaField
           required
           disabled={isLoading}
-          name='observation'
+          name='diagnostic'
           onChange={(e): void => handleChange(e, state, setState)}
-          value={state.observation}
-          label='Observation :'
-          error={errors.observation}
+          value={state.diagnostic}
+          label='Plainte(s) & Diagnostic :'
+          error={errors.diagnostic}
           rows={7}
-          placeholder='Détails du suivi, C.A.T & Observation(s)...'
         />
       </Modal.Body>
       

@@ -1,12 +1,14 @@
 import type {ExamenPrescrit} from "../../prescription/model/prescriptionService.ts";
 import type {Patient} from "../../../patients/patient/model/patientService.ts";
 import type {Consultation} from "../../consultation/model/consultationService.ts";
-import type {Dispatch, FormEvent, SetStateAction} from "react";
+import type {Dispatch, SetStateAction} from "react";
 import type {JsonLdApiResponseInt} from "../../../../interfaces/JsonLdApiResponseInt.ts";
 import toast from "react-hot-toast";
 import type {THeadItemType} from "../../../../services/services.ts";
 import type {Agent} from "../../../personnel/agent/model/agentService.ts";
-  
+import type {CategorieExam} from "../../categorieExam/model/categorieExamService.ts";
+import type {CategoryExamPayload, CategoryExamState} from "../../categorieExam/model/categorieExam.slice.ts";
+
 // INTERFACES OR TYPES
 export interface Lab {
   '@id'?: string
@@ -14,11 +16,12 @@ export interface Lab {
   fkConsultation: Consultation
   examPrescrits: ExamenPrescrit[]
   finished: false
-  conclusion: string
+  conclusion?: string
   comment: string
   fkPatient: Patient
   releasedAt?: string
   fkAgent?: Agent
+  nature?: string
 }
 
 export interface LabExams {
@@ -33,12 +36,14 @@ export interface SaveLab {
   examsItems: LabExams[]
   conclusion: string
   comment: string
+  nature: string
 }
 
 export interface LabError {
   examPrescrits: string | null
   conclusion: string | null
   comment: string | null
+  nature: string | null
 }
 // END INTERFACES OR TYPES
 
@@ -50,12 +55,14 @@ export const initLabState = (): SaveLab => ({
   comment: '',
   conclusion: '',
   examsItems: [],
+  nature: '',
 })
 
 export const initLabErrorState = (): LabError => ({
   examPrescrits: null,
   conclusion: null,
   comment: null,
+  nature: null,
 })
 // END INIT
 
@@ -76,7 +83,9 @@ export async function onLabSubmit(
   onRefresh?: () => void
 ): Promise<void> {
   
+  setErrors(initLabErrorState())
   const { id } = state
+  
   try {
     const { data, error}: JsonLdApiResponseInt<Lab> = await onSubmit(state)
     if (data) {
@@ -93,6 +102,11 @@ export async function onLabSubmit(
     }
   } catch (e) { toast.error('Problème réseau.') }
   
+}
+
+export const getLabExamsByCats = (exams: ExamenPrescrit[], setState: Dispatch<SetStateAction<CategoryExamPayload[]>>) => {
+  
+  return []
 }
 // END EVENTS & FUNCTIONS
 

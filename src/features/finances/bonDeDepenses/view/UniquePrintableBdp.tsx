@@ -2,8 +2,8 @@ import {Expense, getTotalDepense, regrouperParTypeDepenses} from "../model/bonDe
 import {Card, Image} from "react-bootstrap";
 import fecofaLogo from "../../../assets/images/logo192.png";
 import moment from "moment/moment";
-import {Fragment} from "react";
-import {formatDecimalNumberWithSpaces, formatNumberWithSpaces} from "../../../services";
+import {Fragment, ReactNode} from "react";
+import {formatDecimalNumberWithSpaces, formatNumberWithSpaces} from "../../../../services/services.ts";
 
 const imgStyle = {
   width: 60,
@@ -65,12 +65,12 @@ export default function UniquePrintableBdp({ expense }: { expense: Expense }) {
                 <Fragment key={i}>
                   <tr>
                     <th
-                      rowSpan={b.designations.length > 0 ? b.designations.length + 1 : undefined}
+                      rowSpan={b.designations.length > 0 ? b.designations.length + 1 : 0}
                       className='text-center px-1 pe-1'
                       style={{border: '1px solid #000'}}
                     >{(i + 1)}</th>
                     <th
-                      rowSpan={b.designations.length > 0 ? b.designations.length + 1 : undefined}
+                      rowSpan={b.designations.length > 0 ? b.designations.length + 1 : 0}
                       className='text-center px-1 pe-1'
                       style={{border: '1px solid #000'}}
                     >{b.type}</th>
@@ -92,7 +92,7 @@ export default function UniquePrintableBdp({ expense }: { expense: Expense }) {
                           Number(d.prixUnitaire) * Number(d.qte)
                         ))}
                       </td>
-                    </tr>)}
+                    </tr>) as ReactNode}
                 </Fragment>)}
             </tbody>
             

@@ -53,7 +53,6 @@ export default function useSetConsultData(
         fkAgent,
         fkType,
         renseignementClinic: data?.renseignementClinic ?? '',
-        diagnostic: data?.diagnostic ?? '',
         conclusion: data?.conclusion ?? '',
         comment: data?.comment ?? '',
         dateDebut: data?.dateDebut ? data.dateDebut.substring(0, 10) : '',

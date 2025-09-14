@@ -3,6 +3,7 @@ import moment from "moment/moment";
 import type {Consultation} from "../model/consultationService.ts";
 import {Badge} from "react-bootstrap";
 import {consultStatusColor, consultStatusLabel} from "../model/consultationService.ts";
+import {subStr} from "../../../../services/services.ts";
 
 export default function ConsultItem({ consultation, index, onRefresh }: {
   consultation: Consultation,
@@ -27,7 +28,8 @@ export default function ConsultItem({ consultation, index, onRefresh }: {
           </Link>
         </td>
         
-        <td>{fkType ? fkType.nom.toUpperCase() : '—'}</td>
+        <td title={fkType ? fkType.nom : ''}>{fkType ? subStr(fkType.nom.toUpperCase(), 30) : '—'}</td>
+        
         <td><Badge bg={consultStatusColor[statut]}>{consultStatusLabel[statut]}</Badge></td>
         
         <td>{dateDebut

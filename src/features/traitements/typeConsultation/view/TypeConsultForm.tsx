@@ -57,20 +57,6 @@ export default function TypeConsultForm({ data, onHide, onRefresh }: {
         
         <div className='mb-3'>
           <TextField
-            disabled={isLoading || isEditLoading}
-            type='number'
-            name='taxe'
-            onChange={(e): void => onConsultTaxChange(e, setState)}
-            value={state.taxe}
-            text='Ce champ ne peut accepter que des valeurs numériques.'
-            label='Taxe(s) / TVA'
-            size='sm'
-            error={errors.taxe}
-          />
-        </div>
-        
-        <div className='mb-3'>
-          <TextField
             required
             disabled={isLoading || isEditLoading}
             type='number'
@@ -81,6 +67,20 @@ export default function TypeConsultForm({ data, onHide, onRefresh }: {
             label='Prix HT'
             size='sm'
             error={errors.prixHt}
+          />
+        </div>
+        
+        <div className='mb-3'>
+          <TextField
+            disabled={isLoading || isEditLoading}
+            type='number'
+            name='taxe'
+            onChange={(e): void => onConsultTaxChange(e, setState)}
+            value={state.taxe}
+            text='Ce champ ne peut accepter que des valeurs numériques.'
+            label='Taxe(s) / TVA'
+            size='sm'
+            error={errors.taxe}
           />
         </div>
         
@@ -102,7 +102,7 @@ export default function TypeConsultForm({ data, onHide, onRefresh }: {
         </div>
         
         <Button disabled={isLoading || isEditLoading} type='submit' size='sm' className={data ? 'w-100' : ''}>
-          {(isLoading || isEditLoading) && (<Spinner className='me-1' animation='border' size='sm' />) as ReactNode}
+          {(isLoading || isEditLoading) && (<Spinner className='me-1' animation='border' size='sm'/>) as ReactNode}
           {!(isLoading || isEditLoading) && data ? 'Modifier ' : !(isLoading || isEditLoading) && 'Ajouter '}
           {(isLoading || isEditLoading) ? 'Veuillez patienter' : 'un type de fiches'}
         </Button>

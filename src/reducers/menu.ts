@@ -62,7 +62,7 @@ const initialState: MenuInterface = {
       subItems: [
         {label: 'Fiches des consultations', to: '/app/consultations'},
         {label: 'Nouvelle fiche', to: '/app/consultations/new'},
-        {label: 'Documents de suivi', to: '/app/suivis'},
+        {label: 'Nursing', to: '/app/suivis'},
         {label: 'Laboratoire', to: '/app/labs'},
         {label: 'Hospitalisations', to: '/app/hospitalisations'},
       ],

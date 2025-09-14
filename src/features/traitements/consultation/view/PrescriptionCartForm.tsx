@@ -7,7 +7,6 @@ import type {JsonLdApiResponseInt} from "../../../../interfaces/JsonLdApiRespons
 import type {Produit} from "../../../stock/produit/model/produitService.ts";
 import toast from "react-hot-toast";
 import {useState} from "react";
-import {initApproProductItem, onApproProductChange} from "../../../stock/appro/model/approService.ts";
 import SingleAsyncSelectField from "../../../../components/forms/SingleAsyncSelectField.tsx";
 import {
   initAutrePrescriptProduit,
@@ -58,7 +57,7 @@ export default function PrescriptionCartForm(props: {
   return (
     <form
       style={{ borderRadius: 6 }}
-      className='bg-secondary-subtle p-2 mb-3'
+      className='bg-light-subtle p-2 mb-3'
       onSubmit={e => onPrescirpCartSubmit(
         e,
         setState,
@@ -219,7 +218,7 @@ export default function PrescriptionCartForm(props: {
         </>
       )}
       
-      <Button type='submit' className='mt-3 w-100' disabled={loader}>
+      <Button size='sm' type='submit' className='mt-3 w-100' disabled={loader}>
         <i className='bi bi-cart3'/> Ajouter
       </Button>
     </form>

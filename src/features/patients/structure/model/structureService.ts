@@ -72,10 +72,8 @@ export const getStructureFakeData = (): Structure[] => [
 ]
 
 export const getStructureHeadItems = (): THeadItemType[] => [
-  { th: 'Point focal' },
   { th: 'N° Tél.' },
   { th: 'E-mail' },
-  { th: 'Date' },
 ]
 
 export async function onStructureSubmit(

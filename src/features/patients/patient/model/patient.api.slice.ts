@@ -9,14 +9,6 @@ const patientApiSlice = API.injectEndpoints({
 
   endpoints: build => ({
     
-    postPatient: build.mutation<Patient, FormData>({
-      query: (data: FormData) => ({
-        url: `${API_PATH}/patients`,
-        method: APP_METHODS.POST,
-        body: data
-      })
-    }),
-    
     getPatients: build.query<Patient[], string>({
       query: () => `${API_PATH}/patients`,
       transformResponse: (response: JsonLDResponseInt<Patient>) => {
@@ -34,6 +26,31 @@ const patientApiSlice = API.injectEndpoints({
       }
     }),
     
+    getStructurePatients: build.query<Patient[], string | number>({
+      query: (structureId: string | number) => `${API_PATH}/structures/${structureId}/patients`,
+      transformResponse: (response: JsonLDResponseInt<Patient>) => {
+        totalPatientsItems = response.totalItems
+        return response.member;
+      },
+      providesTags: (result) => {
+        if (result && Array.isArray(result)) {
+          return [
+            ...result.map(({ id }) => ({ type: 'UNIQUE' as const, id })),
+            { type: 'LIST' as const, id: 'LIST' }
+          ]
+        }
+        return [{ type: 'LIST' as const, id: 'LIST' }];
+      }
+    }),
+    
+    getUniquePatient: build.query<Patient, string | number | undefined>({
+      query: id => `${API_PATH}/patients/${id}`,
+      providesTags: (result, error, arg) => [{
+        type: 'UNIQUE',
+        id: arg
+      }]
+    }),
+    
     getSearchPatients: build.query<Patient[], string>({
       query: (keywords: string) => `${API_PATH}/patients?fullName=${keywords}`,
       transformResponse: (response: JsonLDResponseInt<Patient>) => {
@@ -49,6 +66,24 @@ const patientApiSlice = API.injectEndpoints({
         }
         return [{ type: 'LIST' as const, id: 'LIST' }];
       }
+    }),
+    
+    postPatient: build.mutation<Patient, FormData>({
+      query: (data: FormData) => ({
+        url: `${API_PATH}/patients`,
+        method: APP_METHODS.POST,
+        body: data
+      }),
+      invalidatesTags: ['LIST', 'UNIQUE']
+    }),
+    
+    updatePatient: build.mutation<void, FormData>({
+      query: (data: FormData) => ({
+        url: `${API_PATH}/patients_profile`,
+        method: APP_METHODS.POST,
+        body: data
+      }),
+      invalidatesTags: ['LIST', 'UNIQUE']
     }),
     
     editPatient: build.mutation<Patient, SavePatient>({
@@ -87,14 +122,6 @@ const patientApiSlice = API.injectEndpoints({
         body: JSON.stringify({ deleted: true })
       })
     }),
-    
-    getUniquePatient: build.query<Patient, string | number | undefined>({
-      query: id => `${API_PATH}/patients/${id}`,
-      providesTags: (result, error, arg) => [{
-        type: 'UNIQUE',
-        id: arg
-      }]
-    }),
 
   })
   
@@ -102,9 +129,11 @@ const patientApiSlice = API.injectEndpoints({
 
 export const {
   useGetPatientsQuery,
+  useGetStructurePatientsQuery,
   useLazyGetSearchPatientsQuery,
   useGetUniquePatientQuery,
   usePostPatientMutation,
   useEditPatientMutation,
   useDeletePatientMutation,
+  useUpdatePatientMutation,
 } = patientApiSlice

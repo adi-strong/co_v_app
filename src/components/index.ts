@@ -18,9 +18,12 @@ import ProfileHeaderComponent from "./ProfileHeaderComponent.tsx";
 import ColDataContent from "./ColDataContent.tsx";
 import SearchComp from "./SearchComp.tsx";
 import ActionsComp from "./ActionsComp.tsx";
-import PrintableContent from "./PrintableContent.tsx";
+import HospitalHeader from "./HospitalHeader.tsx";
+import HospFooter from "./HospFooter.tsx";
 
 export {
+  HospFooter,
+  HospitalHeader,
   ActionsComp,
   SearchComp,
   ColDataContent,

@@ -54,7 +54,7 @@ export default function LitForm({ data, onHide, onRefresh }: {
             name='fkCategorie'
             label='Catégorie'
             error={errors.fkCategorie}
-            placeholder='-- Aucune catégorie sélectionnée --'
+            placeholder='-- --'
             size='sm'
           />
         </div>

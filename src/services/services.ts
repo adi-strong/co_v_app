@@ -46,9 +46,17 @@ export interface TabInt { title: string, event: string }
 
 export type SexKey = 'H' | 'F'
 
+export type EtatCivilKey = 'CELIBATAIRE' | 'VEUF(VE)' | 'MARIE(E)'
+
 export const sexLabel: Record<SexKey, string> = {
   H: 'Homme',
   F: 'Femme',
+}
+
+export const etatCivilLabel: Record<EtatCivilKey, string> = {
+  CELIBATAIRE: 'CÉLIBATAIRE',
+  'VEUF(VE)': 'VEUF(VE)',
+  'MARIE(E)': 'MARIE(E)',
 }
 
 export const sexOptions = (): SelectOptionType[] => [
@@ -235,6 +243,16 @@ export const getTotalLastCurrencyAmount = (lastCurrency: string, devise: string,
   return lastCurrency === devise
     ? amount
     : amount / rate
+}
+
+export const getMediumMediaImage = (contentUrl: string): string => {
+  const parts: string[] = contentUrl.split('/')
+  return `/${parts[1]}/medium-${parts[2]}`
+}
+
+export const getMinMediaImage = (contentUrl: string): string => {
+  const parts: string[] = contentUrl.split('/')
+  return `/${parts[1]}/min-${parts[2]}`
 }
 // END INIT
 

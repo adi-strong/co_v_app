@@ -24,6 +24,7 @@ export default function useSetLabData(data?:Lab, setState?: Dispatch<SetStateAct
         comment: data?.comment ?? '',
         conclusion: data?.conclusion ?? '',
         examsItems,
+        nature: data?.nature ?? '',
       })
     }
   }, [data, setState])

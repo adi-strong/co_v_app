@@ -98,7 +98,7 @@ export default function ProduitForm({ data, onRefresh, onHide }: {
                       <Image
                         fluid
                         thumbnail
-                        src={avatar}
+                        src={(avatar) as string}
                         alt=''
                       />
                       

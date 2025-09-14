@@ -4,7 +4,6 @@ import {handleShow, onMouseEnterEvent, onMouseLeaveEvent, setSelectedDataItem} f
 import {CheckField, SideContent} from "../../../../components";
 import {Link} from "react-router-dom";
 import {Button} from "react-bootstrap";
-import moment from "moment";
 import type {Structure} from "../model/structureService.ts";
 import StructureForm from "./StructureForm.tsx";
 import RemoveStructureModal from "./RemoveStructureModal.tsx";
@@ -57,10 +56,8 @@ export default function StructureItem(props: {
           </div>
         </td>
         
-        <td>{structure?.focal?.toUpperCase() ?? '—'}</td>
         <td>{structure.tel}</td>
         <td>{structure?.email?.toLowerCase() ?? '—'}</td>
-        <td>{structure?.createdAt ? moment(structure.createdAt).format('DD/MM/YY') : '—'}</td>
       </tr>
       
       <RemoveStructureModal

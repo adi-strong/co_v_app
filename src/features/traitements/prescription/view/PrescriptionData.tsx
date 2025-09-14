@@ -1,21 +1,20 @@
-import type {Dispatch, SetStateAction} from "react";
-import {useState} from "react";
-import {Button, Card, Col, Row, Table} from "react-bootstrap";
+import {Dispatch, ReactNode, SetStateAction, useState} from "react";
+import {Button, Card, Col, Row, Spinner, Table} from "react-bootstrap";
 import {selectAllStateItems, tableWhiteStyle} from "../../../../services/services.ts";
 import {CheckField, TextField} from "../../../../components";
 import {handleChange} from "../../../../services/form.hander.service.ts";
-import {getFournisseurHeadItems} from "../../../stock/fournisseur/model/fournisseurService.ts";
 import type {Prescription} from "../model/prescriptionService.ts";
-import PrescriptionItem from "./PrescriptionItem.tsx";
 import {getPrescHeadItems} from "../model/prescriptionService.ts";
-import {Link} from "react-router-dom";
+import {RepeatableTableRows} from "../../../../loaders";
+import PrescriptionItem from "./PrescriptionItem.tsx";
 
 export default function PrescriptionData(props: {
   prescriptions: Prescription[]
   setPrescriptions: Dispatch<SetStateAction<Prescription[]>>
+  onRefresh: () => void
+  loader: boolean
+  isFetching: boolean
 }) {
-  
-  const { prescriptions, setPrescriptions } = props
   
   const [isSelectedAll, setIsSelectedAll] = useState<boolean>(false)
   const [search, setSearch] = useState<{ start: string, end: '', factId: string }>({
@@ -24,14 +23,24 @@ export default function PrescriptionData(props: {
     start: '',
   })
   
+  const {
+    prescriptions,
+    onRefresh,
+    loader,
+    isFetching,
+    setPrescriptions,
+  } = props
+  
   return (
     <>
       <Row>
         <Col md={3}>
           <Card.Title as='h5' className='mx-4 mt-5 me-4'>
-            <Button variant='link' size='sm' className='me-2'>
-              <i className='bi bi-arrow-clockwise'/>
+            <Button disabled={isFetching} variant='link' className='me-1' size='sm' onClick={onRefresh} title='Actualiser'>
+              {!isFetching && (<i className='bi bi-arrow-clockwise' />) as ReactNode}
+              {isFetching && (<Spinner animation='grow' size='sm' />) as ReactNode}
             </Button>
+            
             Liste d'ordonnances
           </Card.Title>
         </Col>
@@ -40,7 +49,7 @@ export default function PrescriptionData(props: {
           <form className='row' onSubmit={e => e.preventDefault()}>
             <Col md={2} className='mb-1'>
               <TextField
-                disabled={false}
+                disabled={loader}
                 size='sm'
                 name='factId'
                 value={search.factId}
@@ -51,7 +60,7 @@ export default function PrescriptionData(props: {
             
             <Col md={3} className='mb-1'>
               <TextField
-                disabled={false}
+                disabled={loader}
                 type='date'
                 size='sm'
                 name='start'
@@ -63,7 +72,7 @@ export default function PrescriptionData(props: {
             
             <Col md={3} className='mb-1'>
               <TextField
-                disabled={false}
+                disabled={loader}
                 type='date'
                 size='sm'
                 name='end'
@@ -119,27 +128,23 @@ export default function PrescriptionData(props: {
           </th>
           {getPrescHeadItems().length > 0 && getPrescHeadItems().map(t =>
             <th key={t.th} style={{fontSize: '1rem'}}>{t.th}</th>)}
+          <th/>
         </tr>
         </thead>
         
         <tbody style={tableWhiteStyle.tbody}>
-        {/* prescriptions.length > 0 && prescriptions.map((c, index: number) =>
+        {prescriptions.length > 0 && prescriptions.map((c, index: number) =>
           <PrescriptionItem
             key={index}
             prescription={c}
-            setPrescription={setPrescriptions}
             index={index}
-            isSelectedAll={isSelectedAll}
-            setIsSelectedAll={setIsSelectedAll}
-          />) */}
-        <tr>
-          <td><Link to='/app/prescriptions/1'>Voir</Link></td>
-          <td/>
-          <td/>
-          <td/>
-        </tr>
+            onRefresh={onRefresh}
+            setPrescription={setPrescriptions}
+          />) }
         </tbody>
       </Table>
+      
+      {loader && <RepeatableTableRows/>}
     </>
   )
   

@@ -47,7 +47,7 @@ export default function LitData(props: {
               {isFetching && (<Spinner animation='grow' size='sm' />) as ReactNode}
             </Button>
             
-            Nom
+            Désignation
           </th>
           {getLitHeadItems().length > 0 && getLitHeadItems().map(t =>
             <th key={t.th}>{t.th}</th>)}

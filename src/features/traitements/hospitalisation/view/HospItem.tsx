@@ -6,7 +6,7 @@ import {Badge, Button} from "react-bootstrap";
 import {useState} from "react";
 import HospModalForm from "./HospModalForm.tsx";
 import RemoveHospModal from "./RemoveHospModal.tsx";
-import {hospEntryColor, hospEntryLabel} from "../model/hospitalisationService.ts";
+import {hospEntryColor, hospEntryLabel, modeSortieColor, modeSortieLabel} from "../model/hospitalisationService.ts";
 import {consultStatusColor, consultStatusLabel} from "../../consultation/model/consultationService.ts";
 
 export default function HospItem({ hosp, index, onRefresh }: {
@@ -29,9 +29,8 @@ export default function HospItem({ hosp, index, onRefresh }: {
           onMouseEnter={(): void => onMouseEnterEvent(index)}
           onMouseLeave={(): void => onMouseLeaveEvent(index)}
         >
-          <Link to={`/app/hospitalisations/${id}`}>
-            {hosp.fkPatient?.fullName?.toUpperCase() ?? hosp?.fkPatient?.nom?.toUpperCase()}
-          </Link>
+          
+          {hosp.fkPatient?.fullName?.toUpperCase() ?? hosp?.fkPatient?.nom?.toUpperCase()}
           
           <div id={`actions-${index}`} hidden>
             {(!hosp.finished && hosp.statut !== 'ANNULEE' && hosp.statut !== 'TERMINEE') && (
@@ -39,27 +38,25 @@ export default function HospItem({ hosp, index, onRefresh }: {
                 <Button variant='link' size='sm' className='p-0' onClick={(): void => handleShow(setIsEdit)}>
                   Clôturer
                 </Button>
-                
-                {' | '}
-                
-                <Button variant='link' size='sm' className='p-0 text-danger' onClick={(): void => handleShow(setIsDel)}>
-                  Supprimer
-                </Button>
               </>
             )}
           </div>
         </td>
         
-        <td>
-          <Link to={`/app/lits/${hosp.fkLit.id}/${hosp.fkLit?.slug}`}>
-            {hosp.fkLit.numero}
-          </Link>
-        </td>
+        <td>{hosp.fkLit.numero}</td>
         
         <td>
           <Badge bg={hospEntryColor[hosp.modeEntree]}>
             {hospEntryLabel[hosp.modeEntree]}
           </Badge>
+        </td>
+        
+        <td>
+          {hosp?.modeSortie ? (
+            <Badge bg={modeSortieColor[hosp.modeSortie]}>
+              {modeSortieLabel[hosp.modeSortie]}
+            </Badge>
+          ) : '—'}
         </td>
         
         <td>
@@ -71,12 +68,6 @@ export default function HospItem({ hosp, index, onRefresh }: {
         <td>{hosp?.dateAdmission
           ? `du le ${moment(hosp.dateAdmission).format('DD/MM/YY à HH:mm')}`
           : '—'}</td>
-        
-        <td className='text-md-end'>
-          <Link to={`/app/hospitalisations/${id}`}>
-            <i className='bi bi-eye-fill'/>
-          </Link>
-        </td>
       </tr>
       
       <HospModalForm

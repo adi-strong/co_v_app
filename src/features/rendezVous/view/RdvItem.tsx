@@ -2,12 +2,12 @@ import type {Dispatch, ReactNode, SetStateAction} from "react";
 import {useState} from "react";
 import {handleShow, onMouseEnterEvent, onMouseLeaveEvent, setSelectedDataItem} from "../../../services/services.ts";
 import {CheckField, SideContent} from "../../../components";
-import {Link} from "react-router-dom";
 import {Button} from "react-bootstrap";
 import moment from "moment";
 import type {RendezVous} from "../model/rendezVousService.ts";
 import RdvForm from "./RdvForm.tsx";
 import RemoveRdvModal from "./RemoveRdvModal.tsx";
+import ShowRdv from "./ShowRdv.tsx";
 
 export default function RdvItem(props: {
   rdv: RendezVous
@@ -25,6 +25,7 @@ export default function RdvItem(props: {
   
   const [isEdit, setIsEdit] = useState<boolean>(false)
   const [isDel, setIsDel] = useState<boolean>(false)
+  const [show, setShow] = useState<boolean>(false)
   
   return (
     <>
@@ -43,9 +44,9 @@ export default function RdvItem(props: {
             onChange={(): void => setSelectedDataItem(index, setRdvs)}
             className='me-0'
           />
-          <Link to={`/app/services/${rdv.id}/${rdv?.slug}`}>
+          <Button variant='link' className='p-0' onClick={(): void => handleShow(setShow)}>
             {rdv.nom.toUpperCase()}
-          </Link>
+          </Button>
           
           <div id={`actions-${index}`} hidden>
             <Button variant='link' size='sm' className='p-0' onClick={(): void => handleShow(setIsEdit)}>
@@ -75,6 +76,14 @@ export default function RdvItem(props: {
         title='Modifier un rendez-vous'
         icon='pencil-square'
         children={<RdvForm data={rdv} onRefresh={onRefresh} onHide={(): void => handleShow(setIsEdit)}/> as ReactNode}
+      />
+      
+      <SideContent
+        show={show}
+        onHide={(): void => handleShow(setShow)}
+        title={`Rendez-vous du ${rdv?.releasedAt ? moment(rdv.releasedAt).format('DD/MM/YY') : '—'}`}
+        icon='eye-fill'
+        children={<ShowRdv rdv={rdv} /> as ReactNode}
       />
     </>
   )

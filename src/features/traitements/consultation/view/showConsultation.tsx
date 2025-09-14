@@ -8,7 +8,6 @@ import LogoLoader from "../../../../loaders/LogoLoader.tsx";
 import {getUniqueConsultHeadItems} from "../model/consultationService.ts";
 import ShowConsultFileTab from "./consultTab/showConsultFileTab.tsx";
 import ShowConsultAnamnesis from "./consultTab/showConsultAnamnesis.tsx";
-import ShowConsultTreatment from "./consultTab/showConsultTreatment.tsx";
 
 const ShowConsultation = () => {
   
@@ -25,7 +24,7 @@ const ShowConsultation = () => {
   
   return (
     <BodyContainer>
-      <PageTitles title={`Fiche de consultation : ${data && data?.fkType && data.fkType.nom}`}/>
+      <PageTitles title={`Fiche de consultation : ${data && data?.fkType ? data.fkType.nom : ''}`}/>
       
       <Row>
         <Col md={6} className='mb-2'>
@@ -42,10 +41,6 @@ const ShowConsultation = () => {
               <i className='bi bi-pencil-square'/> Modifier
             </Link>
           ) as ReactNode}
-          
-          <Button disabled={isFetching} variant='outline-info' size='sm' className='mb-1' onClick={() => {}}>
-            <i className='bi bi-printer-fill'/> Imprimer
-          </Button>
         </Col>
       </Row>
       
@@ -68,7 +63,6 @@ const ShowConsultation = () => {
             <>
               {tabKey === 'file' && <ShowConsultFileTab consult={data} onRefresh={onRefresh}/>}
               {tabKey === 'anamnesis' && <ShowConsultAnamnesis consult={data}/>}
-              {tabKey === 'treatments' && <ShowConsultTreatment consult={data} onRefresh={onRefresh}/>}
             </>
           )}
           

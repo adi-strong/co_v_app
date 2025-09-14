@@ -108,6 +108,20 @@ export const initHospitalisationErrorState = (): HospitalisationError => ({
   mode: null,
   finished: null,
 })
+
+export type ModeSortieKeys = 'URGENCE' | 'TRANSFERT' | 'FIN_SUIVI'
+
+export const modeSortieLabel: Record<ModeSortieKeys, string> = {
+  FIN_SUIVI: 'FIN DE SUIVI',
+  URGENCE: 'URGENCE',
+  TRANSFERT: 'TRANSFERT',
+}
+
+export const modeSortieColor: Record<ModeSortieKeys, string> = {
+  FIN_SUIVI: 'danger',
+  URGENCE: 'warning',
+  TRANSFERT: 'primary',
+}
 // END INIT
 
 /* ------------------------------------------- */
@@ -115,9 +129,10 @@ export const initHospitalisationErrorState = (): HospitalisationError => ({
 // EVENTS & FUNCTIONS
 export const getHospHeadItems = (): THeadItemType[] => [
   { th: 'Lit' },
-  { th: 'Mode d\'entrée' },
+  { th: 'Entrée' },
+  { th: 'Sortie' },
   { th: 'Statut' },
-  { th: 'Date d\'enregistrement' },
+  { th: 'Date' },
 ]
 
 export const getHospEntryModeOptions = (): SelectOptionType[] => [

@@ -70,6 +70,7 @@ const categorieExamApiSlice = API.injectEndpoints({
 export const {
   usePostCategorieExamMutation,
   useGetCategoriesExamsQuery,
+  useLazyGetCategoriesExamsQuery,
   useEditCategorieExamMutation,
   useDeleteCategorieExamMutation,
   useGetUniqueCategorieExamQuery,

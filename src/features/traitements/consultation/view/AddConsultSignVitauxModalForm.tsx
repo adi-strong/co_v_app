@@ -102,7 +102,7 @@ export default function AddConsultSignVitauxModalForm(props: {
               name='saturationEnOxygene'
               onChange={(e): void => handleChange(e, state, setState)}
               value={state.saturationEnOxygene}
-              label='Fréquence cardiaque (SpO2, ...)'
+              label='Saturation en oxygène (SpO2, ...)'
               size='sm'
             />
           </Col>

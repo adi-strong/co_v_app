@@ -2,15 +2,19 @@ import {Button, Modal} from "react-bootstrap";
 import type {Structure} from "../model/structureService.ts";
 import {useDeleteStructureMutation} from "../model/structure.api.slice.ts";
 import {onDeleteStructureSubmit} from "../model/structureService.ts";
+import {useNavigate} from "react-router-dom";
 
 export default function RemoveStructureModal(props: {
   data: Structure,
   show: boolean,
   onHide: () => void,
   onRefresh: () => void
+  isRedirect?: boolean
 }) {
   
-  const { show, data, onHide, onRefresh } = props
+  const navigate = useNavigate()
+  
+  const { show, data, onHide, onRefresh, isRedirect } = props
   
   const [onDeleteStructure] = useDeleteStructureMutation()
   
@@ -28,14 +32,14 @@ export default function RemoveStructureModal(props: {
         </p>
         
         <code className='text-dark'>
-          Êtes-vous certain(e) de vouloir supprimer ce
-          <b className='mx-1'>Service</b>
+          Êtes-vous certain(e) de vouloir supprimer cette
+          <b className='mx-1'>Convention</b>
           <i className='bi bi-question-circle text-danger mx-1'/>
         </code>
       </Modal.Body>
       
       <Modal.Footer>
-        <Button variant='outline-dark'><i className='bi bi-x'/> Annuler</Button>
+        <Button variant='outline-dark' onClick={onHide}><i className='bi bi-x'/> Annuler</Button>
         <Button
           autoFocus
           variant='danger'
@@ -43,7 +47,8 @@ export default function RemoveStructureModal(props: {
             data,
             onDeleteStructure,
             onRefresh,
-            onHide
+            onHide,
+            isRedirect ? navigate : undefined
           )}
         >
           <i className='bi bi-trash'/> Supprimer

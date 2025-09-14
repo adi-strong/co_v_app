@@ -95,7 +95,6 @@ export default function HospData({ hosps, loader, isFetching, onRefresh }: {
           
           {getHospHeadItems().length > 0 && getHospHeadItems().map(t =>
             <th key={t.th} style={{ fontSize: '1rem' }}>{t.th}</th>)}
-          <th/>
         </tr>
         </thead>
         

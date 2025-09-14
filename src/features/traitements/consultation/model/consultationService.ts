@@ -27,6 +27,19 @@ export interface SigneVital {
   releasedAt?: string
 }
 
+export interface SigneVitalHistoric {
+  date: string
+  content: {
+    temperature?: number
+    poids?: number
+    tensionArterielle?: string
+    frequenceCardiaque?: string
+    frequenceRespiratoire?: string
+    saturationEnOxygene?: string
+    comment?: string
+  }[]
+}
+
 export interface SaveSigneVital {
   temperature: number
   poids: number
@@ -66,7 +79,6 @@ export interface Consultation {
   '@id'?: string
   id: number
   motif: string
-  diagnostic: string
   conclusion?: string
   comment?: string
   statut: string
@@ -111,7 +123,6 @@ export interface PrescriptionItem {
 
 export interface SaveConsultation {
   id: number
-  diagnostic: string
   conclusion: string
   comment: string
   statut: string
@@ -199,7 +210,6 @@ export const initConsultationState = (): SaveConsultation => ({
   dateFin: '',
   soinsItems: null,
   dateDebut: '',
-  diagnostic: '',
   examsItems: [],
   isSign: false,
   conclusion: '',
@@ -268,7 +278,6 @@ export const getConsultHeadItems = (): THeadItemType[] => [
 export const getUniqueConsultHeadItems = (): TabInt[] => [
   { title: 'Anamnèse', event: 'anamnesis' },
   { title: 'Fiche', event: 'file' },
-  { title: 'Traitements', event: 'treatments' },
 ]
 
 /**

@@ -32,7 +32,7 @@ export const handleChange = (
 };
 
 export const handleSubItemToTheItemArrayChange = (
-  e: ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+  e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
   index: number,
   setState: Dispatch<React.SetStateAction<object>>,
   field: string // <- ce sera "sn"

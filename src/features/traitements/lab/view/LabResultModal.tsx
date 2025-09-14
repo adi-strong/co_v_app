@@ -1,10 +1,10 @@
 import type {Lab} from "../model/labService.ts";
-import {Button, Col, Modal, Row, Spinner} from "react-bootstrap";
+import {Button, Form, InputGroup, Modal, Spinner} from "react-bootstrap";
 import {ReactNode, useState} from "react";
 import {initLabErrorState, initLabState, onLabSubmit} from "../model/labService.ts";
 import useSetLabData from "../hooks/useSetLabData.ts";
 import {useEditLabMutation} from "../model/lab.api.slice.ts";
-import {TextAreaField, TextField} from "../../../../components";
+import {FormRequiredFieldsNoticeText, TextAreaField, TextField} from "../../../../components";
 import {handleChange, handleSubItemToTheItemArrayChange} from "../../../../services/form.hander.service.ts";
 
 export default function LabResultModal(props: {
@@ -29,18 +29,37 @@ export default function LabResultModal(props: {
   
   return (
     <Modal show={show} onHide={onHide} size='lg'>
-      <Modal.Header closeButton className='bg-danger-subtle'>
+      <Modal.Header closeButton className='bg-primary'>
         <Modal.Title><i className='bi bi-file-earmark-medical'/> Résultats après analyses labo</Modal.Title>
       </Modal.Header>
       
       <Modal.Body>
-        <div className='bg-light-subtle p-2' style={{ borderRadius: 6 }}>
+        <FormRequiredFieldsNoticeText/>
+        
+        <div className='mb-3 mt-3'>
+          <TextField
+            required
+            disabled={isLoading}
+            name='nature'
+            value={state.nature}
+            onChange={e => handleChange(e, state, setState)}
+            label="Nature de l'échantillon"
+            rows={5}
+            error={errors.nature}
+          />
+        </div>
+        
+        <hr/>
+        
+        <div className='bg-light-subtle pt-3 pb-3 px-3 pe-3' style={{borderRadius: 6}}>
           {state.examsItems.length > 0 && state.examsItems.map((exam, index) => (
-            <Row key={index}>
-              <Col md={6} className='mb-3'>
-                <TextField
+            <div key={index} className='mb-3'>
+              <i className='bi bi-pin-angle-fill text-danger'/> {exam.label}
+              <InputGroup>
+                <InputGroup.Text>Résultat</InputGroup.Text>
+                
+                <Form.Control
                   disabled={isLoading}
-                  name='resultats'
                   label={<>Résultat : <b>{exam.label}</b></>}
                   value={exam.resultats}
                   size='sm'
@@ -51,13 +70,10 @@ export default function LabResultModal(props: {
                     'examsItems'
                   )}
                 />
-              </Col>
-              
-              <Col md={6} className='mb-3'>
+                
                 <TextField
                   disabled={isLoading}
                   name='valeurNormale'
-                  label='Valeur(s) normale(s)'
                   value={exam.valeurNormale}
                   size='sm'
                   onChange={e => handleSubItemToTheItemArrayChange(
@@ -67,10 +83,14 @@ export default function LabResultModal(props: {
                     'examsItems'
                   )}
                 />
-              </Col>
-            </Row>
+                
+                <InputGroup.Text>Valeur normale</InputGroup.Text>
+              </InputGroup>
+            </div>
           ) as ReactNode)}
         </div>
+        
+        <hr/>
         
         <div className='mb-3 mt-3'>
           <TextAreaField

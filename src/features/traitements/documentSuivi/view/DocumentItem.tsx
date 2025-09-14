@@ -1,4 +1,4 @@
-import {formatNumberWithSpaces} from "../../../../services/services.ts";
+import {formatNumberWithSpaces, subStr} from "../../../../services/services.ts";
 import {Link} from "react-router-dom";
 import moment from "moment";
 import type {DocumentSuivi} from "../model/documentSuiviService.ts";
@@ -23,11 +23,11 @@ export default function DocumentItem({ doc }: { doc: DocumentSuivi }) {
           </Link>
         </td>
         
-        <td className='text-uppercase'>
+        <td className='text-uppercase' title={fkConsultation?.fkType?.nom ?? ''}>
           {fkConsultation ? (
             <Link to={`/app/consultations/${fkConsultation.id}`}>
               <span className='text-dark me-1'>#{formatNumberWithSpaces(fkConsultation.id)}</span>:
-              {fkConsultation?.fkType?.nom}
+              {subStr(fkConsultation?.fkType ? fkConsultation.fkType.nom : '', 30)}
             </Link>
           ) : '—'}
         </td>

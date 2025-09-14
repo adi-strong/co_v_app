@@ -2,15 +2,19 @@ import {Button, Modal} from "react-bootstrap";
 import type {Patient} from "../model/patientService.ts";
 import {useDeletePatientMutation} from "../model/patient.api.slice.ts";
 import {onDeletePatientSubmit} from "../model/patientService.ts";
+import {useNavigate} from "react-router-dom";
 
 export default function RemovePatientModal(props: {
   data: Patient,
   show: boolean,
   onHide: () => void,
   onRefresh: () => void
+  isRedirect?: boolean
 }) {
   
-  const { show, data, onHide, onRefresh } = props
+  const navigate = useNavigate()
+  
+  const { show, data, onHide, onRefresh, isRedirect } = props
   
   const [onDeletePatient] = useDeletePatientMutation()
   
@@ -35,7 +39,7 @@ export default function RemovePatientModal(props: {
       </Modal.Body>
       
       <Modal.Footer>
-        <Button variant='outline-dark'><i className='bi bi-x'/> Annuler</Button>
+        <Button variant='outline-dark' onClick={onHide}><i className='bi bi-x'/> Annuler</Button>
         <Button
           autoFocus
           variant='danger'
@@ -43,7 +47,8 @@ export default function RemovePatientModal(props: {
             data,
             onDeletePatient,
             onRefresh,
-            onHide
+            onHide,
+            isRedirect ? navigate : undefined
           )}
         >
           <i className='bi bi-trash'/> Supprimer

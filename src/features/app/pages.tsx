@@ -56,6 +56,8 @@ const
     import('../traitements/documentSuivi/view/showDocumentSuivi.tsx')),
   Labs = lazy(() =>
     import('../traitements/lab/view/labView.tsx')),
+  ULab = lazy(() =>
+    import('../traitements/lab/view/showLab.tsx')),
   Exams = lazy(() =>
     import('../traitements/examen/view/examenView.tsx')),
   Hosp = lazy(() =>
@@ -96,6 +98,8 @@ const
   
   Struct = lazy(() =>
     import('../patients/structure/view/structureView.tsx')),
+  UStruct = lazy(() =>
+    import('../patients/structure/view/showStructure.tsx')),
   Pat = lazy(() =>
     import('../patients/patient/view/patientView.tsx')),
   NPat = lazy(() =>
@@ -243,6 +247,10 @@ const pages: RouteType[] = [
         element: <Labs />
       },
       {
+        path: 'labs/:id',
+        element: <ULab />
+      },
+      {
         path: 'examens',
         element: <Exams />
       },
@@ -327,6 +335,10 @@ const pages: RouteType[] = [
       {
         path: 'structures',
         element: <Struct />
+      },
+      {
+        path: 'structures/:id/:slug',
+        element: <UStruct />
       },
       {
         path: 'patients',
