@@ -12,6 +12,7 @@ export interface UniteConsommation {
   updatedAt?: string
   slug?: string
   selected: boolean
+  total: number
 }
 
 export interface SaveUniteConsommation {
@@ -48,6 +49,7 @@ export const getUniteConsommationFakeData = (): UniteConsommation[] => [
     createdAt: new Date().toISOString(),
     "@id": '/api/unite_consommations/1',
     selected: false,
+    total: 0,
   },
   {
     id: 2,
@@ -56,6 +58,7 @@ export const getUniteConsommationFakeData = (): UniteConsommation[] => [
     createdAt: new Date().toISOString(),
     "@id": '/api/unite_consommations/2',
     selected: false,
+    total: 0,
   },
 ]
 

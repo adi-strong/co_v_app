@@ -56,6 +56,11 @@ export interface ProduitError {
   fkUnite: string | null
   file: string | null
 }
+
+export interface ProduitImage {
+  produitId: number
+  file: ImageListType
+}
 // END INTERFACES OR TYPES
 
 /* ------------------------------------------- */
@@ -83,6 +88,8 @@ export const initProduitErrorState = (): ProduitError => ({
   fkUnite: null,
   file: null,
 })
+
+export const initProduitImage = (): ProduitImage => ({ produitId: 0, file: [] })
 // END INIT
 
 /* ------------------------------------------- */
@@ -228,13 +235,14 @@ export async function onPatchProduitSubmit(
   navigate?: NavigateFunction
 ): Promise<void> {
   
+  onHide()
+  
   const { id } = state
   
   try {
     const { data, error }: JsonLdApiResponseInt<Produit> = await onSubmit(state)
     if (data) {
       toast.success('Modification bien effectuée.')
-      onHide()
       
       if (onRefresh) onRefresh()
       if (handleHide) handleHide()
@@ -255,8 +263,10 @@ export async function onDeleteProduitSubmit(
   state: Produit,
   onSubmit: (data: Produit) => Promise<void>,
   onRefresh: () => void,
+  onHide?: () => void,
   navigate?: NavigateFunction
 ): Promise<void> {
+  if (onHide) onHide()
   
   try {
     const { error }: JsonLdApiResponseInt<Produit> = await onSubmit(state)
@@ -269,6 +279,33 @@ export async function onDeleteProduitSubmit(
     }
   } catch (e) { toast.error('Problème réseau.') }
   
+}
+
+export const onUpdateProduitImageSubmit = async (
+  state: ProduitImage,
+  setState: Dispatch<SetStateAction<ProduitImage>>,
+  onSubmit: (data: FormData) => Promise<any>,
+  onRefresh: () => void,
+  onHide?: () => void
+): Promise<void> => {
+  if (onHide) onHide()
+  
+  const { file, produitId } = state
+  
+  const formData = new FormData()
+  if (file && file[0]?.file) formData.append('file', file[0].file)
+  if (produitId && produitId > 0) formData.append('produitId', produitId.toString())
+  
+  try {
+    const { data, error }: JsonLdApiResponseInt<void> = await onSubmit(formData)
+    if (data) {
+      toast.error('Image mis à jour.')
+      setState(initProduitImage())
+      onRefresh()
+    }
+    
+    if (error && error?.data && error.data?.detail) toast.error(error.data.detail)
+  } catch (e) { toast.error('Problème réseau') }
 }
 // END EVENTS & FUNCTIONS
 

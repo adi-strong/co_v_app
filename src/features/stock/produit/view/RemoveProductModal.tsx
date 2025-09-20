@@ -2,15 +2,19 @@ import {Button, Modal} from "react-bootstrap";
 import type {Produit} from "../model/produitService.ts";
 import {useDeleteProduitMutation} from "../model/produit.api.slice.ts";
 import {onDeleteProduitSubmit} from "../model/produitService.ts";
+import {useNavigate} from "react-router-dom";
 
 export default function RemoveProductModal(props: {
   data: Produit
   show: boolean
   onHide: () => void
   onRefresh: () => void
+  isRedirect?: boolean
 }) {
   
-  const { show, data, onHide, onRefresh } = props
+  const navigate = useNavigate()
+  
+  const { show, data, onHide, onRefresh, isRedirect } = props
   
   const [onDeleteProduct] = useDeleteProduitMutation()
   
@@ -35,7 +39,7 @@ export default function RemoveProductModal(props: {
       </Modal.Body>
       
       <Modal.Footer>
-        <Button variant='outline-dark'><i className='bi bi-x'/> Annuler</Button>
+        <Button variant='outline-dark' onClick={onHide}><i className='bi bi-x'/> Annuler</Button>
         <Button
           autoFocus
           variant='danger'
@@ -43,7 +47,8 @@ export default function RemoveProductModal(props: {
             data,
             onDeleteProduct,
             onRefresh,
-            onHide
+            onHide,
+            isRedirect ? navigate : undefined
           )}
         >
           <i className='bi bi-trash'/> Supprimer

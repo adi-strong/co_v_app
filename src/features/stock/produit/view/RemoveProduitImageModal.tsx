@@ -1,13 +1,13 @@
-import {Button, Modal} from "react-bootstrap";
-import type {PatientImage} from "../model/patientService.ts";
 import type {Dispatch, SetStateAction} from "react";
-import {onUpdatePatientProfileSubmit} from "../model/patientService.ts";
+import {Button, Modal} from "react-bootstrap";
+import type {ProduitImage} from "../model/produitService.ts";
+import {onUpdateProduitImageSubmit} from "../model/produitService.ts";
 
-export default function RemovePatientProfileModal(props: {
+export default function RemoveProduitImageModal(props: {
   show: boolean
   onHide: () => void
-  state: PatientImage
-  setState: Dispatch<SetStateAction<PatientImage>>
+  state: ProduitImage
+  setState: Dispatch<SetStateAction<ProduitImage>>
   onSubmit: (data: FormData) => Promise<any>
   onRefresh: () => void
 }) {
@@ -41,7 +41,7 @@ export default function RemovePatientProfileModal(props: {
           <i className='bi bi-x'/> Annuler
         </Button>
         
-        <Button variant='warning' onClick={async (): Promise<void> => onUpdatePatientProfileSubmit(
+        <Button variant='warning' onClick={async (): Promise<void> => onUpdateProduitImageSubmit(
           state,
           setState,
           onSubmit,

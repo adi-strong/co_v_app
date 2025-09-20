@@ -1,17 +1,17 @@
-import type {Patient, PatientImage} from "../model/patientService.ts";
 import {ReactNode, useState} from "react";
-import {initPatientImageState} from "../model/patientService.ts";
-import useSetPatientImageData from "../model/useSetPatientImageData.ts";
-import avatar from '../../../../assets/images/placeholder/placeholder-4by3.svg';
-import {Button, Image} from "react-bootstrap";
 import ImageUploading, {ImageListType, ImageType} from "react-images-uploading";
+import {Button, Image} from "react-bootstrap";
 import {APP_ENTRYPOINT} from "../../../../config/configs.ts";
+import avatar from "../../../../assets/images/placeholder/placeholder-4by3.svg";
 import {handleShow} from "../../../../services/services.ts";
-import RemovePatientProfileModal from "./RemovePatientProfileModal.tsx";
-import useUploadNewPatientProfile from "../hooks/useUploadNewPatientProfile.tsx";
+import type {Produit, ProduitImage} from "../model/produitService.ts";
+import {initProduitImage} from "../model/produitService.ts";
+import useSetProduitImageData from "../hooks/useSetProduitImageData.ts";
+import useUploadNewProduitImage from "../hooks/useUploadNewProduitProfile.ts";
+import RemoveProduitImageModal from "./RemoveProduitImageModal.tsx";
 
-export default function UniquePatientImageForm({ patient, loader, onSubmit, onRefresh, isLoading }: {
-  patient: Patient
+export default function UniqueProduitImageForm({ produit, loader, onSubmit, onRefresh, isLoading }: {
+  produit: Produit
   loader: boolean
   onRefresh: () => void
   isLoading: boolean
@@ -21,12 +21,12 @@ export default function UniquePatientImageForm({ patient, loader, onSubmit, onRe
   const maxNumber: number = 1
   
   const [show, setShow] = useState<boolean>(false)
-  const [state, setState] = useState<PatientImage>(initPatientImageState())
+  const [state, setState] = useState<ProduitImage>(initProduitImage())
   
-  const { profil } = patient
+  const { image } = produit
   
-  useSetPatientImageData(patient, setState)
-  useUploadNewPatientProfile(state, setState, onRefresh)
+  useSetProduitImageData(produit, setState)
+  useUploadNewProduitImage(state, setState, onRefresh)
   
   const onImageChange = (imageList: ImageListType): void => setState(a => ({
     ...a,
@@ -51,13 +51,13 @@ export default function UniquePatientImageForm({ patient, loader, onSubmit, onRe
                     <Image
                       fluid
                       thumbnail
-                      src={(profil ? APP_ENTRYPOINT+profil.contentUrl : avatar) as string}
+                      src={(image ? APP_ENTRYPOINT+image.contentUrl : avatar) as string}
                       alt=''
                     />
                     
                     <div className='mt-3 text-center'>
                       <Button
-                       disabled={loader  || isLoading}
+                        disabled={loader  || isLoading}
                         type='button'
                         variant='outline-white'
                         className='me-1'
@@ -65,10 +65,10 @@ export default function UniquePatientImageForm({ patient, loader, onSubmit, onRe
                       ><i className='bi bi-upload'/> Téléverser</Button>
                       
                       <Button
-                       disabled={loader  || isLoading}
+                        disabled={loader  || isLoading}
                         type='button'
                         variant='outline-white'
-                        onClick={(): void | {} => profil ? handleShow(setShow) : { }}
+                        onClick={(): void | {} => image ? handleShow(setShow) : { }}
                       ><i className='bi bi-trash'/> Supprimer</Button>
                     </div>
                   </>
@@ -105,7 +105,7 @@ export default function UniquePatientImageForm({ patient, loader, onSubmit, onRe
         </>
       )}
       
-      <RemovePatientProfileModal
+      <RemoveProduitImageModal
         show={show}
         onHide={(): void => handleShow(setShow)}
         state={state}

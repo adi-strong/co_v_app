@@ -2,15 +2,19 @@ import {Button, Modal} from "react-bootstrap";
 import type {UniteConsommation} from "../model/uniteConsommationService.ts";
 import {useDeleteUniteConsommationMutation} from "../model/uniteConsommation.api.slice.ts";
 import {onDeleteUniteConsommationSubmit} from "../model/uniteConsommationService.ts";
+import {useNavigate} from "react-router-dom";
 
 export default function RemoveUniteConsommationModal(props: {
   data: UniteConsommation,
   show: boolean,
+  isRedirect?: boolean,
   onHide: () => void,
   onRefresh: () => void
 }) {
   
-  const { show, data, onHide, onRefresh } = props
+  const navigate = useNavigate()
+  
+  const { show, data, onHide, onRefresh, isRedirect } = props
   
   const [onDeleteUnite] = useDeleteUniteConsommationMutation()
   
@@ -43,7 +47,8 @@ export default function RemoveUniteConsommationModal(props: {
             data,
             onDeleteUnite,
             onRefresh,
-            onHide
+            onHide,
+            isRedirect ? navigate : undefined
           )}
         >
           <i className='bi bi-trash'/> Supprimer

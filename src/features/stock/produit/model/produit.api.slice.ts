@@ -26,6 +26,40 @@ const produitApiSlice = API.injectEndpoints({
       }
     }),
     
+    getProduitsByCategory: build.query<Produit[], string | number>({
+      query: (categoryId: string | number) => `${API_PATH}/categorie_produits/${categoryId}/produits`,
+      transformResponse: (response: JsonLDResponseInt<Produit>) => {
+        totalProduitsItems = response.totalItems
+        return response.member;
+      },
+      providesTags: (result) => {
+        if (result && Array.isArray(result)) {
+          return [
+            ...result.map(({ id }) => ({ type: 'UNIQUE' as const, id })),
+            { type: 'LIST' as const, id: 'LIST' }
+          ]
+        }
+        return [{ type: 'LIST' as const, id: 'LIST' }];
+      }
+    }),
+    
+    getProduitsByUnity: build.query<Produit[], string | number>({
+      query: (unitId: string | number) => `${API_PATH}/unite_consommations/${unitId}/produits`,
+      transformResponse: (response: JsonLDResponseInt<Produit>) => {
+        totalProduitsItems = response.totalItems
+        return response.member;
+      },
+      providesTags: (result) => {
+        if (result && Array.isArray(result)) {
+          return [
+            ...result.map(({ id }) => ({ type: 'UNIQUE' as const, id })),
+            { type: 'LIST' as const, id: 'LIST' }
+          ]
+        }
+        return [{ type: 'LIST' as const, id: 'LIST' }];
+      }
+    }),
+    
     getSearchProduits: build.query<Produit[], string>({
       query: (keywords: string) => `${API_PATH}/produits?nom=${keywords}`,
       transformResponse: (response: JsonLDResponseInt<Produit>) => {
@@ -56,7 +90,17 @@ const produitApiSlice = API.injectEndpoints({
         url: `${API_PATH}/produits`,
         method: APP_METHODS.POST,
         body: data
-      })
+      }),
+      invalidatesTags: ['LIST', 'UNIQUE']
+    }),
+    
+    updateProduitImage: build.mutation<void, FormData>({
+      query: (data: FormData) => ({
+        url: `${API_PATH}/produits_image`,
+        method: APP_METHODS.POST,
+        body: data
+      }),
+      invalidatesTags: ['LIST', 'UNIQUE']
     }),
     
     editProduit: build.mutation<Produit, SaveProduit>({
@@ -86,7 +130,8 @@ const produitApiSlice = API.injectEndpoints({
         method: APP_METHODS.PATCH,
         headers: APP_HEADERS.PATCH_HEADERS,
         body: JSON.stringify({ deleted: true })
-      })
+      }),
+      invalidatesTags: ['LIST', 'UNIQUE']
     }),
 
   })
@@ -96,9 +141,12 @@ const produitApiSlice = API.injectEndpoints({
 export const {
   useGetProduitsQuery,
   useLazyGetSearchProduitsQuery,
+  useGetProduitsByCategoryQuery,
+  useGetProduitsByUnityQuery,
   useLazyGetProduitsQuery,
   useGetUniqueProduitQuery,
   usePostProduitMutation,
   useEditProduitMutation,
   useDeleteProduitMutation,
+  useUpdateProduitImageMutation,
 } = produitApiSlice

@@ -1,6 +1,6 @@
 import {BodyContainer, PageTitles} from "../../../../components";
 import {Link, useParams} from "react-router-dom";
-import {memo, ReactNode, useRef} from "react";
+import {memo, ReactNode, RefObject, useRef} from "react";
 import {useActivePage, useDocumentTitle} from "../../../../hooks";
 import {Button, Card, Col, Row, Spinner} from "react-bootstrap";
 import {useReactToPrint} from "react-to-print";
@@ -17,7 +17,7 @@ const ShowPrescription = () => {
   useDocumentTitle(`Ordonnance n°${id}`)
   useActivePage('prescriptions')
   
-  const contentRef = useRef<HTMLDivElement | null>(null)
+  const contentRef: RefObject<HTMLDivElement | null> = useRef<HTMLDivElement | null>(null)
   
   const onRefresh = async (): Promise<void> => { await refetch() }
   

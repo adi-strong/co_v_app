@@ -26,6 +26,23 @@ const lotProduitApiSlice = API.injectEndpoints({
       }
     }),
     
+    getLotProduitsByProduct: build.query<LotProduit[], string | number>({
+      query: (produitId: string | number) => `${API_PATH}/produits/${produitId}/lot_produits`,
+      transformResponse: (response: JsonLDResponseInt<LotProduit>) => {
+        totalLotProduitsItems = response.totalItems
+        return response.member;
+      },
+      providesTags: (result) => {
+        if (result && Array.isArray(result)) {
+          return [
+            ...result.map(({ id }) => ({ type: 'UNIQUE' as const, id })),
+            { type: 'LIST' as const, id: 'LIST' }
+          ]
+        }
+        return [{ type: 'LIST' as const, id: 'LIST' }];
+      }
+    }),
+    
     getUniqueLotProduit: build.query<LotProduit, string | number | undefined>({
       query: id => `${API_PATH}/lot_produits/${id}`,
       providesTags: (result, error, arg) => [{
@@ -46,10 +63,7 @@ const lotProduitApiSlice = API.injectEndpoints({
           fkFournisseur: data?.fkFournisseur ? data.fkFournisseur?.data : null,
         })
       }),
-      invalidatesTags: (result, error, arg) => [{
-        id: arg.id,
-        type: 'UNIQUE',
-      }]
+      invalidatesTags: ['UNIQUE', 'LIST']
     }),
 
   })
@@ -59,5 +73,6 @@ const lotProduitApiSlice = API.injectEndpoints({
 export const {
   useGetLotProduitsQuery,
   useGetUniqueLotProduitQuery,
+  useGetLotProduitsByProductQuery,
   useEditLotProduitMutation,
 } = lotProduitApiSlice

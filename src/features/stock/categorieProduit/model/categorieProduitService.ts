@@ -12,6 +12,7 @@ export interface CategorieProduit {
   updatedAt?: string
   slug?: string
   selected: boolean
+  total: number
 }
 
 export interface SaveCategorieProduit {
@@ -48,6 +49,7 @@ export const getCategorieProduitFakeData = (): CategorieProduit[] => [
     createdAt: new Date().toISOString(),
     "@id": '/api/categorie_exams/1',
     selected: false,
+    total: 0
   },
   {
     id: 2,
@@ -56,6 +58,7 @@ export const getCategorieProduitFakeData = (): CategorieProduit[] => [
     createdAt: new Date().toISOString(),
     "@id": '/api/categorie_exams/2',
     selected: false,
+    total: 0
   },
 ]
 

@@ -40,7 +40,8 @@ const categorieProduitApiSlice = API.injectEndpoints({
         method: APP_METHODS.POST,
         headers: APP_HEADERS.POST_HEADERS,
         body: JSON.stringify(data)
-      })
+      }),
+      invalidatesTags: ['UNIQUE', 'LIST']
     }),
     
     editCategorieProduit: build.mutation<CategorieProduit, SaveCategorieProduit>({
@@ -50,17 +51,15 @@ const categorieProduitApiSlice = API.injectEndpoints({
         headers: APP_HEADERS.PATCH_HEADERS,
         body: JSON.stringify(data)
       }),
-      invalidatesTags: (result, error, arg) => [{
-        id: arg.id,
-        type: 'UNIQUE',
-      }]
+      invalidatesTags: ['UNIQUE', 'LIST']
     }),
     
     deleteCategorieProduit: build.mutation<void, CategorieProduit>({
       query: (data: CategorieProduit) => ({
         url: `${API_PATH}/categorie_produits/${data.id}`,
         method: APP_METHODS.DELETE
-      })
+      }),
+      invalidatesTags: ['UNIQUE', 'LIST']
     }),
 
   })

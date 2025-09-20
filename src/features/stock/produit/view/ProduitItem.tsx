@@ -100,6 +100,7 @@ export default function ProduitItem({ index, product, onRefresh, setProducts }: 
       </tr>
       
       <RemoveProductModal
+        isRedirect
         onHide={(): void => handleShow(setIsDel)}
         data={product}
         show={isDel}

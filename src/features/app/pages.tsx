@@ -75,18 +75,27 @@ const
   UCons = lazy(() =>
     import('../stock/uniteConsommation/view/uniteConsommationView.tsx')),
   
+  UCon = lazy(() =>
+    import('../stock/uniteConsommation/view/showUniteConsommation.tsx')),
+  
   CatProd = lazy(() =>
     import('../stock/categorieProduit/view/categorieProduitView.tsx')),
+  UCatProd = lazy(() =>
+    import('../stock/categorieProduit/view/showCategoryProduit.tsx')),
   Fourn = lazy(() =>
     import('../stock/fournisseur/view/fournisseurView.tsx')),
   Prod = lazy(() =>
     import('../stock/produit/view/produitView.tsx')),
+  UProd = lazy(() =>
+    import('../stock/produit/view/showProduit.tsx')),
   LotProd = lazy(() =>
     import('../stock/lotProduit/view/lotProdView.tsx')),
   NProd = lazy(() =>
     import('../stock/produit/view/newProduit.tsx')),
   Appro = lazy(() =>
     import('../stock/appro/view/approView.tsx')),
+  UAppro = lazy(() =>
+    import('../stock/appro/view/showAppro.tsx')),
   NAppro = lazy(() =>
     import('../stock/appro/view/newAppro.tsx')),
   MoveStk = lazy(() =>
@@ -219,6 +228,10 @@ const pages: RouteType[] = [
         element: <UConsult />
       },
       {
+        path: 'unites-consommations/:id/:slug',
+        element: <UCon />
+      },
+      {
         path: 'consultations/:id/edit',
         element: <EConsult />
       },
@@ -294,12 +307,20 @@ const pages: RouteType[] = [
         element: <CatProd />
       },
       {
+        path: 'categories-produits/:id/:slug',
+        element: <UCatProd />
+      },
+      {
         path: 'fournisseurs',
         element: <Fourn />
       },
       {
         path: 'produits',
         element: <Prod />
+      },
+      {
+        path: 'produits/:id/:slug',
+        element: <UProd />
       },
       {
         path: 'produits/articles',
@@ -312,6 +333,10 @@ const pages: RouteType[] = [
       {
         path: 'approvisionnements',
         element: <Appro />
+      },
+      {
+        path: 'approvisionnements/:id',
+        element: <UAppro />
       },
       {
         path: 'approvisionnements/new',

@@ -20,7 +20,7 @@ export interface Appro {
   fkFournisseur: Fournisseur
   fkCaisse: CompteCaisse
   fkUser: object
-  approProduits: []
+  approProduits: ApproProdut[]
   createdAt?: string
   devise: string
   taux: number
@@ -40,6 +40,7 @@ export interface ApproProdut {
   lotProduit: LotProduit
   price?: number
   qty?: number
+  unite?: string
 }
 
 export interface ApproProductItem {

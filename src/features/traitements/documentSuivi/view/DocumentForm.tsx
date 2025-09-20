@@ -163,7 +163,7 @@ export default function DocumentForm({ data, handleRefresh, loader = false }: {
         ) as ReactNode} {/* Submit button */}
         
         {data && (
-          <Col sm={12} className='mb-3 pt-3'>
+          <Col md={doc.end ? 4 : 12} className='mb-3 pt-3'>
             <CheckField
               inline
               disabled={isLoading || isEditLoading || isPatientsFetching}
@@ -178,7 +178,7 @@ export default function DocumentForm({ data, handleRefresh, loader = false }: {
         
         {doc?.end && (
           <>
-            <Col md={6} className='mb-3'>
+            <Col md={doc.end ? 8 : 6} className='mb-3'>
               <TextField
                 required
                 disabled={isLoading || isEditLoading || isPatientsFetching}
@@ -209,10 +209,12 @@ export default function DocumentForm({ data, handleRefresh, loader = false }: {
         ) as ReactNode}
         
         {data && (
-          <Button disabled={loader || isLoading || isEditLoading} type='submit' className='w-100'>
-            {(isLoading || isEditLoading) && <Spinner className='me-1' animation='border' size='sm' />}
-            {(isLoading || isEditLoading) ? 'Veuillez patienter' : 'Modifier'}
-          </Button>
+          <Col md={data && data.hospitalisation && doc.end ? 6 : 12} className='mb-3'>
+            <Button disabled={loader || isLoading || isEditLoading} type='submit' className='w-100'>
+              {(isLoading || isEditLoading) && <Spinner className='me-1' animation='border' size='sm' />}
+              {(isLoading || isEditLoading) ? 'Veuillez patienter' : 'Modifier'}
+            </Button>
+          </Col>
         ) as ReactNode}
       </form>
     </>

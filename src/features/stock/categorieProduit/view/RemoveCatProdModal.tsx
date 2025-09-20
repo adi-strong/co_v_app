@@ -2,15 +2,19 @@ import {Button, Modal} from "react-bootstrap";
 import type {CategorieProduit} from "../model/categorieProduitService.ts";
 import {useDeleteCategorieProduitMutation} from "../model/categorieProduit.api.slice.ts";
 import {onDeleteCategorieProduitSubmit} from "../model/categorieProduitService.ts";
+import {useNavigate} from "react-router-dom";
 
 export default function RemoveCatProdModal(props: {
   data: CategorieProduit,
   show: boolean,
   onHide: () => void,
   onRefresh: () => void
+  isRedirect?: boolean
 }) {
   
-  const { show, data, onHide, onRefresh } = props
+  const navigate = useNavigate()
+  
+  const { show, data, onHide, onRefresh, isRedirect } = props
   
   const [onDeleteCategory] = useDeleteCategorieProduitMutation()
   
@@ -28,7 +32,7 @@ export default function RemoveCatProdModal(props: {
         </p>
         
         <code className='text-dark'>
-          Êtes-vous certain(e) de vouloir supprimer cette
+          Êtes-vous certain(e) de vouloir supprimer cette <br/>
           <b className='mx-1'>Catégorie de produits</b>
           <i className='bi bi-question-circle text-danger mx-1'/>
         </code>
@@ -43,7 +47,8 @@ export default function RemoveCatProdModal(props: {
             data,
             onDeleteCategory,
             onRefresh,
-            onHide
+            onHide,
+            isRedirect ? navigate : undefined
           )}
         >
           <i className='bi bi-trash'/> Supprimer
