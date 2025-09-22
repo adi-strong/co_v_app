@@ -20,6 +20,7 @@ export interface Lit {
   updatedAt?: string
   slug?: string
   selected: boolean
+  total: number
 }
 
 export interface SaveLit {
@@ -83,6 +84,7 @@ export const getLitsFakeData = (): Lit[] => [
     numero: '001',
     estCeOccuppe: false,
     selected: false,
+    total: 0,
   },
 ]
 

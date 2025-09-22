@@ -2,15 +2,19 @@ import {Button, Modal} from "react-bootstrap";
 import type {Departement} from "../model/departementService.ts";
 import {onDeleteDepartementSubmit} from "../model/departementService.ts";
 import {useDeleteDepartementMutation} from "../model/departement.api.slice.ts";
+import {useNavigate} from "react-router-dom";
 
 export default function RemoveDepartmentModal(props: {
-  data: Departement,
-  show: boolean,
-  onHide: () => void,
+  data: Departement
+  show: boolean
+  isRedirect?: boolean
+  onHide: () => void
   onRefresh: () => void
 }) {
   
-  const { show, data, onHide, onRefresh } = props
+  const navigate = useNavigate()
+  
+  const { show, data, onHide, onRefresh, isRedirect } = props
   
   const [onDeleteFonction] = useDeleteDepartementMutation()
   
@@ -43,7 +47,8 @@ export default function RemoveDepartmentModal(props: {
             data,
             onDeleteFonction,
             onRefresh,
-            onHide
+            onHide,
+            isRedirect ? navigate : undefined
           )}
         >
           <i className='bi bi-trash'/> Supprimer

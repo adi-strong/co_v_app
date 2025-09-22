@@ -8,9 +8,7 @@ import {
   setSelectedDataItem
 } from "../../../../services/services.ts";
 import {CheckField, SideContent} from "../../../../components";
-import {Link} from "react-router-dom";
 import {Button} from "react-bootstrap";
-import moment from "moment";
 import type {Examen} from "../model/examenService.ts";
 import ExamForm from "./ExamForm.tsx";
 import RemoveExamModal from "./RemoveExamModal.tsx";
@@ -51,9 +49,11 @@ export default function ExamItem(props: {
             onChange={(): void => setSelectedDataItem(index, setExams)}
             className='me-0'
           />
-          <Link to={`/app/services/${exam.id}/${exam?.slug}`}>
+          {/* <Link to={`/app/services/${exam.id}/${exam?.slug}`}>
             {exam.nom.toUpperCase()}
-          </Link>
+          </Link> */}
+          
+          {exam.nom.toUpperCase()}
           
           <div id={`actions-${index}`} hidden>
             <Button variant='link' size='sm' className='p-0' onClick={(): void => handleShow(setIsEdit)}>

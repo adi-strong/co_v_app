@@ -3,6 +3,7 @@ import toast from "react-hot-toast";
 import type {JsonLdApiResponseInt} from "../../../../interfaces/JsonLdApiResponseInt.ts";
 import type {NavigateFunction} from "react-router-dom";
 import type {Service} from "../../service/model/serviceService.ts";
+import type {TabInt} from "../../../../services/services.ts";
 
 // INTERFACES OR TYPES
 export interface Departement {
@@ -61,6 +62,11 @@ export const getDepartementFakeData = (): Departement[] => [
     selected: false,
     services: [],
   },
+]
+
+export const getDepartmentTabs = (): TabInt[] => [
+  { title: 'Agents', event: 'agents' },
+  { title: 'Services', event: 'services' },
 ]
 
 export async function onPostDepartementSubmit(

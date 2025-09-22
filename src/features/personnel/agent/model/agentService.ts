@@ -62,6 +62,11 @@ export interface AgentError {
   fkFonction: string | null
   file: string | null
 }
+
+export interface AgentImage {
+  file: ImageListType
+  agentId: number
+}
 // END INTERFACES OR TYPES
 
 /* ------------------------------------------- */
@@ -93,6 +98,8 @@ export const initAgentErrorState = (): AgentError => ({
   fkFonction: null,
   file: null,
 })
+
+export const initAgentImageState = (): AgentImage => ({ file: [], agentId: 0 })
 // END INIT
 
 /* ------------------------------------------- */
@@ -236,7 +243,7 @@ export async function onPatchAgentSubmit(
   
 }
 
-export async function onDeleteAgent(
+export async function onDeleteAgentSubmit(
   state: Agent,
   onSubmit: (data: Agent) => Promise<void>,
   onRefresh: () => void,
@@ -272,6 +279,33 @@ export const onAgentDepartmentChange = (
     
     return agent
   })
+}
+
+export const onUpdateAgentProfileSubmit = async (
+  state: AgentImage,
+  setState: Dispatch<SetStateAction<AgentImage>>,
+  onSubmit: (data: FormData) => Promise<any>,
+  onRefresh: () => void,
+  onHide?: () => void
+): Promise<void> => {
+  if (onHide) onHide()
+  
+  const { file, agentId } = state
+  
+  const formData = new FormData()
+  if (file && file[0]?.file) formData.append('file', file[0].file)
+  if (agentId && agentId > 0) formData.append('agentId', agentId.toString())
+  
+  try {
+    const { data, error }: JsonLdApiResponseInt<void> = await onSubmit(formData)
+    if (data) {
+      toast.error('Profil mis à jour.')
+      setState(initAgentImageState())
+      onRefresh()
+    }
+    
+    if (error && error?.data && error.data?.detail) toast.error(error.data.detail)
+  } catch (e) { toast.error('Problème réseau') }
 }
 // END EVENTS & FUNCTIONS
 

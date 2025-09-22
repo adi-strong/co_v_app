@@ -27,6 +27,57 @@ const agentApiSlice = API.injectEndpoints({
       }
     }),
     
+    getAgentsByDepartment: build.query<Agent[], string | number>({
+      query: (departmentId: string | number) => `${API_PATH}/departements/${departmentId}/agents`,
+      transformResponse: (response: JsonLDResponseInt<Agent>) => {
+        totalAgentsItems = response.totalItems
+        return response.member;
+      },
+      providesTags: (result) => {
+        if (result && Array.isArray(result)) {
+          return [
+            ...result.map(({ id }) => ({ type: 'UNIQUE' as const, id })),
+            { type: 'LIST' as const, id: 'LIST' }
+          ]
+        }
+        return [{ type: 'LIST' as const, id: 'LIST' }];
+      }
+    }),
+    
+    getAgentsByService: build.query<Agent[], string | number>({
+      query: (serviceId: string | number) => `${API_PATH}/services/${serviceId}/agents`,
+      transformResponse: (response: JsonLDResponseInt<Agent>) => {
+        totalAgentsItems = response.totalItems
+        return response.member;
+      },
+      providesTags: (result) => {
+        if (result && Array.isArray(result)) {
+          return [
+            ...result.map(({ id }) => ({ type: 'UNIQUE' as const, id })),
+            { type: 'LIST' as const, id: 'LIST' }
+          ]
+        }
+        return [{ type: 'LIST' as const, id: 'LIST' }];
+      }
+    }),
+    
+    getAgentsByFunction: build.query<Agent[], string | number>({
+      query: (functionId: string | number) => `${API_PATH}/fonctions/${functionId}/agents`,
+      transformResponse: (response: JsonLDResponseInt<Agent>) => {
+        totalAgentsItems = response.totalItems
+        return response.member;
+      },
+      providesTags: (result) => {
+        if (result && Array.isArray(result)) {
+          return [
+            ...result.map(({ id }) => ({ type: 'UNIQUE' as const, id })),
+            { type: 'LIST' as const, id: 'LIST' }
+          ]
+        }
+        return [{ type: 'LIST' as const, id: 'LIST' }];
+      }
+    }),
+    
     getAgentsByFonction: build.query<Fonction[], string>({
       query: (keywords) => `${API_PATH}/fonctions?nom=${keywords}`,
       transformResponse: (response: JsonLDResponseInt<Fonction>) => {
@@ -74,7 +125,8 @@ const agentApiSlice = API.injectEndpoints({
         url: `${API_PATH}/agents`,
         method: APP_METHODS.POST,
         body: data
-      })
+      }),
+      invalidatesTags: ['LIST', 'UNIQUE']
     }),
     
     editAgent: build.mutation<Agent, SaveAgent>({
@@ -94,17 +146,24 @@ const agentApiSlice = API.injectEndpoints({
           fkService: data?.fkService ? data.fkService?.data : null,
         })
       }),
-      invalidatesTags: (result, error, arg) => [{
-        id: arg.id,
-        type: 'UNIQUE',
-      }]
+      invalidatesTags: ['LIST', 'UNIQUE']
     }),
     
     deleteAgent: build.mutation<void, Agent>({
       query: (data: Agent) => ({
         url: `${API_PATH}/agents/${data.id}`,
         method: APP_METHODS.DELETE
-      })
+      }),
+      invalidatesTags: ['LIST', 'UNIQUE']
+    }),
+    
+    updateAgentProfile: build.mutation<void, FormData>({
+      query: (data: FormData) => ({
+        url: `${API_PATH}/agents_profile`,
+        method: APP_METHODS.POST,
+        body: data
+      }),
+      invalidatesTags: ['LIST', 'UNIQUE']
     }),
 
   })
@@ -113,10 +172,14 @@ const agentApiSlice = API.injectEndpoints({
 
 export const {
   useGetAgentsQuery,
+  useGetAgentsByServiceQuery,
+  useGetAgentsByFunctionQuery,
   useGetAllAgentsQuery,
   useGetUniqueAgentQuery,
   usePostAgentMutation,
   useEditAgentMutation,
   useDeleteAgentMutation,
   useGetAgentsByFonctionQuery,
+  useGetAgentsByDepartmentQuery,
+  useUpdateAgentProfileMutation,
 } = agentApiSlice

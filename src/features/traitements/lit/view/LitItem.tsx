@@ -8,9 +8,7 @@ import {
   setSelectedDataItem
 } from "../../../../services/services.ts";
 import {CheckField, SideContent} from "../../../../components";
-import {Link} from "react-router-dom";
 import {Badge, Button} from "react-bootstrap";
-import moment from "moment";
 import type {Lit} from "../model/litService.ts";
 import LitForm from "./LitForm.tsx";
 import RemoveLitModal from "./RemoveLitModal.tsx";
@@ -54,9 +52,11 @@ export default function LitItem(props: {
             onChange={(): void => setSelectedDataItem(index, setLits)}
             className='me-0'
           />
-          <Link to={`/app/lits/${lit.id}/${lit?.slug}`}>
+          {/* <Link to={`/app/lits/${lit.id}/${lit?.slug}`}>
             {lit.numero.toUpperCase()}
-          </Link>
+          </Link> */}
+          
+          {lit.numero.toUpperCase()}
           
           <div id={`actions-${index}`} hidden>
             <Button variant='link' size='sm' className='p-0' onClick={(): void => handleShow(setIsEdit)}>

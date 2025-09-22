@@ -1,31 +1,30 @@
-import {useActivePage, useDocumentTitle} from "../../../../hooks";
-import {BodyContainer, PageTitles, SideContent} from "../../../../components";
 import {memo, ReactNode, useState} from "react";
+import {BodyContainer, PageTitles, SideContent} from "../../../../components";
+import {useActivePage, useDocumentTitle} from "../../../../hooks";
 import {useParams} from "react-router-dom";
-import {useGetUniqueCategorieLitQuery} from "../model/categorieLit.api.slice.ts";
 import {Button, Col, Row, Spinner} from "react-bootstrap";
-import {formatNumberWithSpaces, handleShow} from "../../../../services/services.ts";
-import LogoLoader from "../../../../loaders/LogoLoader.tsx";
-import LitsByCategory from "./LitsByCategory.tsx";
-import RemoveCategorieLitModal from "./RemoveCategorieLitModal.tsx";
-import CategorieLitForm from "./CategorieLitForm.tsx";
+import {handleShow} from "../../../../services/services.ts";
+import RemoveFonctionModal from "./RemoveFonctionModal.tsx";
+import FonctionForm from "./FonctionForm.tsx";
+import {useGetUniqueFonctionQuery} from "../model/fonction.api.slice.ts";
+import AgentsByFunctionList from "./AgentsByFunctionList.tsx";
 
-const ShowCategorieLit = () => {
+const ShowFonction = () => {
   
-  useDocumentTitle('Catégorie de lits')
-  useActivePage('params')
+  useDocumentTitle('Fonction')
+  useActivePage('agents')
   
   const [isEdit, setIsEdit] = useState<boolean>(false)
   const [isDel, setIsDel] = useState<boolean>(false)
   
   const { id } = useParams()
-  const { data, isLoading, isFetching, isError, refetch } = useGetUniqueCategorieLitQuery(id)
+  const { data, isLoading, isFetching, isError, refetch } = useGetUniqueFonctionQuery(id)
   
   const onRefresh = async (): Promise<void> => { await refetch() }
   
   return (
     <BodyContainer>
-      <PageTitles title='Catégorie de lits'/>
+      <PageTitles title='Fonction'/>
       
       <Row>
         <Col md={6} className='mb-3'>
@@ -51,28 +50,15 @@ const ShowCategorieLit = () => {
       
       {!(isLoading && isError) && data && (
         <>
-          <Row>
-            <Col md={9} className='mb-3'>
-              <h2 className='fw-bold text-uppercase'>
-                <i className='bi bi-tags me-1'/>
-                {data.nom}
-              </h2>
-            </Col>
-            
-            <Col md={3} className='mb-3 text-md-end'>
-              <b>{formatNumberWithSpaces(data.total)}</b> lit(s) au total
-            </Col>
-          </Row>
+          <div className='mb-3'>
+            <h2 className='fw-bold text-uppercase'>
+              {data.nom}
+            </h2>
+          </div>
           
-          <LitsByCategory category={data} />
-        </>
-      )}
-      
-      {isLoading && <LogoLoader/>}
-      
-      {data && (
-        <>
-          <RemoveCategorieLitModal
+          <AgentsByFunctionList fonction={data}/>
+          
+          <RemoveFonctionModal
             isRedirect
             onHide={(): void => handleShow(setIsDel)}
             data={data}
@@ -83,10 +69,10 @@ const ShowCategorieLit = () => {
           <SideContent
             show={isEdit}
             onHide={(): void => handleShow(setIsEdit)}
-            title='Modifier la catégorie'
+            title='Modifier la fonction'
             icon='pencil-square'
             children={
-              <CategorieLitForm
+              <FonctionForm
                 data={data}
                 onRefresh={onRefresh}
                 onHide={(): void => handleShow(setIsEdit)}
@@ -100,4 +86,4 @@ const ShowCategorieLit = () => {
   
 }
 
-export default memo(ShowCategorieLit)
+export default memo(ShowFonction)

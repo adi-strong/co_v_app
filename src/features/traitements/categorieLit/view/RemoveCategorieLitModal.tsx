@@ -2,15 +2,19 @@ import {Button, Modal} from "react-bootstrap";
 import type {CategorieLit} from "../model/categorieLitService.ts";
 import {useDeleteCategorieLitMutation} from "../model/categorieLit.api.slice.ts";
 import {onDeleteCategorieLitSubmit} from "../model/categorieLitService.ts";
+import {useNavigate} from "react-router-dom";
 
 export default function RemoveCategorieLitModal(props: {
-  data: CategorieLit,
-  show: boolean,
-  onHide: () => void,
+  data: CategorieLit
+  show: boolean
+  isRedirect?: boolean
+  onHide: () => void
   onRefresh: () => void }
 ) {
   
-  const { show, data, onHide, onRefresh } = props
+  const navigate = useNavigate()
+  
+  const { show, data, onHide, onRefresh, isRedirect } = props
   
   const [onDeleteCategory] = useDeleteCategorieLitMutation()
   
@@ -43,7 +47,8 @@ export default function RemoveCategorieLitModal(props: {
             data,
             onDeleteCategory,
             onRefresh,
-            onHide
+            onHide,
+            isRedirect ? navigate : undefined
           )}
         >
           <i className='bi bi-trash'/> Supprimer

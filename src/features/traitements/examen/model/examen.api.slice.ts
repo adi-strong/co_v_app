@@ -26,6 +26,23 @@ const examenApiSlice = API.injectEndpoints({
       }
     }),
     
+    getExamensByCategory: build.query<Examen[], string | number>({
+      query: (categoryId: string | number) => `${API_PATH}/categorie_exams/${categoryId}/examens`,
+      transformResponse: (response: JsonLDResponseInt<Examen>) => {
+        totalExamensItems = response.totalItems
+        return response.member;
+      },
+      providesTags: (result) => {
+        if (result && Array.isArray(result)) {
+          return [
+            ...result.map(({ id }) => ({ type: 'UNIQUE' as const, id })),
+            { type: 'LIST' as const, id: 'LIST' }
+          ]
+        }
+        return [{ type: 'LIST' as const, id: 'LIST' }];
+      }
+    }),
+    
     getUniqueExamen: build.query<Examen, string | number | undefined>({
       query: id => `${API_PATH}/examens/${id}`,
       providesTags: (result, error, arg) => [{
@@ -44,7 +61,8 @@ const examenApiSlice = API.injectEndpoints({
           prixHt: isNaN(data.prixHt) ? null : data.prixHt.toString(),
           prixTtc: isNaN(data.prixTtc) ? null : data.prixTtc.toString(),
           fkCategorie: data?.fkCategorie ? data.fkCategorie?.data : null,
-        })
+        }),
+        invalidatesTags: ['UNIQUE', 'LIST']
       })
     }),
     
@@ -60,10 +78,7 @@ const examenApiSlice = API.injectEndpoints({
           fkCategorie: data?.fkCategorie ? data.fkCategorie?.data : null,
         })
       }),
-      invalidatesTags: (result, error, arg) => [{
-        id: arg.id,
-        type: 'UNIQUE',
-      }]
+      invalidatesTags: ['UNIQUE', 'LIST']
     }),
     
     deleteExamen: build.mutation<void, Examen>({
@@ -72,7 +87,8 @@ const examenApiSlice = API.injectEndpoints({
         headers: APP_HEADERS.PATCH_HEADERS,
         method: APP_METHODS.PATCH,
         body: JSON.stringify({ deleted: true })
-      })
+      }),
+      invalidatesTags: ['UNIQUE', 'LIST']
     }),
 
   })
@@ -82,6 +98,7 @@ const examenApiSlice = API.injectEndpoints({
 export const {
   useGetExamensQuery,
   useGetUniqueExamenQuery,
+  useGetExamensByCategoryQuery,
   usePostExamenMutation,
   useEditExamenMutation,
   useDeleteExamenMutation,

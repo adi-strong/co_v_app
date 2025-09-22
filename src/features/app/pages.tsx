@@ -65,12 +65,18 @@ const
   
   Fonc = lazy(() =>
     import('../personnel/fonction/view/fonctionView.tsx')),
+  UFonc = lazy(() =>
+    import('../personnel/fonction/view/showFonction.tsx')),
   
   Serv = lazy(() =>
     import('../personnel/service/view/serviceView.tsx')),
+  UServ = lazy(() =>
+    import('../personnel/service/view/showService.tsx')),
   
   Depart = lazy(() =>
     import('../personnel/departement/view/departementView.tsx')),
+  UDepart = lazy(() =>
+    import('../personnel/departement/view/showDepartement.tsx')),
   
   UCons = lazy(() =>
     import('../stock/uniteConsommation/view/uniteConsommationView.tsx')),
@@ -278,6 +284,10 @@ const pages: RouteType[] = [
         path: 'fonctions',
         element: <Fonc />
       },
+      {
+        path: 'fonctions/:id/:slug',
+        element: <UFonc />
+      },
       // End Fonctions
       
       // Services
@@ -285,12 +295,20 @@ const pages: RouteType[] = [
         path: 'services',
         element: <Serv />
       },
+      {
+        path: 'services/:id/:slug',
+        element: <UServ />
+      },
       // End Services
       
       // Services
       {
         path: 'departements',
         element: <Depart />
+      },
+      {
+        path: 'departements/:id/:slug',
+        element: <UDepart />
       },
       // End Services
       

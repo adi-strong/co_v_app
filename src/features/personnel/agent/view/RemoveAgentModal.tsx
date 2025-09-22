@@ -1,22 +1,22 @@
-import {Button, Modal} from "react-bootstrap";
-import type {CategorieExam} from "../model/categorieExamService.ts";
-import {useDeleteCategorieExamMutation} from "../model/categorieExam.api.slice.ts";
-import {onDeleteCategorieExamSubmit} from "../model/categorieExamService.ts";
 import {useNavigate} from "react-router-dom";
+import {useDeleteFonctionMutation} from "../../fonction/model/fonction.api.slice.ts";
+import {Button, Modal} from "react-bootstrap";
+import type {Agent} from "../model/agentService.ts";
+import {onDeleteAgentSubmit} from "../model/agentService.ts";
 
-export default function RemoveCategorieExamModal(props: {
-  data: CategorieExam,
+export default function RemoveAgentModal(props: {
+  data: Agent
   show: boolean
   isRedirect?: boolean
   onHide: () => void
-  onRefresh: () => void }
-) {
+  onRefresh: () => void
+}) {
   
   const navigate = useNavigate()
   
   const { show, data, onHide, onRefresh, isRedirect } = props
   
-  const [onDeleteCategory] = useDeleteCategorieExamMutation()
+  const [onDeleteFonction] = useDeleteFonctionMutation()
   
   return (
     <Modal show={show} onHide={onHide}>
@@ -33,7 +33,7 @@ export default function RemoveCategorieExamModal(props: {
         
         <code className='text-dark'>
           Êtes-vous certain(e) de vouloir supprimer cet
-          <b className='mx-1'>examen</b>
+          <b className='mx-1'>Agent</b>
           <i className='bi bi-question-circle text-danger mx-1'/>
         </code>
       </Modal.Body>
@@ -43,9 +43,9 @@ export default function RemoveCategorieExamModal(props: {
         <Button
           autoFocus
           variant='danger'
-          onClick={async (): Promise<void> => onDeleteCategorieExamSubmit(
+          onClick={async (): Promise<void> => onDeleteAgentSubmit(
             data,
-            onDeleteCategory,
+            onDeleteFonction,
             onRefresh,
             onHide,
             isRedirect ? navigate : undefined

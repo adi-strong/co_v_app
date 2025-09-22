@@ -48,7 +48,7 @@ export const APP_METHODS: MethodInt = {
   PUT: 'PUT',
 }
 
-// export const APP_ENTRYPOINT: string = 'https://localhost:8000'
-export const APP_ENTRYPOINT: string = 'https://localhost:8001'
+export const APP_ENTRYPOINT: string = 'https://localhost:8000'
+// export const APP_ENTRYPOINT: string = 'https://localhost:8001'
 
 export const API_PATH: string = '/api'

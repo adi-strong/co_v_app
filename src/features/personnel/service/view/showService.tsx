@@ -1,31 +1,31 @@
-import {useActivePage, useDocumentTitle} from "../../../../hooks";
 import {BodyContainer, PageTitles, SideContent} from "../../../../components";
 import {memo, ReactNode, useState} from "react";
-import {useParams} from "react-router-dom";
-import {useGetUniqueCategorieLitQuery} from "../model/categorieLit.api.slice.ts";
-import {Button, Col, Row, Spinner} from "react-bootstrap";
-import {formatNumberWithSpaces, handleShow} from "../../../../services/services.ts";
+import {useActivePage, useDocumentTitle} from "../../../../hooks";
+import {Link, useParams} from "react-router-dom";
+import {useGetUniqueServiceQuery} from "../model/service.api.slice.ts";
 import LogoLoader from "../../../../loaders/LogoLoader.tsx";
-import LitsByCategory from "./LitsByCategory.tsx";
-import RemoveCategorieLitModal from "./RemoveCategorieLitModal.tsx";
-import CategorieLitForm from "./CategorieLitForm.tsx";
+import {Button, Col, Row, Spinner} from "react-bootstrap";
+import {handleShow} from "../../../../services/services.ts";
+import RemoveServiceModal from "./RemoveServiceModal.tsx";
+import ServiceForm from "./ServiceForm.tsx";
+import AgentsByServiceList from "./AgentsByServiceList.tsx";
 
-const ShowCategorieLit = () => {
+const ShowService = () => {
   
-  useDocumentTitle('Catégorie de lits')
-  useActivePage('params')
+  useDocumentTitle('Service')
+  useActivePage('agents')
   
   const [isEdit, setIsEdit] = useState<boolean>(false)
   const [isDel, setIsDel] = useState<boolean>(false)
   
   const { id } = useParams()
-  const { data, isLoading, isFetching, isError, refetch } = useGetUniqueCategorieLitQuery(id)
+  const { data, isLoading, isFetching, isError, refetch } = useGetUniqueServiceQuery(id)
   
   const onRefresh = async (): Promise<void> => { await refetch() }
   
   return (
     <BodyContainer>
-      <PageTitles title='Catégorie de lits'/>
+      <PageTitles title='Service'/>
       
       <Row>
         <Col md={6} className='mb-3'>
@@ -51,28 +51,20 @@ const ShowCategorieLit = () => {
       
       {!(isLoading && isError) && data && (
         <>
-          <Row>
-            <Col md={9} className='mb-3'>
-              <h2 className='fw-bold text-uppercase'>
-                <i className='bi bi-tags me-1'/>
-                {data.nom}
-              </h2>
-            </Col>
+          <div className='mb-3'>
+            <h2 className='fw-bold text-uppercase'>
+              {data.nom}
+            </h2>
             
-            <Col md={3} className='mb-3 text-md-end'>
-              <b>{formatNumberWithSpaces(data.total)}</b> lit(s) au total
-            </Col>
-          </Row>
+            {data?.fkDepartement &&
+              <Link to={`/app/departements/${data.fkDepartement.id}/${data.fkDepartement?.slug}`} className='text-uppercase'>
+                {data.fkDepartement.nom}
+              </Link>}
+          </div>
           
-          <LitsByCategory category={data} />
-        </>
-      )}
-      
-      {isLoading && <LogoLoader/>}
-      
-      {data && (
-        <>
-          <RemoveCategorieLitModal
+          <AgentsByServiceList service={data}/>
+          
+          <RemoveServiceModal
             isRedirect
             onHide={(): void => handleShow(setIsDel)}
             data={data}
@@ -83,10 +75,10 @@ const ShowCategorieLit = () => {
           <SideContent
             show={isEdit}
             onHide={(): void => handleShow(setIsEdit)}
-            title='Modifier la catégorie'
+            title='Modifier le service'
             icon='pencil-square'
             children={
-              <CategorieLitForm
+              <ServiceForm
                 data={data}
                 onRefresh={onRefresh}
                 onHide={(): void => handleShow(setIsEdit)}
@@ -95,9 +87,11 @@ const ShowCategorieLit = () => {
           />
         </>
       )}
+      
+      {isLoading && <LogoLoader/>}
     </BodyContainer>
   )
   
 }
 
-export default memo(ShowCategorieLit)
+export default memo(ShowService)

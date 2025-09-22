@@ -26,6 +26,23 @@ const litApiSlice = API.injectEndpoints({
       }
     }),
     
+    getLitsByCategory: build.query<Lit[], string | number>({
+      query: (categoryId: string | number) => `${API_PATH}/categorie_lits/${categoryId}/lits`,
+      transformResponse: (response: JsonLDResponseInt<Lit>) => {
+        totalLitsItems = response.totalItems
+        return response.member;
+      },
+      providesTags: (result) => {
+        if (result && Array.isArray(result)) {
+          return [
+            ...result.map(({ id }) => ({ type: 'UNIQUE' as const, id })),
+            { type: 'LIST' as const, id: 'LIST' }
+          ]
+        }
+        return [{ type: 'LIST' as const, id: 'LIST' }];
+      }
+    }),
+    
     getAvailableBeds: build.query<Lit[], string>({
       query: () => `${API_PATH}/lits?estCeOccuppe=false`,
       transformResponse: (response: JsonLDResponseInt<Lit>) => {
@@ -60,7 +77,8 @@ const litApiSlice = API.injectEndpoints({
           ...data,
           prix: isNaN(data.prix) ? null : data.prix.toString(),
           fkCategorie: data?.fkCategorie ? data.fkCategorie?.data : null,
-        })
+        }),
+        invalidatesTags: ['UNIQUE', 'LIST']
       })
     }),
     
@@ -75,10 +93,7 @@ const litApiSlice = API.injectEndpoints({
           fkCategorie: data?.fkCategorie ? data.fkCategorie?.data : null,
         })
       }),
-      invalidatesTags: (result, error, arg) => [{
-        id: arg.id,
-        type: 'UNIQUE',
-      }]
+      invalidatesTags: ['UNIQUE', 'LIST']
     }),
     
     deleteLit: build.mutation<void, Lit>({
@@ -87,7 +102,8 @@ const litApiSlice = API.injectEndpoints({
         headers: APP_HEADERS.PATCH_HEADERS,
         method: APP_METHODS.PATCH,
         body: JSON.stringify({ deleted: true })
-      })
+      }),
+      invalidatesTags: ['UNIQUE', 'LIST']
     }),
 
   })
@@ -96,6 +112,7 @@ const litApiSlice = API.injectEndpoints({
 
 export const {
   useGetLitsQuery,
+  useGetLitsByCategoryQuery,
   useGetAvailableBedsQuery,
   useGetUniqueLitQuery,
   usePostLitMutation,

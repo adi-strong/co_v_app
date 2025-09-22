@@ -17,12 +17,30 @@ const serviceApiSlice = API.injectEndpoints({
         body: JSON.stringify({
           ...data,
           fkDepartement: data?.fkDepartement ? data.fkDepartement?.data : null,
-        })
+        }),
+        invalidatesTags: ['UNIQUE', 'LIST']
       })
     }),
     
     getServices: build.query<Service[], string>({
       query: () => `${API_PATH}/services`,
+      transformResponse: (response: JsonLDResponseInt<Service>) => {
+        totalServicesItems = response.totalItems
+        return response.member;
+      },
+      providesTags: (result) => {
+        if (result && Array.isArray(result)) {
+          return [
+            ...result.map(({ id }) => ({ type: 'UNIQUE' as const, id })),
+            { type: 'LIST' as const, id: 'LIST' }
+          ]
+        }
+        return [{ type: 'LIST' as const, id: 'LIST' }];
+      }
+    }),
+    
+    getServicesByDepartment: build.query<Service[], string | number>({
+      query: (departmentId: string | number) => `${API_PATH}/departements/${departmentId}/services`,
       transformResponse: (response: JsonLDResponseInt<Service>) => {
         totalServicesItems = response.totalItems
         return response.member;
@@ -48,17 +66,15 @@ const serviceApiSlice = API.injectEndpoints({
           fkDepartement: data?.fkDepartement ? data.fkDepartement?.data : null,
         })
       }),
-      invalidatesTags: (result, error, arg) => [{
-        id: arg.id,
-        type: 'UNIQUE',
-      }]
+      invalidatesTags: ['UNIQUE', 'LIST']
     }),
     
     deleteService: build.mutation<void, Service>({
       query: (data: Service) => ({
         url: `${API_PATH}/services/${data.id}`,
         method: APP_METHODS.DELETE
-      })
+      }),
+      invalidatesTags: ['UNIQUE', 'LIST']
     }),
     
     getUniqueService: build.query<Service, string | number | undefined>({
@@ -79,4 +95,5 @@ export const {
   useEditServiceMutation,
   useDeleteServiceMutation,
   useGetUniqueServiceQuery,
+  useGetServicesByDepartmentQuery,
 } = serviceApiSlice

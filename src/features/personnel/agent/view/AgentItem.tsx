@@ -4,7 +4,6 @@ import {
   handleShow,
   onMouseEnterEvent,
   onMouseLeaveEvent,
-  setSelectedDataItem,
   sexLabel
 } from "../../../../services/services.ts";
 import {CheckField, RemoveModal} from "../../../../components";
@@ -12,6 +11,7 @@ import {Link} from "react-router-dom";
 import {Button} from "react-bootstrap";
 import moment from "moment";
 import type {Agent} from "../model/agentService.ts";
+import RemoveAgentModal from "./RemoveAgentModal.tsx";
 
 function onSubmit(data: any, onHide: () => void, onRefresh: () => void): void { onHide() }
 
@@ -25,7 +25,7 @@ export default function AgentItem(props: {
   const {
     agent,
     index,
-    setAgents,
+    // setAgents,
     onRefresh,
   } = props
   
@@ -40,14 +40,14 @@ export default function AgentItem(props: {
           onMouseEnter={(): void => onMouseEnterEvent(index)}
           onMouseLeave={(): void => onMouseLeaveEvent(index)}
         >
-          <CheckField
+          {/* <CheckField
             inline
             name='selected'
             value={agent.selected}
             checked={agent.selected}
             onChange={(): void => setSelectedDataItem(index, setAgents)}
             className='me-0'
-          />
+          /> */}
           <Link to={`/app/agents/${agent.id}/${agent?.slug}`} className='text-uppercase'>
             {agent?.fullName ?? agent.nom}
           </Link>
@@ -70,14 +70,11 @@ export default function AgentItem(props: {
           : '—'}</td>
       </tr>
       
-      <RemoveModal
-        isItIrreversible
-        onSubmit={() => onSubmit(agent, (): void => handleShow(setIsDel), (): void => { })}
+      <RemoveAgentModal
         onHide={(): void => handleShow(setIsDel)}
         data={agent}
         show={isDel}
-        onRefresh={(): void => { }}
-        title={<><br/> agent : {agent?.fullName?.toUpperCase() ?? agent.nom.toUpperCase()}</>}
+        onRefresh={onRefresh}
       />
     </>
   )

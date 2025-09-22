@@ -88,7 +88,7 @@ export default function AgentData(props: {
         <thead className='table-light'>
         <tr>
           <th style={{ fontSize: '1rem' }}>
-            <CheckField
+            {/* <CheckField
               inline
               disabled={false}
               name='isSelectedAll'
@@ -96,7 +96,7 @@ export default function AgentData(props: {
               checked={isSelectedAll}
               onChange={(): void => selectAllStateItems(isSelectedAll, setIsSelectedAll, setAgents)}
               className='me-0'
-            />
+            /> */}
             
             Nom complet
           </th>

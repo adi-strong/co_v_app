@@ -14,6 +14,7 @@ export interface CategorieExam {
   slug?: string
   selected: boolean
   exams: Examen[]
+  total: number
 }
 
 export interface SaveCategorieExam {
@@ -51,6 +52,7 @@ export const getCategorieExamFakeData = (): CategorieExam[] => [
     "@id": '/api/categorie_exams/1',
     selected: false,
     exams: [],
+    total: 0,
   },
   {
     id: 2,
@@ -60,6 +62,7 @@ export const getCategorieExamFakeData = (): CategorieExam[] => [
     "@id": '/api/categorie_exams/2',
     selected: false,
     exams: [],
+    total: 0,
   },
 ]
 

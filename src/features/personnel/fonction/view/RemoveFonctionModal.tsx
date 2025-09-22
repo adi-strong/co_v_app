@@ -2,15 +2,19 @@ import {Button, Modal} from "react-bootstrap";
 import type {Fonction} from "../model/fonctionService.ts";
 import {useDeleteFonctionMutation} from "../model/fonction.api.slice.ts";
 import {onDeleteFonctionSubmit} from "../model/fonctionService.ts";
+import {useNavigate} from "react-router-dom";
 
 export default function RemoveFonctionModal(props: {
   data: Fonction
   show: boolean
+  isRedirect?: boolean
   onHide: () => void
   onRefresh: () => void
 }) {
   
-  const { show, data, onHide, onRefresh } = props
+  const navigate = useNavigate()
+  
+  const { show, data, onHide, onRefresh, isRedirect } = props
   
   const [onDeleteFonction] = useDeleteFonctionMutation()
   
@@ -43,7 +47,8 @@ export default function RemoveFonctionModal(props: {
             data,
             onDeleteFonction,
             onRefresh,
-            onHide
+            onHide,
+            isRedirect ? navigate : undefined
           )}
         >
           <i className='bi bi-trash'/> Supprimer
