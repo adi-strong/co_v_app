@@ -64,7 +64,7 @@ export default function UniqueBonDeDepenseDetails({ expense }: { expense: BonDeD
           )}
         </div>
         
-        <div style={{fontSize: '0.7rem'}}>
+        <div style={{ fontSize: '0.7rem' }}>
           <p className='fw-bold mt-3'>
             <span className='me-1'>Objet</span> : <br/>
             <span className='fst-italic'>{expense?.objet?.toUpperCase() ?? ''}</span>

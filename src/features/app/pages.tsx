@@ -139,7 +139,7 @@ const
   Receipts = lazy(() => import('../reception/view/receptionView.tsx')),
   NReceipt = lazy(() => import('../reception/view/newReception.tsx')),
   Rdvs = lazy(() => import('../rendezVous/view/rendezVousView.tsx')),
-  NRdv = lazy(() => import('../rendezVous/view/newRdv.tsx')),
+  NRend = lazy(() => import('../rendezVous/view/newRdv.tsx')),
   
   Users = lazy(() => import('../user/view/userView.tsx')),
   NUser = lazy(() => import('../user/view/newUser.tsx')),
@@ -158,7 +158,11 @@ const
   Bdp = lazy(() =>
     import('../finances/bonDeDepenses/view/bonDeDepensesView.tsx')),
   UBdp = lazy(() =>
-    import('../finances/bonDeDepenses/view/showBonDeDepense.tsx'))
+    import('../finances/bonDeDepenses/view/showBonDeDepense.tsx')),
+  Bent = lazy(() =>
+    import('../finances/bonEntree/view/bonEntreeView.tsx')),
+  UBent = lazy(() =>
+    import('../finances/bonEntree/view/showBonEntree.tsx'))
 
 const pages: RouteType[] = [
   {
@@ -443,7 +447,7 @@ const pages: RouteType[] = [
       },
       {
         path: 'rendez-vous/new',
-        element: <NRdv />
+        element: <NRend />
       },
       {
         path: 'receptions/new',
@@ -503,6 +507,14 @@ const pages: RouteType[] = [
       {
         path: 'bons-des-depenses',
         element: <Bdp />
+      },
+      {
+        path: 'bons-des-entrees',
+        element: <Bent />
+      },
+      {
+        path: 'bons-des-entrees/:id/:slug',
+        element: <UBent />
       },
       {
         path: 'bons-des-depenses/:id/:slug',

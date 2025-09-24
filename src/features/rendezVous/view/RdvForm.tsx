@@ -11,7 +11,7 @@ import {useGetAllAgentsQuery} from "../../personnel/agent/model/agent.api.slice.
 
 export default function RdvForm({ data, onRefresh, onHide }: {
   data?: RendezVous
-  onRefresh: () => void
+  onRefresh?: () => void
   onHide?: () => void
 }) {
   
