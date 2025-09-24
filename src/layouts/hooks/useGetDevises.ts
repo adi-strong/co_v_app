@@ -11,6 +11,7 @@ export default function useGetDevises(dispatch: (params?: any) => void): void {
   useEffect((): void => {
     if (compte) {
       const options: SelectOptionType[] = [
+        { label: '-- Aucune devise sélectionnée --', value: '' },
         { label: compte.first.label, value: compte.first.code },
         { label: compte.last.label, value: compte.last.code },
       ]

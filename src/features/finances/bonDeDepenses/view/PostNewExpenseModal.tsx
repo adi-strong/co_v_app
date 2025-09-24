@@ -1,71 +1,89 @@
 import {Button, Modal, Spinner} from "react-bootstrap";
-import {useState} from "react";
-import {
-  ExpenseError,
-  ExpenseFormModalProps,
-  ExpenseSaver,
-  initExpenseErrorState,
-  initExpenseState, onExpenseSubmit
-} from "../model/bonDeDepensesService";
-import {usePostExpenseMutation} from "../model/bonDeDepenses.api.slice";
-import ExpenseForm from "./ExpenseForm";
+import {ReactNode, useState} from "react";
+import {initExpenseErrorState, initExpenseState, onExpenseSubmit} from "../model/bonDeDepensesService.ts";
+import {usePostBonDepensesMutation} from "../model/bonDeDepenses.api.slice.ts";
+import {handleShow} from "../../../../services/services.ts";
+import PostExpenseFields from "./PostExpenseFields.tsx";
 
-const PostNewExpenseModal = ({ show, onHide, onRefresh }: ExpenseFormModalProps) => {
+export default function PostNewExpenseModal(props: { show: boolean; onHide: () => void; onRefresh: () => void }) {
   
-  const [expense, setExpense] = useState<ExpenseSaver>(initExpenseState())
-  const [errorState, setErrorState] = useState<ExpenseError>(initExpenseErrorState())
+  const { show, onHide, onRefresh } = props
   
-  const [postExpense, {
-    isLoading,
-    isError,
-    error
-  }] = usePostExpenseMutation()
+  const [confirm, setConfirm] = useState<boolean>(false)
+  const [expense, setExpense] = useState(initExpenseState())
+  const [errors, setErrors] = useState(initExpenseErrorState())
+  
+  const [postExpense, { isLoading }] = usePostBonDepensesMutation()
+  
+  const onAbort = (): void => {
+    setExpense(initExpenseState())
+    setErrors(initExpenseErrorState())
+    onHide()
+  }
   
   return (
-    <Modal size='lg' show={show} onHide={onHide} className='modal-transition' animation>
-      <Modal.Header closeButton>
-        <Modal.Title>
-          <i className='bi bi-plus' /> Nouveau bon de dépenses
+    <Modal size='lg' show={show} onHide={onHide}>
+      <Modal.Header closeButton className='bg-primary'>
+        <Modal.Title className='text-light'>
+          <i className='bi bi-plus'/> Nouveau bon de dépenses
         </Modal.Title>
       </Modal.Header>
       
       <Modal.Body>
-        
-        <ExpenseForm
-          error={error}
-          isError={isError}
-          state={expense}
-          isLoading={isLoading}
+        <PostExpenseFields
           setState={setExpense}
-          errorState={errorState}
+          errors={errors}
+          loader={isLoading}
+          state={expense}
         />
-      
       </Modal.Body>
       
       <Modal.Footer>
-        <Button disabled={isLoading} variant='outline-secondary' onClick={onHide}>
-          <i className='bi bi-x'/> Annuler
-        </Button>
+        {!confirm && (
+          <>
+            <Button size='sm' disabled={isLoading} variant='outline-dark' onClick={onAbort}>
+              <i className='bi bi-x'/> Fermer
+            </Button>
+            
+            <Button
+              size='sm'
+              disabled={isLoading}
+              variant='outline-primary'
+              onClick={(): void => handleShow(setConfirm)}>
+              {!isLoading && (<i className='bi bi-floppy me-1'/>) as ReactNode}
+              {isLoading && (<Spinner className='me-1' animation='grow' size='sm'/>) as ReactNode}
+              {isLoading ? 'Veuillez patienter' : 'Enregistrer'}
+            </Button>
+          </>
+        ) as ReactNode}
         
-        <Button
-          disabled={isLoading}
-          variant='outline-primary'
-          onClick={() => onExpenseSubmit(
-            expense,
-            setErrorState,
-            postExpense,
-            onHide,
-            onRefresh,
-            setExpense
-          )}>
-          {isLoading && <Spinner className='me-1' animation='border' size='sm'/>}
-          {!isLoading && <i className='bi bi-check-all me-1'/>}
-          {isLoading ? 'Veuillez patienter' : 'Enregistrer'}
-        </Button>
+        {confirm && (
+          <>
+            <Button size='sm' disabled={isLoading} variant='outline-dark' onClick={(): void => handleShow(setConfirm)}>
+              <i className='bi bi-x'/> Annuler
+            </Button>
+            
+            <Button
+              size='sm'
+              disabled={isLoading}
+              variant='warning'
+              onClick={() => {
+                setConfirm(false)
+                onExpenseSubmit(
+                  expense,
+                  setErrors,
+                  postExpense,
+                  onHide,
+                  onRefresh,
+                  setExpense
+                )
+              }}>
+              <i className='bi bi-exclamation-circle-fill'/> Valider
+            </Button>
+          </>
+        ) as ReactNode}
       </Modal.Footer>
     </Modal>
-  );
+  )
   
-};
-
-export default PostNewExpenseModal;
+}

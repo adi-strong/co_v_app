@@ -84,8 +84,8 @@ const initialState: MenuInterface = {
         {label: 'Fournisseurs', to: '/app/fournisseurs'},
         {label: 'Approvisionnements', to: '/app/approvisionnements'},
         {label: 'Mouvements en stocks', to: '/app/mouvements-stocks'},
-        {label: 'Pertes', to: '/app/pertes-produits'},
         {label: 'Factures', to: '/app/factures-des-produits'},
+        {label: 'Rapports', to: '/app/rapports-stock'},
       ],
     }, // 5 - Pharmacie
     {

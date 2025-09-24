@@ -40,7 +40,8 @@ const fonctionApiSlice = API.injectEndpoints({
         method: APP_METHODS.POST,
         headers: APP_HEADERS.POST_HEADERS,
         body: JSON.stringify(data)
-      })
+      }),
+      invalidatesTags: ['UNIQUE', 'LIST']
     }),
     
     editFonction: build.mutation<Fonction, SaveFonction>({
@@ -50,17 +51,15 @@ const fonctionApiSlice = API.injectEndpoints({
         headers: APP_HEADERS.PATCH_HEADERS,
         body: JSON.stringify(data)
       }),
-      invalidatesTags: (result, error, arg) => [{
-        id: arg.id,
-        type: 'UNIQUE',
-      }]
+      invalidatesTags: ['UNIQUE', 'LIST']
     }),
     
     deleteFonction: build.mutation<void, Fonction>({
       query: (data: Fonction) => ({
         url: `${API_PATH}/fonctions/${data.id}`,
         method: APP_METHODS.DELETE
-      })
+      }),
+      invalidatesTags: ['UNIQUE', 'LIST']
     }),
 
   })

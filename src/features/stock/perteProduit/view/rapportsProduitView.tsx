@@ -1,23 +1,18 @@
 import {memo} from 'react';
-import {Card} from "react-bootstrap";
 import {BodyContainer, PageTitles} from "../../../../components";
 import {useActivePage, useDocumentTitle} from "../../../../hooks";
-import PerteProdList from "./PerteProdList.tsx";
 
-const PerteProduitView = () => {
+const RapportsProduitView = () => {
   
   useDocumentTitle('Produits perdu')
   useActivePage('pharmacy')
   
   return (
     <BodyContainer>
-      <PageTitles title='Produits perdu'/>
-      <Card>
-        <PerteProdList/>
-      </Card>
+      <PageTitles title='Rapports de stock'/>
     </BodyContainer>
   )
   
 };
 
-export default memo(PerteProduitView)
+export default memo(RapportsProduitView)

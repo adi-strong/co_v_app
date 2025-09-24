@@ -107,7 +107,7 @@ const
   MoveStk = lazy(() =>
     import('../stock/sortieProduit/view/sortieProduitView.tsx')),
   Perte = lazy(() =>
-    import('../stock/perteProduit/view/perteProduitView.tsx')),
+    import('../stock/perteProduit/view/rapportsProduitView.tsx')),
   Vente = lazy(() =>
     import('../stock/sortieProduit/view/newVente.tsx')),
   
@@ -153,7 +153,12 @@ const
   UAgent = lazy(() => import('../personnel/agent/view/showAgent.tsx')),
   
   Treats = lazy(() =>
-    import('../traitements/traitement/view/traitementView.tsx'))
+    import('../traitements/traitement/view/traitementView.tsx')),
+  
+  Bdp = lazy(() =>
+    import('../finances/bonDeDepenses/view/bonDeDepensesView.tsx')),
+  UBdp = lazy(() =>
+    import('../finances/bonDeDepenses/view/showBonDeDepense.tsx'))
 
 const pages: RouteType[] = [
   {
@@ -365,7 +370,7 @@ const pages: RouteType[] = [
         element: <MoveStk />
       },
       {
-        path: 'pertes-produits',
+        path: 'rapports-stock',
         element: <Perte />
       },
       {
@@ -493,6 +498,17 @@ const pages: RouteType[] = [
         element: <Treats />
       },
       // End Traitements
+      
+      // Finances
+      {
+        path: 'bons-des-depenses',
+        element: <Bdp />
+      },
+      {
+        path: 'bons-des-depenses/:id/:slug',
+        element: <UBdp />
+      },
+      // End Finances
     ]
   },
 ]

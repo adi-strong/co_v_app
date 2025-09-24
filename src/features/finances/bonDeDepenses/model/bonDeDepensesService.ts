@@ -1,28 +1,13 @@
 import toast from "react-hot-toast";
-import {MultiValue, SingleValue} from "react-select";
 import type {SelectOptionType} from "../../../../services/services.ts";
 import type {ExpenseType} from "../../typesDepenses/model/typesDepensesService.ts";
-import type {ErrorJsonLDResponseInt} from "../../../../interfaces/ErrorJsonLDResponseInt.ts";
 import {formatDecimalNumberWithSpaces} from "../../../../services/services.ts";
 import type {SubDataType} from "../../../../interfaces/SelectFieldInt.ts";
 import type {JsonLdApiResponseInt} from "../../../../interfaces/JsonLdApiResponseInt.ts";
 import type {User} from "../../../user/model/userService.ts";
 import type {CompteCaisse} from "../../compteCaisse/model/compteCaisseService.ts";
-
-export interface ExpenseFilters {
-  startAt: string
-  endAt: string
-  object: string
-  expenseType: SingleValue<SelectOptionType> | null
-  expenseId: number | string | null
-}
-
-export interface ExpenseToExport {
-  id: number
-  objet: string
-  sTotal: string
-  date: string
-}
+import type {Dispatch, SetStateAction} from "react";
+import type {MultiValue} from "react-select";
 
 export interface DesignationBonDeDepense {
   '@id'?: string | undefined
@@ -33,7 +18,7 @@ export interface DesignationBonDeDepense {
   fkTypeDepense?: ExpenseType | undefined | null,
 }
 
-export interface Expense {
+export interface BonDeDepense {
   '@id'?: string | undefined | null
   id: number
   designations: ExpenseDesignation[]
@@ -44,6 +29,9 @@ export interface Expense {
   fkUser?: User
   fkCompte?: CompteCaisse
   designationBonDeDepenses: DesignationBonDeDepense[]
+  selected: boolean
+  devise: string
+  taux: string
 }
 
 export type ExpenseDesignation = {
@@ -57,10 +45,11 @@ export type ExpenseDesignation = {
 export interface ExpenseSaver {
   designations: ExpenseDesignation[]
   objet: string
-  demandeur: string | undefined | null
+  demandeur: string
   id: number
-  createdAt?: string | undefined | null
-  updatedAt?: string | undefined | null
+  createdAt?: string
+  updatedAt?: string
+  devise: string
 }
 
 export interface ExpenseError {
@@ -68,22 +57,18 @@ export interface ExpenseError {
   objet: string | null
   demandeur: string | null
   adresse: string | null
-}
-
-export type ExpenseResponse = {
-  data: Expense | undefined | null
-  error: ErrorJsonLDResponseInt
+  devise: string | null
 }
 
 export interface ExpenseFormModalProps {
-  data?: Expense | undefined | null
+  data?: BonDeDepense | undefined | null
   show: boolean
   onHide: () => void
   onRefresh: () => void
 }
 
 export interface ExpenseFormModalProps {
-  data?: Expense | undefined | null
+  data?: BonDeDepense | undefined | null
   show: boolean
   onHide: () => void
   onRefresh: () => void
@@ -95,6 +80,7 @@ export const initExpenseState = (): ExpenseSaver => ({
   demandeur: '',
   id: 0,
   createdAt: '',
+  devise: '',
 })
 
 export const initExpenseErrorState = (): ExpenseError => ({
@@ -102,14 +88,7 @@ export const initExpenseErrorState = (): ExpenseError => ({
   objet: null,
   demandeur: null,
   adresse: null,
-})
-
-export const initExpenseFilters = (): ExpenseFilters => ({
-  endAt: '',
-  expenseType: null,
-  object: '',
-  startAt: '',
-  expenseId: '',
+  devise: null,
 })
 
 const expenseData = (expense: ExpenseSaver): ExpenseSaver => {
@@ -118,33 +97,35 @@ const expenseData = (expense: ExpenseSaver): ExpenseSaver => {
     objet,
     designations,
     demandeur,
+    devise,
   } = expense
   
   const createdAt = expense?.createdAt ? expense.createdAt : null
   
   return {
     id,
-    objet: objet,
-    designations,
-    createdAt,
+    devise,
     demandeur,
+    objet,
+    designations
   }
 }
 
 export const onExpenseSubmit = async (
   state: ExpenseSaver,
-  setErrors: React.Dispatch<React.SetStateAction<ExpenseError>>,
+  setErrors: Dispatch<SetStateAction<ExpenseError>>,
   onSubmit: (order: ExpenseSaver) => Promise<any>,
   onHide: () => void,
   onRefresh: () => void,
-  setState?: React.Dispatch<React.SetStateAction<ExpenseSaver>>,
+  setState?: Dispatch<SetStateAction<ExpenseSaver>>,
 ): Promise<void> => {
   setErrors(initExpenseErrorState())
   
   const { id } = state
   const expense = expenseData(state)
+  
   try {
-    const { data, error }: ExpenseResponse = await onSubmit(expense)
+    const { data, error }: JsonLdApiResponseInt<BonDeDepense> = await onSubmit(expense)
     
     if (data) {
       toast.success(id > 0 ? 'Modification bien effectuée.' : 'Enregistrement bien effectué.')
@@ -162,40 +143,6 @@ export const onExpenseSubmit = async (
   } catch (e) {
     toast.error('Problème réseau.')
   }
-}
-
-export const onDeleteExpenseSubmit = async (
-  state: Expense,
-  onSubmit: (order: Expense) => Promise<any>,
-  onRefresh: () => void,
-  onHide: () => void
-): Promise<void> => {
-  onHide()
-  try {
-    await onSubmit(state)
-    toast.success('Suppression bien effectuée.')
-    onRefresh()
-  } catch (e) {
-    toast.error('Problème réseau.')
-  }
-}
-
-export const onExpenseOpenEditModal = (
-  order: Expense,
-  setIsEdited: React.Dispatch<React.SetStateAction<any>>
-): void => { setIsEdited(order); }
-
-export const onExpenseCloseEditModal = (setIsEdited: React.Dispatch<React.SetStateAction<any>>): void => {
-  setIsEdited(null);
-}
-
-export const onExpenseOpenDeleteModal = (
-  order: Expense,
-  setIsDeleted: React.Dispatch<React.SetStateAction<any>>
-): void => { setIsDeleted(order); }
-
-export const onExpenseCloseDeleteModal = (setIsDeleted: React.Dispatch<React.SetStateAction<any>>): void => {
-  setIsDeleted(null);
 }
 
 export const totalExpenseItem = (item: ExpenseDesignation): string => {
@@ -219,7 +166,7 @@ export const totalExpenseAmount = (designations: ExpenseDesignation[]): string =
   return formatDecimalNumberWithSpaces(sum)
 }
 
-export const onExpenseCurrentTotalSum = (expenses: Expense[]) => {
+export const onExpenseCurrentTotalSum = (expenses: BonDeDepense[]) => {
   let sum = 0
   
   if (expenses.length > 0) {
@@ -244,9 +191,9 @@ export const onExpenseCurrentTotalSum = (expenses: Expense[]) => {
 export const onExpTypeOptionChange = (
   newValue: MultiValue<SelectOptionType>,
   oldSelectedSubTypes: MultiValue<SelectOptionType>,
-  setState: React.Dispatch<React.SetStateAction<any>>,
-  setSubDataOptionsState: React.Dispatch<React.SetStateAction<SubDataType[]>>,
-  setSubDataState: React.Dispatch<React.SetStateAction<any>>
+  setState: Dispatch<SetStateAction<any>>,
+  setSubDataOptionsState: Dispatch<SetStateAction<SubDataType[]>>,
+  setSubDataState: Dispatch<SetStateAction<any>>
 ): void => {
   const updatedSubData: SubDataType[] = newValue.flatMap(opt => opt.subData || []);
   const updatedSubDataIds = new Set(updatedSubData.map(sub => sub.data));
@@ -262,8 +209,8 @@ export const onExpTypeOptionChange = (
 
 export const onSubExpTypeChange = (
   newValue: MultiValue<SelectOptionType>,
-  setSelectedSubTypes: React.Dispatch<React.SetStateAction<any>>,
-  setState: React.Dispatch<React.SetStateAction<ExpenseSaver>>
+  setSelectedSubTypes: Dispatch<SetStateAction<any>>,
+  setState: Dispatch<SetStateAction<ExpenseSaver>>
 ): void => {
   setSelectedSubTypes(newValue)
   
@@ -332,31 +279,3 @@ export const getTotalDepense = (designations: DesignationBonDeDepense[]): number
 }
 
 export const getSousTotalDepense = (price: number, qty: number): number => (price * qty)
-
-export interface ExpenseFilterResponse extends JsonLdApiResponseInt<Expense[]> {}
-
-export const onGetFilteredExpenseSubmit = async (
-  e: React.FormEvent<HTMLFormElement>,
-  filters: ExpenseFilters,
-  setState: React.Dispatch<React.SetStateAction<Expense[]>>,
-  setIsFiltered: React.Dispatch<React.SetStateAction<boolean>>,
-  setIsPaginated: React.Dispatch<React.SetStateAction<boolean>>,
-  onSubmit: (data: ExpenseFilters) => any
-): Promise<void> => {
-  e.preventDefault()
-  setIsPaginated(false)
-  setIsFiltered(true)
-  
-  try {
-    const { data, error }: ExpenseFilterResponse = await onSubmit(filters)
-    if (data && data.length > 0)
-      setState(data)
-    else setState([])
-    
-    if (error && error?.data)
-      toast.error(error.data.detail)
-  } catch (e) {
-    toast.error('Problème réseau.')
-  }
-  
-}
